@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS admin_listings (id TEXT PRIMARY KEY, data TEXT NOT NULL, created_at INTEGER NOT NULL);

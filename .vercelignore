@@ -1,0 +1,12 @@
+.local
+.git
+node_modules
+dist
+.openai
+assets
+data
+worker
+drizzle
+supabase
+listing-data.json
+.env*

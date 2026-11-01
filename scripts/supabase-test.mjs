@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {gameListings,syncSupabase,supabaseListings} from '../worker/supabase.js';
+import {createDB} from './test-db.mjs';
+const DB=createDB(),env={DB,OGZ_SUPABASE_URL:'https://example.test/functions/v1/ogz-game-listings',OGZ_SUPABASE_KEY:'test-key'};
+const local={id:'old',createdAt:1,car:[]};await DB.prepare('INSERT INTO admin_listings(id,data,created_at) VALUES(?,?,?)').bind(local.id,JSON.stringify(local),1).run();
+const original=globalThis.fetch;let sent;
+try{globalThis.fetch=async(url,options)=>{assert.equal(options.headers['x-ogz-key'],'test-key');if(options.method==='POST'){sent=JSON.parse(options.body);return Response.json({saved:sent.listings.length})}return Response.json({listings:[{...local,createdAt:2},{id:'new',createdAt:3,car:[]}]})};
+const listings=await gameListings(env);assert.equal(listings.length,2);assert.equal(listings[0].id,'new');assert.equal(listings[1].createdAt,2);
+assert.equal((await syncSupabase(new Request('https://site.test/api/admin/supabase-sync',{method:'POST'}),env)).status,403);
+const synced=await syncSupabase(new Request('https://site.test/api/admin/supabase-sync',{method:'POST',headers:{'x-ogz-key':'test-key'}}),env);assert.equal(synced.status,200);assert.equal(sent.listings[0].id,'old');
+globalThis.fetch=async()=>new Response(null,{status:503});await assert.rejects(()=>gameListings(env),/Supabase/);assert.equal((await gameListings({DB})).length,1);
+}finally{globalThis.fetch=original}console.log('PASS: Supabase server credentials, ID deduplication, sync authorization, legacy preservation, service failure handling.');

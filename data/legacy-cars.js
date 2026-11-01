@@ -1,0 +1,22 @@
+export const legacyCars = [
+['BMW','320i M Sport',2020,68000,'Benzin','Otomatik',2375000,'1 parça lokal boya','Değişen yok','Tramer yok','photo-1555215695-3004980ad54e'],
+['Mercedes-Benz','C 200 AMG',2021,52000,'Benzin','Otomatik',3150000,'Boya yok','Değişen yok','Tramer yok','photo-1618843479313-40f8afb4b4d8'],
+['Volkswagen','Golf 1.5 TSI',2022,34000,'Benzin','Otomatik',1825000,'Boya yok','Değişen yok','Tramer yok','photo-1533473359331-0135ef1b58bf'],
+['Audi','A3 Sedan 35 TFSI',2021,73000,'Benzin','Otomatik',2150000,'2 parça boya','Değişen yok','24.500 TL hasar','photo-1606664515524-ed2f786a0bd6'],
+['Renault','Clio 1.0 TCe',2023,28000,'Benzin','Manuel',1090000,'Boya yok','Değişen yok','Tramer yok','photo-1492144534655-ae79c964c9d7'],
+['Peugeot','3008 1.5 BlueHDi',2020,112000,'Dizel','Otomatik',1675000,'1 parça boya','Değişen yok','12.000 TL hasar','photo-1503376780353-7e6692767b70'],
+['Toyota','Corolla 1.5 Dream',2022,61000,'Benzin','Otomatik',1420000,'Boya yok','Değişen yok','Tramer yok','photo-1621007947382-bb3c3994e3fb'],
+['Fiat','Egea 1.3 Multijet',2021,125000,'Dizel','Manuel',845000,'3 parça boya','Sol ön çamurluk','38.000 TL hasar','photo-1492144534655-ae79c964c9d7'],
+['Honda','Civic 1.5 VTEC',2023,24000,'Benzin','Otomatik',1980000,'Boya yok','Değişen yok','Tramer yok','photo-1533473359331-0135ef1b58bf'],
+['Skoda','Superb 1.5 TSI',2020,98000,'Benzin','Otomatik',1790000,'1 parça boya','Değişen yok','Tramer yok','photo-1606664515524-ed2f786a0bd6'],
+['BMW','520i Executive',2018,145000,'Benzin','Otomatik',2490000,'2 parça boya','Değişen yok','19.000 TL hasar','photo-1555215695-3004980ad54e'],
+['Volkswagen','Passat 1.6 TDI',2019,168000,'Dizel','Otomatik',1575000,'2 parça boya','Sağ ön çamurluk','45.000 TL hasar','photo-1533473359331-0135ef1b58bf'],
+['Mercedes-Benz','A 180 Style',2020,87000,'Benzin','Otomatik',2060000,'1 parça boya','Değişen yok','Tramer yok','photo-1618843479313-40f8afb4b4d8'],
+['Audi','A4 40 TDI',2019,132000,'Dizel','Otomatik',2290000,'2 parça boya','Değişen yok','32.000 TL hasar','photo-1606664515524-ed2f786a0bd6'],
+['Renault','Megane 1.5 Blue dCi',2022,76000,'Dizel','Otomatik',1490000,'Boya yok','Değişen yok','Tramer yok','photo-1492144534655-ae79c964c9d7'],
+['Peugeot','208 1.2 PureTech',2023,19000,'Benzin','Otomatik',1295000,'Boya yok','Değişen yok','Tramer yok','photo-1503376780353-7e6692767b70'],
+['Toyota','Yaris 1.5 Hybrid',2021,57000,'Hibrit','Otomatik',1390000,'1 parça boya','Değişen yok','Tramer yok','photo-1621007947382-bb3c3994e3fb'],
+['Honda','HR-V e:HEV',2023,31000,'Hibrit','Otomatik',2190000,'Boya yok','Değişen yok','Tramer yok','photo-1533473359331-0135ef1b58bf'],
+['Skoda','Octavia 1.0 TSI',2021,84000,'Benzin','Otomatik',1480000,'1 parça boya','Değişen yok','Tramer yok','photo-1606664515524-ed2f786a0bd6'],
+['Fiat','500 1.2 Lounge',2020,42000,'Benzin','Otomatik',985000,'Boya yok','Değişen yok','Tramer yok','photo-1492144534655-ae79c964c9d7']
+];
