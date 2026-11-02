@@ -1,11 +1,11 @@
 /**
- * Game Modes Architecture (Strategy Pattern + Registry)
- * 
- * Bu modül oyun modlarını tek bir çatı altında toplar ve modüler hale getirir.
- * İleride 5-10 farklı oyun modu eklendiğinde (örn: 'crypto-price', 'real-estate', vb.)
- * index.js dosyasındaki oda mantığına dokunmadan sadece yeni bir mod stratejisi tanımlayıp
- * sisteme kaydetmek yeterlidir (Open/Closed Principle).
- */
+* Game Modes Architecture (Strategy Pattern + Registry)
+* 
+* Bu modül oyun modlarını tek bir çatı altında toplar ve modüler hale getirir.
+* İleride 5-10 farklı oyun modu eklendiğinde (örn: 'crypto-price', 'real-estate', vb.)
+* index.js dosyasındaki oda mantığına dokunmadan sadece yeni bir mod stratejisi tanımlayıp
+* sisteme kaydetmek yeterlidir (Open/Closed Principle).
+*/
 
 export function createGameModes({
   adminHtml,
