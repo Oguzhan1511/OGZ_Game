@@ -1,6 +1,14 @@
+import {hasSupabase} from './supabase.js';
 export const productCategories={market:'Market',clothing:'Kıyafet',shoes:'Ayakkabı',cosmetics:'Kozmetik',technology:'Teknoloji',kitchen:'Mutfak',home:'Ev ve Yaşam',toys:'Oyuncak',diy:'Yapı Market',office:'Ofis ve Kırtasiye'};
 export function normalizeProductCategories(value){if(value==='mixed')return Object.keys(productCategories);if(!Array.isArray(value)||!value.length||value.some(key=>!Object.hasOwn(productCategories,key)))return null;return [...new Set(value)]}
-export async function productListings(env){const rows=await env.DB.prepare('SELECT data FROM products ORDER BY created_at DESC').all();return rows.results.map(row=>JSON.parse(row.data))}
+export async function productService(env,options={}){
+ const url=env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-products');
+ const response=await fetch(url+(options.path||''),{method:options.method||'GET',headers:{'x-ogz-key':env.OGZ_SUPABASE_KEY,...(options.bytes?{}:{'content-type':'application/json'})},body:options.bytes|| (options.products?JSON.stringify({products:options.products}):undefined),signal:AbortSignal.timeout(30000)});
+ if(!response.ok)throw Error('Supabase ürün servisine erişilemiyor. Lütfen tekrar dene.');return response.json();
+}
+export async function productListings(env){if(hasSupabase(env))return (await productService(env)).products;const rows=await env.DB.prepare('SELECT data FROM products ORDER BY created_at DESC').all();return rows.results.map(row=>JSON.parse(row.data))}
+async function saveProduct(env,item,existing){if(hasSupabase(env)){await productService(env,{method:'POST',products:[item]});return}if(existing)await env.DB.prepare('UPDATE products SET data=? WHERE id=?').bind(JSON.stringify(item),item.id).run();else await env.DB.prepare('INSERT INTO products(id,data,created_at) VALUES(?,?,?)').bind(item.id,JSON.stringify(item),item.createdAt).run()}
+
 export function productAsRound(item){return [item.name,'',0,0,'','',item.price,'','','',item.image,{id:item.id,source:'user',family:item.id,kind:'product',productCategory:item.category}]}
 export async function productAdminApi(req,env){
  const reply=(body,status=200)=>new Response(JSON.stringify(body),{status,headers:{'content-type':'application/json','cache-control':'no-store'}});
@@ -13,7 +21,7 @@ export async function productAdminApi(req,env){
  if(req.headers.get('content-type')?.includes('application/json')){
   const body=await req.json();if(body.action!=='archive'||typeof body.id!=='string'||typeof body.archived!=='boolean')return reply({error:'Geçersiz işlem'},400);
   const item=(await productListings(env)).find(item=>item.id===body.id);if(!item)return reply({error:'Ürün bulunamadı'},404);
-  item.archived=body.archived;await env.DB.prepare('UPDATE products SET data=? WHERE id=?').bind(JSON.stringify(item),item.id).run();return reply({product:item});
+  item.archived=body.archived;await saveProduct(env,item,true);return reply({product:item});
  }
  const form=await req.formData(),name=String(form.get('name')||'').trim(),category=String(form.get('category')||''),text=String(form.get('price')||'').trim().replace(/\s/g,'');
  const price=/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(text)?Number(text.replaceAll('.','').replace(',','.')):/^\d+([,.]\d{1,2})?$/.test(text)?Number(text.replace(',','.')):NaN;
@@ -24,6 +32,6 @@ export async function productAdminApi(req,env){
  if(file?.size){if(file.size>5000000)return reply({error:'Görsel en fazla 5 MB olabilir.'},400);const bytes=new Uint8Array(await file.arrayBuffer());const type=bytes[0]===255&&bytes[1]===216&&bytes[2]===255?'image/jpeg':bytes[0]===137&&bytes[1]===80&&bytes[2]===78&&bytes[3]===71?'image/png':String.fromCharCode(...bytes.slice(0,4))==='RIFF'&&String.fromCharCode(...bytes.slice(8,12))==='WEBP'?'image/webp':null;if(!type||bytes.length<12)return reply({error:'JPG, PNG veya WebP görsel seç.'},400);image='/media/admin/admin-'+crypto.randomUUID()+'-0';uploaded={bytes,type};}
  if(!image)return reply({error:'Ürün görseli yükle.'},400);
  const item={id:existing?.id||'product-'+crypto.randomUUID(),name,category,price:Math.round(price*100)/100,image,createdAt:existing?.createdAt||Date.now(),archived:existing?.archived||false};
- try{if(uploaded)await env.BUCKET.put(image.slice(1),uploaded.bytes,{httpMetadata:{contentType:uploaded.type}});if(existing)await env.DB.prepare('UPDATE products SET data=? WHERE id=?').bind(JSON.stringify(item),item.id).run();else await env.DB.prepare('INSERT INTO products(id,data,created_at) VALUES(?,?,?)').bind(item.id,JSON.stringify(item),item.createdAt).run()}catch(error){if(uploaded)await env.BUCKET.delete(image.slice(1));throw error}
+ try{if(uploaded){if(hasSupabase(env)){const stored=await productService(env,{method:'PUT',path:'?image='+encodeURIComponent(image.slice(1)),bytes:uploaded.bytes});item.image=stored.image}else await env.BUCKET.put(image.slice(1),uploaded.bytes,{httpMetadata:{contentType:uploaded.type}})}await saveProduct(env,item,existing)}catch(error){if(uploaded&&!hasSupabase(env))await env.BUCKET.delete(image.slice(1));throw error}
  return reply({product:item},201);
 }
