@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 
 const moduleMap = [
+  ['./ui/assets.js', 'worker/ui/assets.js'],
   ['./ui/mode-cards.js', 'worker/ui/mode-cards.js'],
   ['./modes/product/product-ui.js', 'worker/modes/product/product-ui.js'],
   ['./modes/product/products.js', 'worker/modes/product/products.js'],
@@ -15,7 +16,10 @@ const moduleMap = [
   ['./selection.js', 'worker/selection.js'],
   ['./modes/car/catalog.js', 'worker/modes/car/catalog.js'],
   ['./modes/car/media-manifest.js', 'worker/modes/car/media-manifest.js'],
-  ['./game-modes.js', 'worker/game-modes.js']
+  ['./game-modes.js', 'worker/game-modes.js'],
+  ['./services/room-service.js', 'worker/services/room-service.js'],
+  ['./services/media.js', 'worker/services/media.js'],
+  ['./ui/app-shell.js', 'worker/ui/app-shell.js']
 ];
 
 let code = fs.readFileSync('worker/index.js', 'utf8');
@@ -39,6 +43,7 @@ code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/services\/supabase\.js["'
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/modes\/product\/products\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/game-modes\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\.\/ocr\/ocr\.js["'];?/g, '');
+code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/room-service\.js["'];?/g, '');
 code = code.replace('const cars=baseCars;', 'const baseCars=cars;');
 
 fs.mkdirSync('dist/server', { recursive: true });
