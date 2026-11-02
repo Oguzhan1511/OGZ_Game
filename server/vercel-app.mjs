@@ -1,4 +1,5 @@
 import {scryptSync,timingSafeEqual,createHmac,randomBytes} from 'node:crypto';
+import worker from '../worker/index.js';
 const cookieName='__Host-ogz_admin';
 function cookieToken(request){return request.headers.get('cookie')?.split(';').map(x=>x.trim()).find(x=>x.startsWith(cookieName+'='))?.slice(cookieName.length+1)}
 export function createAdminSession(env,now=Date.now()){
@@ -15,6 +16,7 @@ export async function handleVercelRequest(request,env){
  if(!env.OGZ_BACKEND_ORIGIN||!env.OGZ_BACKEND_TOKEN||!env.OGZ_DEPLOYMENT_KEY||!env.ADMIN_PASSWORD_HASH||!env.ADMIN_USERNAME||!env.ADMIN_SESSION_SECRET)return json({error:'Sunucu yapılandırması hazır değil.'},503);
  const url=new URL(request.url),path=url.pathname,isAdmin=validAdminSession(request,env);
  const bridgeHeaders={'OAI-Sites-Authorization':'Bearer '+env.OGZ_BACKEND_TOKEN,'x-ogz-deployment-key':env.OGZ_DEPLOYMENT_KEY};
+ if(path==='/'||path==='/mascot.jpg'||path==='/logo.png')return await worker.fetch(request,env);
  if(path==='/admin/login'){if(isAdmin)return Response.redirect(url.origin+'/admin',303);return new Response(loginHtml,{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}})}
  if(path==='/api/admin/login'){
   if(request.method!=='POST')return json({error:'Geçersiz yöntem'},405);if(request.headers.get('origin')!==url.origin)return json({error:'Geçersiz kaynak'},403);
@@ -28,7 +30,7 @@ export async function handleVercelRequest(request,env){
  if(path.startsWith('/api/admin/')&&!isAdmin)return json({error:'Yönetici girişi gerekli.'},401);
  if(path==='/admin'&&!isAdmin)return Response.redirect(url.origin+'/admin/login',303);
  if(!['GET','HEAD'].includes(request.method)&&path.startsWith('/api/admin/')&&request.headers.get('origin')!==url.origin)return json({error:'Geçersiz kaynak'},403);
- const allowed=['/','/logo.png','/admin','/admin/ocr-engine.js','/api/room','/api/admin/listings'].includes(path)||/^\/media\/[a-zA-Z0-9_./-]+$/.test(path);
+ const allowed=['/admin','/admin/ocr-engine.js','/api/room','/api/admin/listings'].includes(path)||/^\/media\/[a-zA-Z0-9_./-]+$/.test(path);
  if(!allowed)return json({error:'Sayfa bulunamadı.'},404);
  const headers=new Headers(bridgeHeaders);for(const name of ['content-type','if-none-match','origin'])if(request.headers.has(name))headers.set(name,request.headers.get(name));headers.set('x-ogz-path',url.pathname+url.search);headers.set('x-ogz-origin',url.origin);if(isAdmin)headers.set('x-ogz-admin','1');
  const result=await fetch(env.OGZ_BACKEND_ORIGIN+'/api/vercel-bridge',{method:request.method,headers,body:['GET','HEAD'].includes(request.method)?undefined:request.body,duplex:'half',redirect:'manual',signal:AbortSignal.timeout(55000)});
