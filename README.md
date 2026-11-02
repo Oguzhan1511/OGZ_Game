@@ -68,3 +68,11 @@ Aynı oyun turunda diğer oyuncuların tahmin/sayaç güncellemeleri giriş alan
 Oyun sonunda oda sahibi “Tekrar oyna” ile aynı oda kodu, oyuncular ve ayarlarla yeni oyunu başlatabilir. Puanlar ve tahminler sıfırlanır; ilan geçmişi korunarak yeni tur sırası seçilir. Her oyunun ayrı kimliği vardır; önceki oyunun geciken tahmin/sonraki tur istekleri yeni oyunu etkilemez.
 
 Mobil oyun ekranında Araç / Hasar / Puanlar sekmeleri bulunur. Fotoğraf ve temel bilgiler kompakt gösterilir; tahmin kutusu, Bin/Milyon kısayolları ve Gönder düğmesi altta sabittir. Visual Viewport değişimleriyle klavyenin üstünde kalır. Sekmelerde giriş düğümü değiştirilmez; tutar korunur. Tur sonundaki devam düğmesi mobilde sabit alandadır; masaüstünde mevcut sütunlu düzen sürer.
+
+Ürün fiyatı tahmini: Oda oluştururken `Ürün fiyatı tahmini` seçilir. Market,
+kıyafet, ayakkabı, kozmetik ve teknoloji kategorilerinden bir veya birkaçı
+seçilebilir; Karışık tüm kategorileri kapsar. `/admin?mode=product-price`
+üzerinden ürün adı, kategori, fiyat ve görsel eklenir; ürünler düzenlenebilir,
+kaldırılabilir ve geri alınabilir. Seçili havuzda tur sayısı kadar aktif, farklı
+ürün gerekir. Fiyatlar tur sonuna kadar istemciye gönderilmez. Ürün kayıtları
+D1 `products` tablosunda, görseller R2'de tutulur; araç havuzu ayrı kalır.

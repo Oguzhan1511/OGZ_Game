@@ -2,7 +2,7 @@
 export function selectListings(cars, rounds, excluded=new Set(), random=Math.random, history=new Map()){
  const normalize=value=>String(value||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i').toLowerCase().replace(/[^a-z0-9]/g,'');
  const ids=new Set(),entries=[];
- cars.forEach((car,index)=>{const meta=car[11];if(meta?.source!=='user'||excluded.has(meta.id)||ids.has(meta.id))return;ids.add(meta.id);const seen=history.get(meta.id);entries.push({index,id:meta.id,brand:car[0],family:normalize(meta.family)||normalize(car[0]+' '+car[1]),category:meta.vehicleType==='suv'?'suv':'automobile',seen:!!seen,count:seen?.seenCount||1,last:seen?.lastSeen||0,priceBand:Math.floor(Math.log10(Math.max(1,car[6]))*2)})});
+ cars.forEach((car,index)=>{const meta=car[11];if(meta?.source!=='user'||excluded.has(meta.id)||ids.has(meta.id))return;ids.add(meta.id);const seen=history.get(meta.id);entries.push({index,id:meta.id,brand:car[0],family:normalize(meta.family)||normalize(car[0]+' '+car[1]),category:meta.productCategory||(meta.vehicleType==='suv'?'suv':'automobile'),seen:!!seen,count:seen?.seenCount||1,last:seen?.lastSeen||0,priceBand:Math.floor(Math.log10(Math.max(1,car[6]))*2)})});
  if(entries.length<rounds)return {error:rounds+' tur için '+entries.length+' uygun ilan var. Daha az tur seç veya diğer açık oyunların bitmesini bekle.',available:entries.length};
  const availableFamilies=new Set(entries.map(e=>e.family)).size;if(availableFamilies<rounds)return {error:rounds+' tur için '+availableFamilies+' farklı model ailesi var. Aynı model tekrarlanmaması için daha az tur seç.',available:availableFamilies};
  const fresh=entries.filter(e=>!e.seen),old=entries.filter(e=>e.seen);
