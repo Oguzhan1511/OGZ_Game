@@ -19,4 +19,12 @@ body.game-mode header.topbar{display:none}.game-damage .panel-heading,.game-dama
 @media(min-width:701px) and (max-height:650px){
  .game-vehicle-info>.vehicle-rows>div{padding:3px 0}.game-vehicle-info>.vehicle-rows span{font-size:11px}.game-vehicle-info>.vehicle-rows b{font-size:15px}.game-details h1{font-size:17px}.actual-price{padding:7px 10px}.actual-price strong{font-size:24px}.result-tiles>div{padding:5px}.round-actions .btn{min-height:34px;padding:7px 10px}
 }
+@media(min-width:701px){
+ .game-board .guess-card{padding:clamp(12px,1.5vw,22px);background:linear-gradient(145deg,#203734,#16282c);border-color:#3d685d;justify-content:flex-start;gap:10px;min-height:0}
+ .guess-card form{flex:1;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-areas:'label' 'input' 'shortcuts' 'submit';grid-template-rows:auto minmax(48px,1.1fr) minmax(34px,.65fr) minmax(40px,.8fr);gap:8px}
+ .guess-label{font-size:13px;font-weight:600;letter-spacing:.2px;color:#d1e9e1}.currency-input{height:100%;min-height:0;padding:0 16px;border-radius:12px;background:#101e22;border-color:#4c7c70;transition:border-color .15s,box-shadow .15s}.currency-input:focus-within{border-color:#60e8c6;box-shadow:0 0 0 3px #60e8c61a}.currency-input>span{font-size:28px}.currency-input input{height:100%;box-sizing:border-box;padding:6px 0;font-size:clamp(23px,2.2vw,34px);font-variant-numeric:tabular-nums}.currency-input input::placeholder{color:#738c87}
+ .guess-shortcuts{height:100%;gap:10px}.guess-multiplier{padding:5px 10px;border-radius:10px;font-size:14px;background:#24483e}.guess-multiplier small{font-size:10px;color:#a1c6b9}.guess-card .btn.full{height:100%;min-height:0;padding:8px 16px;border-radius:11px;font-size:15px;font-weight:700;gap:12px;justify-content:space-between;box-shadow:0 4px 18px #33dbb51a}.guess-card .guess-submit-desktop,.guess-card .guess-arrow{display:inline}.guess-card .guess-submit-mobile{display:none}.guess-card p{margin:0;color:#a0bbb2;font-size:10px;line-height:1.4}.guess-confirmed{margin:auto 0;padding:20px;font-size:17px}
+}
+@media(min-width:701px) and (max-height:650px){.game-board .guess-card{padding:10px 12px;gap:6px}.guess-card form{gap:5px;grid-template-rows:auto minmax(42px,1.1fr) minmax(30px,.65fr) minmax(34px,.8fr)}.guess-label{font-size:11px}.currency-input input{font-size:23px}.guess-multiplier{font-size:12px}.guess-card .btn.full{font-size:13px}}
+
 `;
