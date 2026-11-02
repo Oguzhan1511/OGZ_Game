@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {buildRoundRanking} from '../worker/round-ranking.js';
+import {buildRoundRanking} from '../worker/ui/round-ranking.js';
 const room={players:[{id:'a',score:1100},{id:'b',score:1500},{id:'c',score:1100},{id:'d',score:200}],results:[{id:'a',points:100,guess:1},{id:'b',points:1000,guess:1},{id:'c',points:900,guess:1}]};
 const original=JSON.stringify(room),rows=buildRoundRanking(room);
 assert.deepEqual(rows.map(x=>x.id),['b','a','c','d']);

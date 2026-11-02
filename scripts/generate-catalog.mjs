@@ -1,6 +1,6 @@
-import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';
+import fs from 'node:fs';import path from 'node:path';import crypto from 'node:crypto';import {fileURLToPath} from 'node:url';
 import {legacyCars} from '../data/legacy-cars.js';
-const root=new URL('../',import.meta.url).pathname;
+const root=fileURLToPath(new URL('../',import.meta.url));
 const catalog=fs.readFileSync(path.join(root,'data/catalog.tsv'),'utf8').trim().split('\n').map(line=>{const v=line.split('|');if(v.length!==20)throw Error('Invalid fields: '+v[0]);return v});
 const bodyTypes={tesla:'Hatchback 5 kapı','clio-evolution':'Hatchback 5 kapı',megane:'Hatchback 5 kapı','clio-touch':'Hatchback 5 kapı',corsa:'Hatchback 5 kapı',audi:'Hatchback 5 kapı','audi-a5-2026':'Sedan',abarth:'Coupe',alpine:'Hatchback 5 kapı',arora2025:'Coupe',arora2026:'Hatchback 3 kapı','aston-db12':'Cabrio','aston-db9':'Coupe','aston-vantage':'Coupe',mito:'Hatchback 3 kapı',giulietta:'Hatchback 5 kapı',alfa147:'Hatchback 5 kapı','buick-riviera':'Coupe','byd-dolphin':'Hatchback 5 kapı',bmw216:'MPV',bmw650:'Cabrio',bmw630gt:'Hatchback 5 kapı',bmw630cabrio:'Cabrio',bmw630ci:'Coupe',bmw430:'Cabrio',bmw420:'Coupe',bmw850:'Coupe'};
 const charging={abarth:'0–45 dk',alpine:'0–45 dk',arora2025:'91 dk ve üzeri',arora2026:'91 dk ve üzeri','byd-han':'39,6 dk','byd-seal':'15,6 dk','byd-dolphin':'36,0 dk'};
@@ -12,8 +12,8 @@ const rows=catalog.map(([alias,id,brand,family,trim,year,km,fuel,trans,price,pai
 });
 if(rows.length!==82||new Set(rows.map(c=>c[11].id)).size!==82)throw Error('Expected 82 unique listings');
 fs.writeFileSync(path.join(root,'listing-data.json'),JSON.stringify(rows,null,2)+'\n');
-fs.writeFileSync(path.join(root,'worker/catalog.js'),'// Generated from data/catalog.tsv; legacy indices are stable.\nexport const cars = '+JSON.stringify([...legacyCars,...rows])+';\n');
+fs.writeFileSync(path.join(root,'worker/modes/car/catalog.js'),'// Generated from data/catalog.tsv; legacy indices are stable.\nexport const cars = '+JSON.stringify([...legacyCars,...rows])+';\n');
 const manifest={};for(const file of fs.readdirSync(path.join(root,'assets/listings')).sort()){const b=fs.readFileSync(path.join(root,'assets/listings',file));manifest['/media/'+file]={sha256:crypto.createHash('sha256').update(b).digest('hex'),size:b.length,type:file.endsWith('.png')?'image/png':'image/jpeg'}}
 if(Object.keys(manifest).length!==164)throw Error('Expected 164 assets');
-fs.writeFileSync(path.join(root,'worker/media-manifest.js'),'// Allowed media keys and hashes. Images live in R2, separate from Worker code.\nexport const mediaManifest = '+JSON.stringify(manifest)+';\n');
+fs.writeFileSync(path.join(root,'worker/modes/car/media-manifest.js'),'// Allowed media keys and hashes. Images live in R2, separate from Worker code.\nexport const mediaManifest = '+JSON.stringify(manifest)+';\n');
 console.log(rows.length+' listings, '+new Set(rows.map(c=>c[11].family)).size+' model families, '+new Set(rows.map(c=>c[0])).size+' brands; '+Object.keys(manifest).length+' assets.');

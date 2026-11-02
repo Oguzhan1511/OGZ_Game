@@ -1,0 +1,107 @@
+[
+  {
+    "name": "Apple iPhone 16 128 GB",
+    "category": "technology",
+    "price": 64999
+  },
+  {
+    "name": "Sony WH-1000XM5 Kablosuz Kulaklık",
+    "category": "technology",
+    "price": 14499
+  },
+  {
+    "name": "PlayStation 5 Slim 1 TB Konsol",
+    "category": "technology",
+    "price": 27999
+  },
+  {
+    "name": "Apple Watch Series 10 46mm GPS",
+    "category": "technology",
+    "price": 19999
+  },
+  {
+    "name": "Nutella Kakaolu Fındık Kreması 750 g",
+    "category": "market",
+    "price": 185
+  },
+  {
+    "name": "Komili Riviera Zeytinyağı 5 L",
+    "category": "market",
+    "price": 1250
+  },
+  {
+    "name": "Çaykur Rize Turist Çayı 1000 g",
+    "category": "market",
+    "price": 210
+  },
+  {
+    "name": "Fairy Platinum Bulaşık Kapsülü 75li",
+    "category": "market",
+    "price": 495
+  },
+  {
+    "name": "Nike Air Force 1 07 Spor Ayakkabı",
+    "category": "shoes",
+    "price": 4599
+  },
+  {
+    "name": "Adidas Samba OG Beyaz Ayakkabı",
+    "category": "shoes",
+    "price": 4299
+  },
+  {
+    "name": "Levis 501 Original Erkek Kot Pantolon",
+    "category": "clothing",
+    "price": 2899
+  },
+  {
+    "name": "The North Face 1996 Retro Nuptse Mont",
+    "category": "clothing",
+    "price": 14999
+  },
+  {
+    "name": "Philips Airfryer XXL Fritöz HD9650",
+    "category": "kitchen",
+    "price": 6499
+  },
+  {
+    "name": "Moccamaster KBG Select Filtre Kahve Makinesi",
+    "category": "kitchen",
+    "price": 12999
+  },
+  {
+    "name": "Dyson V15 Detect Kablosuz Süpürge",
+    "category": "home",
+    "price": 28999
+  },
+  {
+    "name": "Ikea Poäng Sallanan Koltuk",
+    "category": "home",
+    "price": 3499
+  },
+  {
+    "name": "Dior Sauvage EDP Erkek Parfüm 100 ml",
+    "category": "cosmetics",
+    "price": 5850
+  },
+  {
+    "name": "Yves Saint Laurent Libre EDP Kadın 90 ml",
+    "category": "cosmetics",
+    "price": 6200
+  },
+  {
+    "name": "LEGO Star Wars Millennium Falcon 75257",
+    "category": "toys",
+    "price": 6999
+  },
+  {
+    "name": "Logitech MX Master 3S Kablosuz Mouse",
+    "category": "office",
+    "price": 3799
+  },
+  {
+    "name": "Bosch Darbeli Matkap GSB 13 RE",
+    "category": "diy",
+    "price": 2450
+  }
+]

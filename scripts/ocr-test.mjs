@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {parseListingScreenshot,detectListingPhoto} from '../worker/ocr.js';
+import {parseListingScreenshot,detectListingPhoto} from '../worker/ocr/ocr.js';
 const result=parseListingScreenshot('765.000 TL\nMarka Daihatsu\nSeri Copen\nModel 1.3 Sport\nYıl 2006\nYakıt / Motor Tipi Benzin\nVites Manuel\nKM 136.000\nAğır Hasar Kayıtlı Hayır');
 assert.equal(result.brand,'Daihatsu');assert.equal(result.model,'Copen 1.3 Sport');assert.equal(result.km,'136.000');assert.equal(result.price,'765.000');assert.equal(result.damage,'Ağır hasar kaydı: Hayır');assert.equal(result.fuel,'Benzin');assert.equal(result.gear,'Manuel');
 const missing=parseListingScreenshot('Marka\nRenault\nSeri\nClio\nModel\n1.0 TCe\nYakıt Tipi Benzin (LPG)\nVites Yarı Otomatik');assert.equal(missing.brand,'Renault');assert.equal(missing.model,'Clio 1.0 TCe');assert.equal(missing.fuel,'LPG');assert.equal(missing.gear,'Yarı otomatik');assert.equal(missing.price,undefined);assert.equal(missing.year,undefined);assert.equal(missing.damage,'Belirtilmedi');

@@ -1,5 +1,5 @@
-import {formatGuessAmount,parseGuessAmount} from '../worker/guess-input.js';
-import assert from 'node:assert/strict';import vm from 'node:vm';import worker from '../worker/index.js';import {createDB} from './test-db.mjs';import {productCategories} from '../worker/products.js';
+import {formatGuessAmount,parseGuessAmount} from '../worker/ui/guess-input.js';
+import assert from 'node:assert/strict';import vm from 'node:vm';import worker from '../worker/index.js';import {createDB} from './test-db.mjs';import {productCategories} from '../worker/modes/product/products.js';
 const DB=createDB(),objects=new Map(),env={DB,BUCKET:{async put(key,bytes,meta){objects.set(key,{body:bytes,httpMetadata:meta.httpMetadata})},async get(key){return objects.get(key)},async delete(key){objects.delete(key)}}},base='https://game.test',endpoint=base+'/api/admin/listings?mode=product-price',headers={origin:base,'oai-authenticated-user-email':'selenetarotspell@gmail.com'};
 const image=new File([new Uint8Array([255,216,255,...Array(30).fill(0)])],'product.jpg',{type:'image/jpeg'});
 async function save(name,category,extra={}){const form=new FormData();for(const [key,value] of Object.entries({name,category,price:'1.299,90',...extra}))form.set(key,value);if(!extra.editId)form.set('photo',image);return worker.fetch(new Request(endpoint,{method:'POST',headers,body:form}),env)}

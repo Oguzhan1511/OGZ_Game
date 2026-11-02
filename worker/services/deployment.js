@@ -24,7 +24,7 @@ export async function deploymentRequest(request,env){
  }
  const target=request.headers.get('x-ogz-path'),origin=request.headers.get('x-ogz-origin');if(!target?.startsWith('/')||target.startsWith('//'))return fail('Invalid path',400);
  let forwarded;try{forwarded=new URL(target,origin);if(forwarded.origin!==new URL(origin).origin||!['http:','https:'].includes(forwarded.protocol))return fail('Invalid origin',400)}catch{return fail('Invalid origin',400)}
- const path=forwarded.pathname;if(!['/','/logo.png','/admin','/admin/ocr-engine.js','/api/room','/api/admin/listings'].includes(path)&&!path.startsWith('/media/'))return fail('Not found',404);
+ const path=forwarded.pathname;if(!['/','/logo.png','/mascot.jpg','/admin','/admin/ocr-engine.js','/api/room','/api/admin/listings'].includes(path)&&!path.startsWith('/media/'))return fail('Not found',404);
  const headers=new Headers(request.headers);headers.delete('oai-authenticated-user-id');headers.delete('oai-authenticated-user-email');headers.delete('x-ogz-deployment-key');headers.delete('x-ogz-path');headers.delete('x-ogz-origin');
  if(request.headers.get('x-ogz-admin')==='1')headers.set('oai-authenticated-user-email','selenetarotspell@gmail.com');headers.delete('x-ogz-admin');
  return new Request(forwarded,{method:request.method,headers,body:['GET','HEAD'].includes(request.method)?undefined:request.body,duplex:'half'});

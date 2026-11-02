@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {gameListings,syncSupabase,supabaseListings} from '../worker/supabase.js';
+import {gameListings,syncSupabase,supabaseListings} from '../worker/services/supabase.js';
 import {createDB} from './test-db.mjs';
 const DB=createDB(),env={DB,OGZ_SUPABASE_URL:'https://example.test/functions/v1/ogz-game-listings',OGZ_SUPABASE_KEY:'test-key'};
 const local={id:'old',createdAt:1,car:[]};await DB.prepare('INSERT INTO admin_listings(id,data,created_at) VALUES(?,?,?)').bind(local.id,JSON.stringify(local),1).run();
