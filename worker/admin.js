@@ -1,5 +1,5 @@
 import { ocrClient } from "./ocr.js";
-import { hasSupabase, supabaseListings, gameListings } from "./supabase.js";
+import { hasSupabase, supabaseListings, gameListings, supabaseMedia } from "./supabase.js";
 export function parseListingNumber(value){
  const text=String(value).trim().replace(/\s/g,'');
  // Turkish thousands separators and optional decimal comma; plain decimal points also work.
@@ -35,7 +35,7 @@ export async function adminApi(req,env){
  const id=existing?.id||'admin-'+crypto.randomUUID(),uploadId='admin-'+crypto.randomUUID(),paths=files.map((_,i)=>bytes[i]?'/media/admin/'+uploadId+'-'+i:(i===0?existing.car[10]:existing.car[11].damageImage));
  const car=[brand,model,year,km,text('fuel'),text('gear'),price,text('paint')||'Belirtilmedi',text('changed')||'Belirtilmedi',text('damage')||'Belirtilmedi',paths[0],{...existing?.car[11],id,source:'user',vehicleType,family:brand.toLowerCase()+'-'+family.toLowerCase(),damageImage:paths[1],details:existing?.car[11]?.details||[],note:existing?.car[11]?.note||'Admin panelinden eklenen ilan.'}];
  const listing={id,mode:'car-price',createdAt:existing?.createdAt||Date.now(),archived:existing?.archived||false,car};
- try{for(let i=0;i<2;i++)if(bytes[i])await env.BUCKET.put(paths[i].slice(1),bytes[i].b,{httpMetadata:{contentType:bytes[i].type}});if(hasSupabase(env))await supabaseListings(env,[listing],existing?'update':'insert');else if(existing)await env.DB.prepare('UPDATE admin_listings SET data=? WHERE id=?').bind(JSON.stringify(listing),id).run();else await env.DB.prepare('INSERT INTO admin_listings(id,data,created_at) VALUES(?,?,?)').bind(id,JSON.stringify(listing),listing.createdAt).run()}catch(e){if(!hasSupabase(env))await Promise.all(paths.filter((_,i)=>bytes[i]).map(path=>env.BUCKET.delete(path.slice(1))));throw e}
+ try{for(let i=0;i<2;i++)if(bytes[i]){if(hasSupabase(env)){const stored=await supabaseMedia(env,paths[i],bytes[i].b);if(i===0)car[10]=stored;else car[11].damageImage=stored}else await env.BUCKET.put(paths[i].slice(1),bytes[i].b,{httpMetadata:{contentType:bytes[i].type}})}if(hasSupabase(env))await supabaseListings(env,[listing],existing?'update':'insert');else if(existing)await env.DB.prepare('UPDATE admin_listings SET data=? WHERE id=?').bind(JSON.stringify(listing),id).run();else await env.DB.prepare('INSERT INTO admin_listings(id,data,created_at) VALUES(?,?,?)').bind(id,JSON.stringify(listing),listing.createdAt).run()}catch(e){if(!hasSupabase(env))await Promise.all(paths.filter((_,i)=>bytes[i]).map(path=>env.BUCKET.delete(path.slice(1))));throw e}
  return reply({listing},201);
 }
 export async function adminMedia(req,env,path){

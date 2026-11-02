@@ -15,3 +15,9 @@ export async function syncSupabase(request,env){
  if(items.length)await supabaseListings(env,items);
  return new Response(JSON.stringify({synced:items.length}),{headers:{'content-type':'application/json','cache-control':'no-store'}});
 }
+
+export async function supabaseMedia(env,path,bytes){
+ const url=env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-products');
+ const response=await fetch(url+'?image='+encodeURIComponent(path.replace(/^\//,'')),{method:'PUT',headers:{'x-ogz-key':env.OGZ_SUPABASE_KEY},body:bytes,signal:AbortSignal.timeout(30000)});
+ if(!response.ok)throw Error('Supabase görsel servisine erişilemiyor. Lütfen tekrar dene.');return (await response.json()).image;
+}
