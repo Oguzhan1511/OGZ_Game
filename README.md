@@ -60,3 +60,5 @@ Vercel runs the gateway in `api/index.mjs` / `server/vercel-app.mjs`. The existi
 `/admin/login` uses the configured administrator username and a salted scrypt password hash. Cookies are signed, HttpOnly, Secure and SameSite=Strict. Login rate limits are persisted in D1. The gateway rejects spoofed identity headers; only its authenticated backend bridge can identify an admin. The public GitHub repository must exclude `.local`, `.env*`, `.vercel`, credentials and local SQLite files.
 
 `npm test` includes the Vercel bridge and authentication checks. `npm run build:vercel` prepares the Vercel build. To update the Cloudflare backend, use the Sites source/deployment workflow and apply the appended D1 migrations. `scripts/migrate-local-to-live.mjs` imports the local listing snapshot and new images through an authenticated server endpoint; credentials arrive only via hidden stdin.
+
+Tahmin girişi yazıldıkça Türkçe binlik ayraçlarıyla biçimlenir. “Bin” mevcut tutarı 1.000, “Milyon” 1.000.000 ile çarpar. İstemci noktaları kaldırıp sunucuya sayısal tutarı gönderir; 10 milyar TL sınırı korunur. Aynı turun lobi güncellemelerinde yazılan tahmin ve imleç korunur.
