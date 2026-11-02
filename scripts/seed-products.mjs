@@ -108,3 +108,4 @@ for (const item of seedItems) {
 console.log(`Successfully seeded ${count} products into .local/game.sqlite!`);
 const total = sqlite.prepare('SELECT count(*) as n FROM products').get().n;
 console.log(`Total products in local database: ${total}`);
+

@@ -8,7 +8,7 @@ import { guessInputClient } from "./ui/guess-input.js";
 import { deploymentRequest } from "./services/deployment.js";
 import { tesseractScript } from "./ocr/ocr-engine.js";
 import { gameListings, syncSupabase } from "./services/supabase.js";
-import { logoPng } from "./ui/assets.js";
+import { logoPng, mascotJpg } from "./ui/assets.js";
 import { adminApi, adminMedia, adminHtml } from "./services/admin.js";
 import { selectListings } from "./selection.js";
 import { cars as baseCars } from "./modes/car/catalog.js";
@@ -84,6 +84,14 @@ export default {
           headers: {
             'content-type': 'image/png',
             'cache-control': 'public, max-age=86400'
+          }
+        });
+      }
+      if (u.pathname === '/mascot.jpg') {
+        return new Response(Uint8Array.from(atob(mascotJpg), c => c.charCodeAt(0)), {
+          headers: {
+            'content-type': 'image/jpeg',
+            'cache-control': 'public, max-age=31536000, immutable'
           }
         });
       }
