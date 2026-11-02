@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import readline from 'node:readline';
-import {mediaManifest} from '../worker/media-manifest.js';
+import {mediaManifest} from '../worker/modes/car/media-manifest.js';
 if(process.stdin.isTTY)process.stdin.setRawMode(true);
 process.stdout.write('Ready for media upload JSON on stdin (input is hidden).\n');
 let input='';for await(const chunk of process.stdin){input+=chunk;if(input.includes('\n'))break}

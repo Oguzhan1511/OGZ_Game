@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {parseListingNumber} from '../worker/admin.js';
+import {parseListingNumber} from '../worker/services/admin.js';
 import worker from '../worker/index.js';
 import {createDB} from './test-db.mjs';
 const DB=createDB(),objects=new Map(),BUCKET={async put(k,b,meta){objects.set(k,{body:b,httpMetadata:meta.httpMetadata})},async get(k){return objects.get(k)},async delete(k){objects.delete(k)}};

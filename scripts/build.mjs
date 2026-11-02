@@ -1,45 +1,42 @@
 import fs from 'node:fs';
-import path from 'node:path';
 
-function readModuleCode(name) {
-  const filePath = `worker/${name}.js`;
-  let content = fs.readFileSync(filePath, 'utf8');
-  const match = content.match(/from\s+['"]\.\/([^'"]+)['"]/);
-  if (match) {
-    const resolved = path.join('worker', match[1]);
-    if (fs.existsSync(resolved)) {
-      content = fs.readFileSync(resolved, 'utf8');
-    }
-  }
-  return content;
-}
-
-let code = fs.readFileSync('worker/index.js', 'utf8');
-const moduleNames = [
-  'mode-cards', 'product-ui', 'products', 'desktop-game', 'round-ranking',
-  'mobile-game', 'guess-input', 'deployment', 'ocr-engine', 'supabase',
-  'admin', 'selection', 'catalog', 'media-manifest', 'game-modes'
+const moduleMap = [
+  ['./ui/mode-cards.js', 'worker/ui/mode-cards.js'],
+  ['./modes/product/product-ui.js', 'worker/modes/product/product-ui.js'],
+  ['./modes/product/products.js', 'worker/modes/product/products.js'],
+  ['./ui/desktop-game.js', 'worker/ui/desktop-game.js'],
+  ['./ui/round-ranking.js', 'worker/ui/round-ranking.js'],
+  ['./ui/mobile-game.js', 'worker/ui/mobile-game.js'],
+  ['./ui/guess-input.js', 'worker/ui/guess-input.js'],
+  ['./services/deployment.js', 'worker/services/deployment.js'],
+  ['./ocr/ocr-engine.js', 'worker/ocr/ocr-engine.js'],
+  ['./services/supabase.js', 'worker/services/supabase.js'],
+  ['./services/admin.js', 'worker/services/admin.js'],
+  ['./selection.js', 'worker/selection.js'],
+  ['./modes/car/catalog.js', 'worker/modes/car/catalog.js'],
+  ['./modes/car/media-manifest.js', 'worker/modes/car/media-manifest.js'],
+  ['./game-modes.js', 'worker/game-modes.js']
 ];
 
-for (const name of moduleNames) {
-  code = code.replace(
-    new RegExp('import \\{[^\\n]+\\} from "\\./' + name + '\\.js";'),
-    () => readModuleCode(name)
-      .replaceAll('export const ', 'const ')
-      .replaceAll('export function ', 'function ')
-      .replaceAll('export async function ', 'async function ')
-  );
-}
+let code = fs.readFileSync('worker/index.js', 'utf8');
 
-code = code.replace(
-  'import { ocrClient } from "./ocr.js";',
-  readModuleCode('ocr')
+for (const [specifier, filePath] of moduleMap) {
+  const content = fs.readFileSync(filePath, 'utf8')
     .replaceAll('export const ', 'const ')
     .replaceAll('export function ', 'function ')
-);
+    .replaceAll('export async function ', 'async function ');
+  const escaped = specifier.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  code = code.replace(new RegExp('import \\{[^\\n]+\\} from "' + escaped + '";'), () => content);
+}
 
-code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/supabase\.js["'];?/g, '');
-code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/products\.js["'];?/g, '');
+const ocrContent = fs.readFileSync('worker/ocr/ocr.js', 'utf8')
+  .replaceAll('export const ', 'const ')
+  .replaceAll('export function ', 'function ');
+code = code.replace('import { ocrClient } from "./ocr/ocr.js";', ocrContent);
+code = code.replace('import { ocrClient } from "../ocr/ocr.js";', ocrContent);
+
+code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/services\/supabase\.js["'];?/g, '');
+code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/modes\/product\/products\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/game-modes\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\.\/ocr\/ocr\.js["'];?/g, '');
 code = code.replace('const cars=baseCars;', 'const baseCars=cars;');
