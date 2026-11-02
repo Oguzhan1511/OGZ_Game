@@ -1,3 +1,4 @@
+import { desktopGameStyles } from "./desktop-game.js";
 import { roundRankingStyles, roundRankingClient } from "./round-ranking.js";
 import { mobileGameStyles, mobileGameClient } from "./mobile-game.js";
 import { guessInputClient } from "./guess-input.js";
@@ -83,6 +84,7 @@ body.game-mode{background:#101518}body.game-mode main{max-width:none;padding:0 2
 .game-board>.game-damage{grid-column:1/3;grid-row:2;margin:0 24px 24px}.game-board>.game-scores{grid-column:3;grid-row:1/3}.game-board>.game-visual,.game-board>.game-details{grid-row:1}@media(min-width:701px) and (max-width:1100px){.game-board>.game-scores{grid-column:1/-1;grid-row:3}}
 ${mobileGameStyles}
 ${roundRankingStyles}
+${desktopGameStyles}
 </style></head><body><main><header class="topbar"><span id="breadcrumb" class="hidden">Ana sayfa</span><button class="headeruser" onclick="profileModal()" id="userbutton" aria-label="Profil"></button><button class="settings-button" onclick="settingsModal()"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3z"/><circle cx="12" cy="12" r="3"/></svg><span>Oyun ayarları</span></button></header><div id="content"></div></main><div id="overlay"></div><div id="toast" class="toast hidden" role="status"></div><script>
 ${guessInputClient}
 ${mobileGameClient}
