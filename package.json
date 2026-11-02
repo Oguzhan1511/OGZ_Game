@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "bash scripts/build.sh",
-    "test": "node scripts/test.mjs && node scripts/catalog-test.mjs && node scripts/admin-test.mjs && node scripts/supabase-test.mjs && node scripts/ocr-test.mjs && node scripts/vercel-test.mjs && node scripts/guess-input-test.mjs && node scripts/mobile-guess-test.mjs && node scripts/restart-test.mjs && node scripts/round-ranking-test.mjs && node scripts/products-test.mjs && node scripts/product-supabase-test.mjs && node scripts/car-storage-test.mjs",
+    "test": "node scripts/test.mjs && node scripts/catalog-test.mjs && node scripts/admin-test.mjs && node scripts/supabase-test.mjs && node scripts/ocr-test.mjs && node scripts/vercel-test.mjs && node scripts/guess-input-test.mjs && node scripts/mobile-guess-test.mjs && node scripts/restart-test.mjs && node scripts/round-ranking-test.mjs && node scripts/products-test.mjs && node scripts/product-supabase-test.mjs && node scripts/car-storage-test.mjs && node scripts/auction-test.mjs",
     "dev": "node scripts/dev.mjs",
     "build:vercel": "node scripts/build-vercel.mjs"
   },
