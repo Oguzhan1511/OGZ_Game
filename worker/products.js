@@ -1,4 +1,4 @@
-import {hasSupabase} from './supabase.js';
+import { hasSupabase } from "./supabase.js";
 export const productCategories={market:'Market',clothing:'Kıyafet',shoes:'Ayakkabı',cosmetics:'Kozmetik',technology:'Teknoloji',kitchen:'Mutfak',home:'Ev ve Yaşam',toys:'Oyuncak',diy:'Yapı Market',office:'Ofis ve Kırtasiye'};
 export function normalizeProductCategories(value){if(value==='mixed')return Object.keys(productCategories);if(!Array.isArray(value)||!value.length||value.some(key=>!Object.hasOwn(productCategories,key)))return null;return [...new Set(value)]}
 export async function productService(env,options={}){
