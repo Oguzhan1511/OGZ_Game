@@ -62,3 +62,5 @@ Vercel runs the gateway in `api/index.mjs` / `server/vercel-app.mjs`. The existi
 `npm test` includes the Vercel bridge and authentication checks. `npm run build:vercel` prepares the Vercel build. To update the Cloudflare backend, use the Sites source/deployment workflow and apply the appended D1 migrations. `scripts/migrate-local-to-live.mjs` imports the local listing snapshot and new images through an authenticated server endpoint; credentials arrive only via hidden stdin.
 
 Tahmin girişi yazıldıkça Türkçe binlik ayraçlarıyla biçimlenir. “Bin” mevcut tutarı 1.000, “Milyon” 1.000.000 ile çarpar. İstemci noktaları kaldırıp sunucuya sayısal tutarı gönderir; 10 milyar TL sınırı korunur. Aynı turun lobi güncellemelerinde yazılan tahmin ve imleç korunur.
+
+Aynı oyun turunda diğer oyuncuların tahmin/sayaç güncellemeleri giriş alanını yeniden oluşturmaz. Alanın DOM düğümü, odak ve mobil klavye korunur. Metin biçimlendirme yalnızca gerekli olduğunda değeri değiştirir ve yazım birleştirme olayları tamamlanana kadar bekler. Geciken oda yenileme yanıtları daha yeni oyun durumunu geri alamaz.
