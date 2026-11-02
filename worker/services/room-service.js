@@ -46,14 +46,28 @@ export function revealRound(r, cars) {
   r.players.forEach(p => p.score += r.results.find(x => x.id === p.id).points);
 }
 
-export function createRoomService({ gameModes, cars: baseCars, selectListings }) {
-  const cars = baseCars;
-  return async function roomApi(req, env) {
+export function createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog }) {
+    return async function roomApi(req, env) {
     if (!env.DB) return json({ error: 'Oda servisi henüz hazır değil.' }, 503);
     let b;
     try { b = await req.json(); } catch { return json({ error: 'Geçersiz istek' }, 400); }
     if (!b || typeof b !== 'object') return json({ error: 'Geçersiz istek' }, 400);
     const { action, token } = b;
+    if (action === 'auction-categories') {
+      if (!auctionCatalog) return json({ categories: [] });
+      const { catalog } = await auctionCatalog(env);
+      return json({
+        categories: catalog.categories.filter(c => !c.archived).map(c => ({
+          id: c.id,
+          name: c.name,
+          icon: c.icon,
+          available: c.products.filter(p => !p.archived).length
+        }))
+      });
+    }
+    if (action === 'create' && b.mode === 'auction') {
+      if (auctionApi) return await auctionApi(b, env);
+    }
     if (['create', 'join'].includes(action) && !validProfile(b.profile)) return json({ error: 'Oda oluşturmak veya katılmak için önce profilini tamamlamalısın.' }, 400);
     if (typeof token !== 'string' || token.length < 20) return json({ error: 'Profil oturumu geçersiz' }, 400);
     if (action === 'create') {
@@ -78,6 +92,7 @@ export function createRoomService({ gameModes, cars: baseCars, selectListings })
       const row = await env.DB.prepare('SELECT data,version FROM rooms WHERE code=?').bind(code).first();
       if (!row) return json({ error: 'Bu oda kodu geçersiz veya oda kapatılmış.', closed: true }, 404);
       const r = JSON.parse(row.data);
+      if (r.mode === 'auction' && auctionApi) return await auctionApi(b, env);
       if (r.state === 'closed') return json({ error: 'Bu oda kapatıldı. Oda kodu artık geçersiz.', closed: true }, 410);
       if (r.expiresAt && Date.now() >= r.expiresAt) {
         r.state = 'closed';
@@ -111,7 +126,7 @@ export function createRoomService({ gameModes, cars: baseCars, selectListings })
         const history = await env.DB.prepare('SELECT listing_id,SUM(seen_count) AS seen_count,MAX(seen_at) AS last_seen FROM listing_history WHERE token IN (' + placeholders + ') GROUP BY listing_id').bind(...tokens).all();
         const reservations = await env.DB.prepare('SELECT listing_id FROM listing_reservations WHERE token IN (' + placeholders + ')').bind(...tokens).all();
         const modeHandler = gameModes.get(r.mode) || gameModes.get('car-price');
-        r.customCars = await modeHandler.loadPool(env, r, baseCars);
+        r.customCars = await modeHandler.loadPool(env, r, cars);
         const currentPool = r.customCars;
         const selection = selectListings(currentPool, r.rounds, new Set(reservations.results.map(h => h.listing_id)), Math.random, new Map(history.results.map(h => [h.listing_id, { seenCount: h.seen_count, lastSeen: h.last_seen }])));
         if (selection.error) return json({ error: modeHandler.formatSelectionError(selection, r.rounds), available: selection.available }, 409);

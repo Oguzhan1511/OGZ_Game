@@ -16,7 +16,9 @@ export function createGameModes({
   productListings,
   productAsRound,
   productAdminHtml,
-  productAdminApi
+  productAdminApi,
+  auctionAdminHtml,
+  auctionAdminApi
 }) {
   const modes = {
     'car-price': {
@@ -71,6 +73,26 @@ export function createGameModes({
       },
       adminHtml: productAdminHtml,
       adminApi: productAdminApi,
+    },
+    'auction': {
+      id: 'auction',
+      name: 'Açık artırma · 2 kişi',
+      description: '20 TL ile en güzel tabağı sen kur. Teklif ver, rakibini geç, ürünü kap.',
+      validateOptions(b) {
+        if (!b.category) return 'Açık artırma kategorisi seç.';
+        return null;
+      },
+      normalizeOptions(b) {
+        return b.category;
+      },
+      formatSelectionError(selection) {
+        return 'Bu kategoride en az 10 aktif ürün gerekli.';
+      },
+      formatLobbyNotice(room) {
+        return 'Açık artırma · ' + (room.categoryName || '2 kişilik');
+      },
+      adminHtml: auctionAdminHtml,
+      adminApi: auctionAdminApi,
     }
   };
 

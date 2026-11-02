@@ -1,6 +1,10 @@
 import { modeCardStyles, modeCardClient } from "./ui/mode-cards.js";
 import { productCategories, normalizeProductCategories, productListings, productAsRound, productAdminApi } from "./modes/product/products.js";
 import { productAdminHtml, productGameStyles, productGameClient } from "./modes/product/product-ui.js";
+import { auctionCatalog, auctionAdminApi, auctionAdminHtml } from "./modes/auction/auction-admin.js";
+import { auctionApi } from "./modes/auction/auction.js";
+import { auctionStyles, auctionClient } from "./modes/auction/auction-ui.js";
+import { gameDatabase, databaseMigration } from "./services/game-db.js";
 import { desktopGameStyles } from "./ui/desktop-game.js";
 import { roundRankingStyles, roundRankingClient } from "./ui/round-ranking.js";
 import { mobileGameStyles, mobileGameClient } from "./ui/mobile-game.js";
@@ -11,14 +15,14 @@ import { gameListings, syncSupabase } from "./services/supabase.js";
 import { logoPng, mascotJpg } from "./ui/assets.js";
 import { adminApi, adminMedia, adminHtml } from "./services/admin.js";
 import { selectListings } from "./selection.js";
-import { cars as baseCars } from "./modes/car/catalog.js";
+import { cars } from "./modes/car/catalog.js";
 import { mediaManifest } from "./modes/car/media-manifest.js";
 import { createGameModes } from "./game-modes.js";
 import { createRoomService, validProfile, json } from "./services/room-service.js";
 import { serveMedia, uploadMedia } from "./services/media.js";
 import { createAppShell } from "./ui/app-shell.js";
 
-const cars = baseCars;
+const baseCars = cars;
 const gameModes = createGameModes({
   adminHtml,
   adminApi,
@@ -28,10 +32,13 @@ const gameModes = createGameModes({
   productListings,
   productAsRound,
   productAdminHtml,
-  productAdminApi
+  productAdminApi,
+  auctionAdminHtml,
+  auctionAdminApi,
+  auctionCatalog
 });
 
-const roomApi = createRoomService({ gameModes, cars, selectListings });
+const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
 const html = createAppShell({
   desktopGameStyles,
   roundRankingStyles,
@@ -43,13 +50,25 @@ const html = createAppShell({
   modeCardClient,
   roundRankingClient,
   mobileGameClient,
-  validProfile
+  validProfile,
+  auctionStyles,
+  auctionClient
 });
 
 export default {
   async fetch(request, env) {
     try {
       let u = new URL(request.url);
+      if (u.pathname === '/api/database-migration') return await databaseMigration(request, env);
+      if (env.OGZ_DB_MAINTENANCE === '1' && u.pathname.startsWith('/api/')) {
+        return json({ error: 'Oyun verileri güncelleniyor. Biraz sonra tekrar dene.' }, 503);
+      }
+      if (env.OGZ_GAME_DB === 'supabase') {
+        if (!env.OGZ_SUPABASE_URL || !env.OGZ_SUPABASE_KEY) {
+          return json({ error: 'Oyun veritabanı hazır değil.' }, 503);
+        }
+        env = { ...env, DB: gameDatabase(env) };
+      }
       if (['/api/vercel-bridge', '/api/deployment-import', '/api/deployment-login'].includes(u.pathname)) {
         const forwarded = await deploymentRequest(request, env);
         if (forwarded instanceof Response) return forwarded;

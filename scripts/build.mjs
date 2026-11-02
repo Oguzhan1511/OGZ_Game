@@ -5,6 +5,10 @@ const moduleMap = [
   ['./ui/mode-cards.js', 'worker/ui/mode-cards.js'],
   ['./modes/product/product-ui.js', 'worker/modes/product/product-ui.js'],
   ['./modes/product/products.js', 'worker/modes/product/products.js'],
+  ['./modes/auction/auction-admin.js', 'worker/modes/auction/auction-admin.js'],
+  ['./modes/auction/auction-ui.js', 'worker/modes/auction/auction-ui.js'],
+  ['./modes/auction/auction.js', 'worker/modes/auction/auction.js'],
+  ['./services/game-db.js', 'worker/services/game-db.js'],
   ['./ui/desktop-game.js', 'worker/ui/desktop-game.js'],
   ['./ui/round-ranking.js', 'worker/ui/round-ranking.js'],
   ['./ui/mobile-game.js', 'worker/ui/mobile-game.js'],
@@ -39,12 +43,14 @@ const ocrContent = fs.readFileSync('worker/ocr/ocr.js', 'utf8')
 code = code.replace('import { ocrClient } from "./ocr/ocr.js";', ocrContent);
 code = code.replace('import { ocrClient } from "../ocr/ocr.js";', ocrContent);
 
-code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/services\/supabase\.js["'];?/g, '');
-code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/modes\/product\/products\.js["'];?/g, '');
+code = code.replaceAll(/import \{[^\n]+\} from ["'][^"']*supabase(\.js)?["'];?/g, '');
+code = code.replaceAll(/import \{[^\n]+\} from ["'][^"']*products(\.js)?["'];?/g, '');
+code = code.replaceAll(/import \{[^\n]+\} from ["'][^"']*auction(\.js)?["'];?/g, '');
+code = code.replaceAll(/import \{[^\n]+\} from ["'][^"']*auction-admin(\.js)?["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/game-modes\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\.\/ocr\/ocr\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/room-service\.js["'];?/g, '');
-code = code.replace('const cars=baseCars;', 'const baseCars=cars;');
 
 fs.mkdirSync('dist/server', { recursive: true });
 fs.writeFileSync('dist/server/index.js', code);
+console.log('8. scripts/build.mjs updated and bundled successfully');
