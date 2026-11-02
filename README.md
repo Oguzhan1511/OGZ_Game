@@ -64,3 +64,5 @@ Vercel runs the gateway in `api/index.mjs` / `server/vercel-app.mjs`. The existi
 Tahmin girişi yazıldıkça Türkçe binlik ayraçlarıyla biçimlenir. “Bin” mevcut tutarı 1.000, “Milyon” 1.000.000 ile çarpar. İstemci noktaları kaldırıp sunucuya sayısal tutarı gönderir; 10 milyar TL sınırı korunur. Aynı turun lobi güncellemelerinde yazılan tahmin ve imleç korunur.
 
 Aynı oyun turunda diğer oyuncuların tahmin/sayaç güncellemeleri giriş alanını yeniden oluşturmaz. Alanın DOM düğümü, odak ve mobil klavye korunur. Metin biçimlendirme yalnızca gerekli olduğunda değeri değiştirir ve yazım birleştirme olayları tamamlanana kadar bekler. Geciken oda yenileme yanıtları daha yeni oyun durumunu geri alamaz.
+
+Oyun sonunda oda sahibi “Tekrar oyna” ile aynı oda kodu, oyuncular ve ayarlarla yeni oyunu başlatabilir. Puanlar ve tahminler sıfırlanır; ilan geçmişi korunarak yeni tur sırası seçilir. Her oyunun ayrı kimliği vardır; önceki oyunun geciken tahmin/sonraki tur istekleri yeni oyunu etkilemez.
