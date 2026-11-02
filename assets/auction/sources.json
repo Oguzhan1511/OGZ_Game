@@ -1,0 +1,178 @@
+{
+  "retrievedAt": "2026-11-02T17:00:06.454Z",
+  "method": "web-image-search",
+  "images": [
+    {
+      "id": "yaprak-sarma",
+      "name": "Yaprak sarma",
+      "file": "yaprak-sarma-v1.jpg",
+      "sourceUrl": "https://www.yemeksepeti.com/restaurant/d33g/tabi-tabi-mercimek-kofte-and-meze-evi-d33g",
+      "sourceImage": "https://images.deliveryhero.io/image/fd-tr/Products/68829245.jpg?width=800",
+      "bytes": 84839,
+      "sha256": "41b8de97126c62f7015906bfcd39f5bab9b82f1d27af2ba204b3508d2f22fed8"
+    },
+    {
+      "id": "su-boregi",
+      "name": "Su böreği",
+      "file": "su-boregi-v1.jpg",
+      "sourceUrl": "https://www.lezzet.com.tr/lezzetten-haberler/1-kilo-su-boreginden-kac-dilim-cikar",
+      "sourceImage": "https://i.lezzet.com.tr/images-xxlarge-secondary/1-kilo-su-boreginden-kac-dilim-cikar-8e20a902-86f9-44f2-9507-c7266d829f1f.jpg",
+      "bytes": 112529,
+      "sha256": "e2415e51e0d0fbf5840474b6e919b35a7d2e87c2c80f20a2355ca17be95a93c5"
+    },
+    {
+      "id": "mercimek-koftesi",
+      "name": "Mercimek köftesi",
+      "file": "mercimek-koftesi-v1.jpg",
+      "sourceUrl": "https://www.nefisyemektarifleri.com/mercimekli-kofte/",
+      "sourceImage": "https://i.nefisyemektarifleri.com/2021/05/24/mercimekli-kofte-10.jpg",
+      "bytes": 73757,
+      "sha256": "0eff34a93b7eb51e9854112eddbeade54c331ac55969058ac4edccbfdb4da947"
+    },
+    {
+      "id": "rus-salatasi",
+      "name": "Rus salatası",
+      "file": "rus-salatasi-v1.webp",
+      "sourceUrl": "https://www.cumhuriyet.com.tr/gurme/saraylardan-halka-inen-lezzet-rus-salatasi-tarifi-2506193",
+      "sourceImage": "https://media.cumhuriyet.com.tr/Archive/2aedf626-963c-4821-91cb-f44e783f1c2d.jpg",
+      "bytes": 20658,
+      "sha256": "a63097f9441a9cbee692194478fddf6fdd7663c4d05c554c4b5673a64049a22d"
+    },
+    {
+      "id": "pogaca",
+      "name": "Poğaça",
+      "file": "pogaca-v1.jpg",
+      "sourceUrl": "https://yemek.com/pogaca-nasil-saklanir/",
+      "sourceImage": "https://cdn.yemek.com/mnresize/940/940/uploads/2025/09/pogaca-saklama-shutter.jpg",
+      "bytes": 120310,
+      "sha256": "9d61751db19fcf80645652c14b6f6311878170736a9b5fe12275ad591c795008"
+    },
+    {
+      "id": "tuzlu-kurabiye",
+      "name": "Tuzlu kurabiye",
+      "file": "tuzlu-kurabiye-v1.jpg",
+      "sourceUrl": "https://ye-mek.net/tarif/tuzlu-kuru-pasta",
+      "sourceImage": "https://cdn.ye-mek.net/App_UI/Img/out/650/2016/01/tuzlu-kuru-pasta-resimli-yemek-tarifi%2812%29.jpg?h=487&w=650",
+      "bytes": 75005,
+      "sha256": "857756682491f4c488ee792557b74405b264a434efc5e8a1118accbd04f91bce"
+    },
+    {
+      "id": "kisir",
+      "name": "Kısır",
+      "file": "kisir-v1.jpg",
+      "sourceUrl": "https://yemek.com/tarif/kisir/",
+      "sourceImage": "https://cdn.yemek.com/mncrop/620/388/uploads/2022/02/mersin-usulu-kisir-onecikan.jpg",
+      "bytes": 203543,
+      "sha256": "d4ebfcc2c2cd047c8eeae88bcfa1144c037455cded57591bf9013628ecd28855"
+    },
+    {
+      "id": "sucuklu-yumurta",
+      "name": "Sucuklu yumurta",
+      "file": "sucuklu-yumurta-v1.jpg",
+      "sourceUrl": "https://cafe.otelselcuk.com.tr/urundetay/sucuklu-yumurta",
+      "sourceImage": "https://cafe.otelselcuk.com.tr/images/urun/026-1024x680.jpg",
+      "bytes": 152607,
+      "sha256": "0d198a1f3e0d220b3b4d5e9c710990923a2b69c9c1816c553f3f00173b54e0de"
+    },
+    {
+      "id": "menemen",
+      "name": "Menemen",
+      "file": "menemen-v1.jpg",
+      "sourceUrl": "https://www.aytenusta.com.tr/menemen-tarifi",
+      "sourceImage": "https://www.aytenusta.com.tr/storage/images/f3eaa28fd82449a5a409df1147b35208.jpg",
+      "bytes": 303759,
+      "sha256": "a2173ece4fe4f556490e04337dda6596e2ff6786ed7341c3e85926a987ac0b57"
+    },
+    {
+      "id": "patates-salatasi",
+      "name": "Patates salatası",
+      "file": "patates-salatasi-v1.jpg",
+      "sourceUrl": "https://www.mutfak.ca/en/product/patates-salatasi/",
+      "sourceImage": "https://www.mutfak.ca/wp-content/uploads/2023/09/patates-salatasi.jpg",
+      "bytes": 378347,
+      "sha256": "fa4bd871ff735af91b91e53a4de2bce6f0a18d7bf265fa815f4c732e425e3c17"
+    },
+    {
+      "id": "pisi",
+      "name": "Pişi",
+      "file": "pisi-v1.jpg",
+      "sourceUrl": "https://www.lezzet.com.tr/yemek-tarifleri/hamurisi-tarifleri/tuzlu-hamur-isi-tarifleri/puf-puf-kabaran-mayali-pisi-tarifi",
+      "sourceImage": "https://i.lezzet.com.tr/images-xxlarge-recipe/puf-puf-kabaran-mayali-pisi-tarifi-7c91c5e4-a9d3-40fe-8090-a71b499aba9c.jpg",
+      "bytes": 64336,
+      "sha256": "bd7681d9e9f01d293d5d0b4bfd5e3196ca722a721a7f2aa87cea7f11b72e2551"
+    },
+    {
+      "id": "salatalik",
+      "name": "Salatalık",
+      "file": "salatalik-v1.jpg",
+      "sourceUrl": "https://www.snapcalorie.com/nutrition/sliced_cucumber_nutrition.html",
+      "sourceImage": "https://snapcalorie-webflow-website.s3.us-east-2.amazonaws.com/media/food_pics_v2/medium/sliced_cucumber.jpg",
+      "bytes": 32750,
+      "sha256": "5fef9f727a2a57ebf0c711a0ad75c75a29b9f13e6f01f15416b4609c0d719093"
+    },
+    {
+      "id": "simit",
+      "name": "Sıcak simit",
+      "file": "simit-v1.jpg",
+      "sourceUrl": "https://www.edna.de/Simit-mit-Sesam",
+      "sourceImage": "https://www.edna.de/WebRoot/EdnaDE/Shops/Edna/Products/2513/2513.jpg",
+      "bytes": 118645,
+      "sha256": "c0683442523cf75bc4feb336a37263d432adaa7c5ac6fe27252be9b22e0a252f"
+    },
+    {
+      "id": "bal-kaymak",
+      "name": "Bal kaymak",
+      "file": "bal-kaymak-v1.jpg",
+      "sourceUrl": "https://www.tasteatlas.com/bal-kaymak",
+      "sourceImage": "https://www.tasteatlas.com/images/dishes/d0cd7a6873014569b18ad89fccf53e3a.jpg",
+      "bytes": 912088,
+      "sha256": "6e8d520b35c0f6d6ef6ac9ff253e215f1c25df3712ba724cfe06ced608d0f749"
+    },
+    {
+      "id": "recel",
+      "name": "Reçel",
+      "file": "recel-v1.jpg",
+      "sourceUrl": "https://www.lezzet.com.tr/yemek-tarifleri/tatli-tarifleri/meyveli-tatlilar/kivami-tam-tutan-cilek-receli-tarifi",
+      "sourceImage": "https://i.lezzet.com.tr/images-xxlarge/kivami-tam-tutan-cilek-receli-tarifi-35495050-63ac-4776-9528-6ec4d496c843",
+      "bytes": 76843,
+      "sha256": "bfcbb69837e7cd0fb24639aec087da020d4922bbd9d8f37c6c87ab7bc548d8cf"
+    },
+    {
+      "id": "beyaz-peynir",
+      "name": "Beyaz peynir",
+      "file": "beyaz-peynir-v1.jpg",
+      "sourceUrl": "https://www.yoreselbakkal.com.tr/urun/bergama-beyaz-peyniri-700-gr",
+      "sourceImage": "https://www.yoreselbakkal.com.tr/idea/jl/78/myassets/products/514/bergama-beyaz.jpg?revision=1751786462",
+      "bytes": 298919,
+      "sha256": "ce02aa43471648bb43cad9ff85fd026d7509f8c38cb07b786d7df7ecc3d92078"
+    },
+    {
+      "id": "zeytin",
+      "name": "Zeytin",
+      "file": "zeytin-v1.jpg",
+      "sourceUrl": "https://kuntoplus.fi/laihdutus/painonhallinta/keto-ruoka",
+      "sourceImage": "https://images-bonnier.imgix.net/files/ifo/production/groenne-og-sorte-oliven-i-skaal.jpg?auto=compress%2Cformat&w=1024+1024w",
+      "bytes": 186453,
+      "sha256": "7273837fd6e81b7d1c0a4361562f48627fcedfc5ddd878a5389708c665154ec3"
+    },
+    {
+      "id": "icli-kofte",
+      "name": "İçli köfte",
+      "file": "icli-kofte-v1.jpg",
+      "sourceUrl": "https://discoverturkishfood.com/recipe/kofte.html",
+      "sourceImage": "https://www.discoverturkishfood.com/recipe/icirikofte00.jpg",
+      "bytes": 482692,
+      "sha256": "012794bb84208cfdcddd92449f69c1eaf61478eb9bc902bc71b63120724a6571"
+    },
+    {
+      "id": "domates",
+      "name": "Domates",
+      "file": "domates-v1.jpg",
+      "sourceUrl": "https://tabelog.com/kumamoto/A4302/A430201/43002155/",
+      "sourceImage": "https://tblg.k-img.com/restaurant/images/Rvw/75816/640x640_rect_a36d179cddd381bd158e57c4b291a63f.jpg",
+      "bytes": 65497,
+      "sha256": "ba426c9cef4ec205b1428b31617897218c02300af95d27948f1d2413b025af49"
+    }
+  ],
+  "failures": []
+}
