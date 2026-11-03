@@ -1476,8 +1476,8 @@ function home(){
      '<svg class="mode-3d-Origin-stroke" viewBox="0 0 110 12" fill="none" aria-hidden="true"><path d="M3 9C36 3 74 3 107 7" stroke="#f0ad5f" stroke-width="4" stroke-linecap="round"/></svg>',
     '</div>',
    '</button>',
-   '<button type="button" class="mode-3d-card coming-soon" onclick="toast(\'Açık Arttırma modu geliştirme aşamasında. Çok yakında!\')">',
-    '<span class="mode-3d-badge">YAKINDA</span>',
+   '<button type="button" class="mode-3d-card gold-glow" onclick="openModeRoom(\'auction\')">',
+    '<span class="mode-3d-badge" style="background:#e24046;color:#ffffff;border-color:#e24046">2 KİŞİ</span>',
     '<div class="mode-3d-inner">',
      '<div class="mode-3d-figure" aria-hidden="true">',
       '<svg viewBox="0 0 200 135" fill="none">',
@@ -1531,6 +1531,8 @@ function home(){
  '</section>'
  ].join('');
  init3DFox();
+}
+function scrollModes(idx){const t=document.querySelector('.home-modes-track'),c=t?.querySelectorAll('.mode-3d-card');if(c&&c[idx])c[idx].scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});document.querySelectorAll('.home-dot').forEach((d,i)=>d.classList.toggle('active',i===Math.floor(idx/2)));
 }
 
 function goHome(){if(!room){home();return}modal(room.isHost?'<h2>Odayı kapat?</h2><p>Tüm oyuncular çıkarılır ve '+esc(room.code)+' kodu kalıcı olarak geçersiz olur.</p><button class="btn full" onclick="exitRoom()">Odayı kapat ve çık</button>':'<h2>Odadan ayrıl?</h2><p>Oda açık kalır. Oyun henüz başlamadıysa koduyla tekrar katılabilirsin.</p><button class="btn full" onclick="exitRoom()">Odadan ayrıl</button>')}
