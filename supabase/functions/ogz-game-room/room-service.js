@@ -1,3 +1,4 @@
+import { returnToLobby } from "./room-lifecycle.js";
 import { gameImage } from "./performance.js";
 export const json = (v, s = 200) => new Response(JSON.stringify(v), {
   status: s,
@@ -147,10 +148,12 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         if (r.players.length >= 8) return json({ error: 'Oda dolu (8 kişi).' }, 409);
         r.players.push({ ...b.profile, token, id: crypto.randomUUID(), score: 0 });
       }
-      if (action === 'get' && !expired) return json(view(r, token, cars));
+      const legacyFinished = r.state==='finished';
+      if(legacyFinished && action==='get') returnToLobby(r);
+      if (action === 'get' && !expired && !legacyFinished) return json(view(r, token, cars));
       let reserve = false;
       if (action === 'start' || action === 'restart') {
-        if (r.host !== token || r.state !== (action === 'restart' ? 'finished' : 'lobby')) return json({ error: action === 'restart' ? 'Yeni oyunu yalnızca oda sahibi, oyun bittikten sonra başlatabilir.' : 'Oyunu yalnızca oda sahibi başlatabilir.' }, 403);
+        if (r.host !== token || !(action === 'restart' ? r.state==='finished'||(r.state==='lobby'&&r.lastGame) : r.state==='lobby')) return json({ error: action === 'restart' ? 'Yeni oyunu yalnızca oda sahibi, oyun bittikten sonra başlatabilir.' : 'Oyunu yalnızca oda sahibi başlatabilir.' }, 403);
         const tokens = r.players.map(p => p.token);
         const placeholders=tokens.map(()=>'?').join(',');
         const historyStatement=env.DB.prepare('SELECT listing_id,SUM(seen_count) AS seen_count,MAX(seen_at) AS last_seen FROM listing_history WHERE token IN ('+placeholders+') GROUP BY listing_id').bind(...tokens),reservationStatement=env.DB.prepare('SELECT listing_id FROM listing_reservations WHERE token IN ('+placeholders+')').bind(...tokens),expireStatement=env.DB.prepare('DELETE FROM listing_reservations WHERE expires_at<=?').bind(Date.now());
@@ -183,9 +186,10 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
           if (Object.keys(r.guesses).length === r.players.length) revealRound(r, cars);
         }
       }
+      let returnedToLobby = legacyFinished && action==='get';
       if (action === 'next') {
         if (r.host !== token || r.state !== 'reveal') return json({ error: 'Sonraki turu oda sahibi başlatır.' }, 403);
-        if (r.round + 1 >= r.rounds) r.state = 'finished';
+        if (r.round + 1 >= r.rounds) { returnToLobby(r); returnedToLobby=true; }
         else {
           r.round++;
           r.state = 'playing';
@@ -215,7 +219,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         const listingId = (r.customCars || []).concat(cars)[r.order[r.round]][11].id;
         for (const p of r.players) changes.push(env.DB.prepare("INSERT INTO listing_history(token,listing_id,room_code,round_number,seen_at,seen_count) SELECT ?,?,?,?,?,1 WHERE EXISTS(SELECT 1 FROM rooms WHERE code=? AND version=?) ON CONFLICT(token,listing_id) DO UPDATE SET room_code=excluded.room_code,round_number=excluded.round_number,seen_at=excluded.seen_at,seen_count=listing_history.seen_count+1").bind(p.token, listingId, code, r.round, Date.now(), code, row.version));
       }
-      if (action === 'close' || r.state === 'finished') changes.push(env.DB.prepare('DELETE FROM listing_reservations WHERE room_code=? AND EXISTS(SELECT 1 FROM rooms WHERE code=? AND version=?)').bind(code, code, row.version));
+      if (action === 'close' || returnedToLobby || r.state === 'finished') changes.push(env.DB.prepare('DELETE FROM listing_reservations WHERE room_code=? AND EXISTS(SELECT 1 FROM rooms WHERE code=? AND version=?)').bind(code, code, row.version));
       if (action === 'leave') changes.push(env.DB.prepare('DELETE FROM listing_reservations WHERE room_code=? AND token=? AND EXISTS(SELECT 1 FROM rooms WHERE code=? AND version=?)').bind(code, token, code, row.version));
       const statement = env.DB.prepare('UPDATE rooms SET data=?,version=version+1 WHERE code=? AND version=?').bind(JSON.stringify(r), code, row.version);
       let update;
