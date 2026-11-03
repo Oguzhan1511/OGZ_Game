@@ -1,3 +1,4 @@
+import { gameAudioClient } from "./ui/game-audio.js";
 import { returnToLobby } from "./room-lifecycle.js";
 import { gameImage } from "./performance.js";
 import { modeCardStyles, modeCardClient } from "./ui/mode-cards.js";
@@ -42,6 +43,7 @@ const gameModes = createGameModes({
 
 const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
 const html = createAppShell({
+  gameAudioClient,
   desktopGameStyles,
   roundRankingStyles,
   mobileGameStyles,
