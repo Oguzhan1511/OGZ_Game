@@ -9,7 +9,7 @@ Deno.serve(async(req:Request)=>{
  const auth=await fetch(base+'/rest/v1/ogz_game_integration?select=key_hash&id=in.(sites,products-transfer)',{headers});if(!auth.ok||!(await auth.json()).some((r:any)=>r.key_hash===hash))return reply({error:'Unauthorized'},401);
  const url=new URL(req.url);
  if(req.method==='PUT'){
- const path=url.searchParams.get('image');if(!/^media\/(?:auction\/[a-z0-9-]+\.(?:png|jpg|webp)|admin\/admin-[a-f0-9-]{36}-[01]|[a-z0-9-]+-(?:photo\.jpg|damage\.png))$/.test(path||''))return reply({error:'Invalid path'},400);
+ const path=url.searchParams.get('image');if(!/^media\/(?:optimized\/[a-zA-Z0-9_-]+\.webp|auction\/[a-z0-9-]+\.(?:png|jpg|webp)|admin\/admin-[a-f0-9-]{36}-[01]|[a-z0-9-]+-(?:photo\.jpg|damage\.png))$/.test(path||''))return reply({error:'Invalid path'},400);
  const bytes=new Uint8Array(await req.arrayBuffer());const type=bytes[0]===255&&bytes[1]===216?'image/jpeg':bytes[0]===137&&bytes[1]===80?'image/png':String.fromCharCode(...bytes.slice(0,4))==='RIFF'&&String.fromCharCode(...bytes.slice(8,12))==='WEBP'?'image/webp':null;
  if(!type||bytes.length<12||bytes.length>5000000)return reply({error:'Invalid image'},400);
  const uploaded=await fetch(base+'/storage/v1/object/ogz-game/'+path,{method:'POST',headers:{...headers,'content-type':type,'x-upsert':'true'},body:bytes});if(!uploaded.ok)throw Error('upload');return reply({image:base+'/storage/v1/object/public/ogz-game/'+path});

@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 
 const moduleMap = [
+  ['./performance.js','worker/performance.js'],
+  ['./image-variants.js','worker/image-variants.js'],
   ['./ui/assets.js', 'worker/ui/assets.js'],
   ['./ui/mode-cards.js', 'worker/ui/mode-cards.js'],
   ['./modes/product/product-ui.js', 'worker/modes/product/product-ui.js'],
@@ -51,6 +53,7 @@ code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/game-modes\.js["'];?/g, '
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\.\/ocr\/ocr\.js["'];?/g, '');
 code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/room-service\.js["'];?/g, '');
 
+code=code.replaceAll(/import \{[^\n]+\} from ["'][^"']*performance\.js["'];?/g,'');
 fs.mkdirSync('dist/server', { recursive: true });
 fs.writeFileSync('dist/server/index.js', code);
 console.log('8. scripts/build.mjs updated and bundled successfully');

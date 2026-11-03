@@ -398,6 +398,7 @@ function init3DFox(){
  scene.add(foxGroup);
 
  let mouseX=0,mouseY=0,targetHeadRotY=0,targetHeadRotX=0,isDragging=false,prevDragX=0,dragRotY=0,jumpTime=0,isJumping=false;
+ const dragMove=e=>{if(isDragging){dragRotY+=(e.clientX-prevDragX)*0.01;prevDragX=e.clientX}};
  const stage=document.getElementById('hero-art-stage');
  if(stage){
   stage.onmousemove=e=>{
@@ -408,13 +409,20 @@ function init3DFox(){
   stage.onmouseleave=()=>{targetHeadRotY=0;targetHeadRotX=0};
   stage.onmousedown=e=>{isDragging=true;prevDragX=e.clientX};
   window.onmouseup=()=>{isDragging=false};
-  window.addEventListener('mousemove',e=>{if(isDragging){dragRotY+=(e.clientX-prevDragX)*0.01;prevDragX=e.clientX}});
+  window.addEventListener('mousemove',dragMove);
   stage.onclick=()=>{if(!isJumping){isJumping=true;jumpTime=0;petMascot()}};
  }
 
  let clock=0;
  function animate(){
-  foxAnimId=requestAnimationFrame(animate);clock+=0.025;
+  if(!canvas.isConnected){
+   window.removeEventListener('mousemove',dragMove);
+   scene.traverse(obj=>{if(obj.geometry)obj.geometry.dispose();if(obj.material){for(const mat of [obj.material].flat())mat.dispose()}});
+   renderer.dispose();if(foxRenderer===renderer)foxRenderer=null;foxAnimId=null;return;
+  }
+  foxAnimId=requestAnimationFrame(animate);
+  if(document.hidden)return;
+  clock+=0.025;
   headGroup.rotation.y+=(targetHeadRotY-headGroup.rotation.y)*0.08;
   headGroup.rotation.x+=(targetHeadRotX-headGroup.rotation.x)*0.08;
   crownGroup.position.y=2.75+Math.sin(clock*2)*0.08;
@@ -625,9 +633,12 @@ let settings={rounds:10,motion:true};try{const saved=JSON.parse(localStorage.get
 function settingsModal(){if(!profile){afterProfile=settingsModal;profileModal();return}modal('<span class="tag">OYUN AYARLARI</span><h2>Oyunu kendine göre ayarla.</h2><form onsubmit="saveSettings(event)"><label for="default-rounds">Yeni odalar için tur sayısı</label><select class="input" id="default-rounds">'+[10,15,20].map(n=>'<option value="'+n+'" '+(settings.rounds===n?'selected':'')+'>'+n+' tur</option>').join('')+'</select><p class="notice">Bu tercih kuracağın yeni odalarda varsayılan olarak seçilir. Mevcut odanın kurallarını değiştirmez.</p><label class="motion-setting" for="motion-toggle"><span>Logo ve buton animasyonları</span><input id="motion-toggle" type="checkbox" '+(settings.motion?'checked':'')+'></label><button class="btn full" type="submit">Ayarları kaydet</button></form>')}
 function saveSettings(e){e.preventDefault();settings={rounds:Number($('#default-rounds').value),motion:$('#motion-toggle').checked};localStorage.setItem('ogz-settings',JSON.stringify(settings));document.body.classList.toggle('no-motion',!settings.motion);closeModal();toast('Oyun ayarların kaydedildi.')}
 function joinModal(){modal('<span class="tag">EKİBİN SENİ BEKLİYOR</span><h2>Hemen oyuna katıl.</h2><p>Arkadaşının paylaştığı 6 karakterli oda kodunu gir ya da kendi odanı kur.</p><form onsubmit="event.preventDefault();enterRoom(\'join\')"><label for="roomcode">Oda kodu</label><input class="input" id="roomcode" placeholder="ÖRN. A3F8B2" pattern="[A-Fa-f0-9]{6}" minlength="6" maxlength="6" required style="text-transform:uppercase;letter-spacing:5px"><button class="btn full">Odaya katıl &nbsp; →</button><button type="button" class="btn secondary full" style="margin-top:10px" onclick="createModal()">Yeni oda kur &nbsp; +</button></form>')}
-async function call(action,extra={}){const res=await fetch('/api/room',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,token,code:room?.code,gameId:room?.gameId,...extra})});const data=await res.json();if(!res.ok){const error=Error(data.error||'İşlem tamamlanamadı.');error.closed=!!data.closed;throw error}if(data.serverNow)clockOffset=data.serverNow-Date.now();return data}
+const preloadedGameImages=new Map();
+function prefetchGameImages(urls,priority='low'){for(const url of urls.filter(u=>typeof u==='string'&&u.startsWith('https://'))){if(preloadedGameImages.has(url))continue;const img=new Image();img.decoding='async';img.fetchPriority=priority;preloadedGameImages.set(url,img);img.src=url;while(preloadedGameImages.size>4)preloadedGameImages.delete(preloadedGameImages.keys().next().value)}}
+async function call(action,extra={}){const res=await fetch('/api/room',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({action,token,code:room?.code,gameId:room?.gameId,...extra})});const data=await res.json();if(!res.ok){const error=Error(data.error||'İşlem tamamlanamadı.');error.closed=!!data.closed;throw error}if(data.car)prefetchGameImages([data.car[9],data.car[10]?.damageImage],'high');if(data.nextImages)prefetchGameImages(data.nextImages);if(data.serverNow)clockOffset=data.serverNow-Date.now();return data}
 async function enterRoom(action){if(!validProfile(profile)){afterProfile=action==='create'?createModal:joinModal;profileModal();toast('Önce profilini oluşturmalısın.');return}if(busy)return;busy=true;try{if(action==='create'){rounds=Number($('#room-rounds').value);guessSeconds=Number($('#guess-seconds').value)}const chosenMode=action==='create'?$('#game-mode')?.value||'car-price':undefined;let chosenCategory=undefined;if(chosenMode==='auction'){const ch=document.querySelector('input[name="auction-category"]:checked');chosenCategory=ch?ch.value:undefined;}room=await call(action,{profile,rounds,mode:chosenMode,category:chosenCategory,categories:action==='create'&&chosenMode==='product-price'?selectedProductCategories():undefined,guessSeconds,code:action==='join'?$('#roomcode').value.trim().toUpperCase():undefined});$('#overlay').innerHTML='';renderRoom();clearInterval(poll);poll=setInterval(refresh,2000)}catch(e){toast(e.message)}finally{busy=false}}
-async function refresh(){if(!room||busy)return;try{const expectedRoom=room;const next=await call('get');if(busy||room!==expectedRoom)return;const previous={...room};delete previous.serverNow;const updated={...next};delete updated.serverNow;if(JSON.stringify(updated)!==JSON.stringify(previous)){room=next;renderRoom()}}catch(e){if(e.closed){leaveView();toast(e.message)}else if($('#connection'))$('#connection').textContent='Bağlantı yenileniyor…'}}
+let refreshInFlight=false;
+async function refresh(){if(!room||busy||refreshInFlight||document.hidden)return;refreshInFlight=true;try{const expectedRoom=room;const next=await call('get');if(busy||room!==expectedRoom)return;const previous={...room};delete previous.serverNow;const updated={...next};delete updated.serverNow;if(JSON.stringify(updated)!==JSON.stringify(previous)){room=next;renderRoom()}}catch(e){if(e.closed){leaveView();toast(e.message)}else if($('#connection'))$('#connection').textContent='Bağlantı yenileniyor…'}finally{refreshInFlight=false}}
 function tickTimer(){clearInterval(timer);const update=()=>{const el=$('#round-timer');if(!el||!room||room.state!=='playing')return;const left=Math.max(0,Math.ceil((room.deadline-Date.now()-clockOffset)/1000));el.textContent=left+' sn';el.classList.toggle('urgent',left<=10);if(left===0){$('#guessbtn')&&($('#guessbtn').disabled=true);$('#guess')&&($('#guess').disabled=true);document.querySelectorAll('.guess-multiplier').forEach(button=>button.disabled=true)}};update();if(room?.state==='playing')timer=setInterval(update,250)}
 
 function playersHtml(){return room.players.slice().sort((a,b)=>b.score-a.score).map((p,i)=>'<div class="player"><img class="avatar" src="'+avatar(p.avatar)+'" alt="'+esc(p.name)+' profil resmi"><div><strong>'+esc(p.name)+(p.id===room.me?' <span style="color:var(--gold)">(sen)</span>':'')+'</strong><small>'+(room.isHost&&p.id===room.me?'Oda sahibi':'Oyuncu')+'</small></div><span class="score">'+p.score+'</span></div>').join('')}

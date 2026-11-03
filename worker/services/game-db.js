@@ -1,5 +1,5 @@
 export function gameDatabase(env){
- const endpoint=env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-database');
+ const direct=env.OGZ_DIRECT_RPC_HEADERS;const endpoint=direct?env.OGZ_DIRECT_URL+'/rest/v1/rpc/ogz_game_state':env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-database');
  const classify=sql=>{
   if(sql==='INSERT OR IGNORE INTO rooms(code,data,created_at) VALUES(?,?,?)')return 'room_create';
   if(sql==='SELECT data,version FROM rooms WHERE code=?')return 'room_get';
@@ -17,8 +17,9 @@ export function gameDatabase(env){
   if(sql==='SELECT attempts FROM admin_login_attempts WHERE key=?')return 'login_get';
   throw Error('Unsupported game database operation');
  };
- const execute=async operations=>{const response=await fetch(endpoint,{method:'POST',headers:{'x-ogz-key':env.OGZ_SUPABASE_KEY,'content-type':'application/json'},body:JSON.stringify({operations}),signal:AbortSignal.timeout(20000)});if(!response.ok){const body=await response.json().catch(()=>({}));if(response.status===409&&body.code==='23505')throw Error('UNIQUE constraint: reservation');throw Error('Oyun veritabanına erişilemiyor. Tekrar dene.')}return (await response.json()).results};
- return {prepare(sql){const packet={op:classify(sql),params:[]};return {packet,bind(...params){packet.params=params;return this},async first(){return (await execute([packet]))[0].results[0]||null},async all(){return (await execute([packet]))[0]},async run(){return (await execute([packet]))[0]}}},async batch(statements){return execute(statements.map(s=>s.packet))}};
+ const reads=new Map();
+ const execute=async operations=>{if(operations.every(o=>o.op==='legacy_listings'))return operations.map(()=>({results:[],meta:{changes:0}}));if(operations.some(o=>!['room_get','history_get','reservations_get','login_get','legacy_listings'].includes(o.op)))reads.clear();const response=await fetch(endpoint,{method:'POST',headers:direct||{'x-ogz-key':env.OGZ_SUPABASE_KEY,'content-type':'application/json'},body:JSON.stringify(direct?{operations}:{operations}),signal:AbortSignal.timeout(20000)});if(!response.ok){const body=await response.json().catch(()=>({}));if(response.status===409&&body.code==='23505')throw Error('UNIQUE constraint: reservation');throw Error('Oyun veritabanına erişilemiyor. Tekrar dene.')}const data=await response.json();return direct?data:data.results};
+ return {remote:true,prepare(sql){const packet={op:classify(sql),params:[]};return {packet,bind(...params){packet.params=params;return this},async first(){const key=JSON.stringify(packet);if(packet.op==='room_get'){if(!reads.has(key))reads.set(key,execute([packet]).catch(e=>{reads.delete(key);throw e}));return (await reads.get(key))[0].results[0]||null}return (await execute([packet]))[0].results[0]||null},async all(){return (await execute([packet]))[0]},async run(){return (await execute([packet]))[0]}}},async batch(statements){return execute(statements.map(s=>s.packet))}};
 }
 export async function databaseMigration(request,env){
  if(!env.OGZ_MIGRATION_KEY||request.headers.get('x-ogz-migration-key')!==env.OGZ_MIGRATION_KEY||env.OGZ_GAME_DB==='supabase')return Response.json({error:'Unauthorized'},{status:403});

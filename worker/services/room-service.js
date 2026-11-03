@@ -1,3 +1,4 @@
+import { gameImage } from "../performance.js";
 export const json = (v, s = 200) => new Response(JSON.stringify(v), {
   status: s,
   headers: { 'content-type': 'application/json', 'cache-control': 'no-store' }
@@ -8,7 +9,8 @@ export function validProfile(p) {
 }
 
 export function view(r, id, cars) {
-  const result = structuredClone(r);
+  const {order:privateOrder,customCars:privateCars,host:privateHost,...publicState}=r;
+  const result = structuredClone(publicState);
   result.serverNow = Date.now();
   delete result.order;
   delete result.customCars;
@@ -20,10 +22,12 @@ export function view(r, id, cars) {
   if (r.state !== 'lobby') {
     const c = (r.customCars || []).concat(cars)[r.order[r.round]];
     result.car = c.filter((_, i) => i !== 6);
+    result.car[9]=gameImage(result.car[9]);if(result.car[10])result.car[10]={...result.car[10],damageImage:gameImage(result.car[10].damageImage)};
     result.submitted = Object.keys(r.guesses).length;
     if (r.state === 'reveal' || r.state === 'finished') {
       result.price = c[6];
       result.guesses = r.guesses;
+      if(r.state==='reveal'&&r.round+1<r.rounds){const next=(r.customCars||[]).concat(cars)[r.order[r.round+1]];result.nextImages=[next?.[10],next?.[11]?.damageImage].filter(u=>typeof u==='string'&&u.startsWith('https://')).map(gameImage)}
     } else {
       delete result.guesses;
     }
@@ -65,11 +69,9 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         }))
       });
     }
-    if (action === 'create' && b.mode === 'auction') {
-      if (auctionApi) return await auctionApi(b, env);
-    }
     if (['create', 'join'].includes(action) && !validProfile(b.profile)) return json({ error: 'Oda oluşturmak veya katılmak için önce profilini tamamlamalısın.' }, 400);
     if (typeof token !== 'string' || token.length < 20) return json({ error: 'Profil oturumu geçersiz' }, 400);
+    if(action==='create'&&b.mode==='auction'&&auctionApi)return auctionApi(b,env);
     if (action === 'create') {
       if (![10, 15, 20].includes(b.rounds)) return json({ error: 'Tur sayısı geçersiz' }, 400);
       const selectedMode = gameModes.get(b.mode);
@@ -121,10 +123,9 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
       if (action === 'start' || action === 'restart') {
         if (r.host !== token || r.state !== (action === 'restart' ? 'finished' : 'lobby')) return json({ error: action === 'restart' ? 'Yeni oyunu yalnızca oda sahibi, oyun bittikten sonra başlatabilir.' : 'Oyunu yalnızca oda sahibi başlatabilir.' }, 403);
         const tokens = r.players.map(p => p.token);
-        await env.DB.prepare('DELETE FROM listing_reservations WHERE expires_at<=?').bind(Date.now()).run();
-        const placeholders = tokens.map(() => '?').join(',');
-        const history = await env.DB.prepare('SELECT listing_id,SUM(seen_count) AS seen_count,MAX(seen_at) AS last_seen FROM listing_history WHERE token IN (' + placeholders + ') GROUP BY listing_id').bind(...tokens).all();
-        const reservations = await env.DB.prepare('SELECT listing_id FROM listing_reservations WHERE token IN (' + placeholders + ')').bind(...tokens).all();
+        const placeholders=tokens.map(()=>'?').join(',');
+        const historyStatement=env.DB.prepare('SELECT listing_id,SUM(seen_count) AS seen_count,MAX(seen_at) AS last_seen FROM listing_history WHERE token IN ('+placeholders+') GROUP BY listing_id').bind(...tokens),reservationStatement=env.DB.prepare('SELECT listing_id FROM listing_reservations WHERE token IN ('+placeholders+')').bind(...tokens),expireStatement=env.DB.prepare('DELETE FROM listing_reservations WHERE expires_at<=?').bind(Date.now());
+        let history,reservations;if(env.DB.remote){const batch=await env.DB.batch([expireStatement,historyStatement,reservationStatement]);history=batch[1];reservations=batch[2]}else{await expireStatement.run();[history,reservations]=await Promise.all([historyStatement.all(),reservationStatement.all()])}
         const modeHandler = gameModes.get(r.mode) || gameModes.get('car-price');
         r.customCars = await modeHandler.loadPool(env, r, cars);
         const currentPool = r.customCars;
@@ -138,7 +139,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
           r.players.forEach(player => player.score = 0);
           r.expiresAt = Date.now() + 86400000;
         }
-        r.order = selection.order;
+        r.customCars=selection.order.map(i=>currentPool[i]);r.order=r.customCars.map((_,i)=>i);
         reserve = true;
         r.state = 'playing';
         r.deadline = Date.now() + (r.guessSeconds || 30) * 1000;

@@ -1,3 +1,4 @@
+import { gameImage } from "./performance.js";
 import { modeCardStyles, modeCardClient } from "./ui/mode-cards.js";
 import { productCategories, normalizeProductCategories, productListings, productAsRound, productAdminApi } from "./modes/product/products.js";
 import { productAdminHtml, productGameStyles, productGameClient } from "./modes/product/product-ui.js";
@@ -114,7 +115,7 @@ export default {
           }
         });
       }
-      if (u.pathname === '/api/room' && request.method === 'POST') return await roomApi(request, env);
+      if(u.pathname==='/api/room'&&request.method==='POST'){if(env.OGZ_GAME_ENGINE==='edge')return await fetch(env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-room'),{method:'POST',headers:{'x-ogz-key':env.OGZ_SUPABASE_KEY,'x-region':env.OGZ_DB_REGION||'ap-northeast-2','content-type':'application/json'},body:request.body,duplex:'half',signal:AbortSignal.timeout(30000)});return await roomApi(request,env)}
       return new Response(html, {
         headers: {
           'content-type': 'text/html; charset=utf-8',
