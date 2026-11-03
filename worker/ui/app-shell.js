@@ -30,10 +30,7 @@ body:not(.home-mode) main{padding-top:75px}
 
 /* === HOME MODE (NO NAVBAR, IMAGE 1 PALETTE + IMAGE 2 3D MODE CARDS) === */
 body.home-mode{isolation:isolate;background:var(--bg);min-height:100svh;overflow-x:hidden;position:relative}
-body.home-mode::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:radial-gradient(circle at 74% 38%,#3b182288 0%,#22152044 34%,transparent 65%),radial-gradient(circle at 18% 28%,#1c233680 0%,transparent 52%)}
-.home-wave-bl,.home-wave-br{position:fixed;bottom:0;z-index:-1;pointer-events:none}
-.home-wave-bl{left:0;width:min(440px,42vw);height:auto}
-.home-wave-br{right:0;width:min(520px,48vw);height:auto}
+body.home-mode::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:#111220 url('/home-background-v1.webp') center center / cover no-repeat}
 .home-mode main{min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;padding:24px 40px 26px;max-width:1320px;margin:0 auto}
 .home-brand-row{display:flex;align-items:center;justify-content:space-between;min-height:48px}
 .ogz-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);user-select:none}
@@ -452,14 +449,6 @@ function home(){
  document.body.classList.add('home-mode');
  $('#breadcrumb').textContent='Ana sayfa';
  $('#content').innerHTML=[
- '<svg class="home-wave-bl" viewBox="0 0 440 160" fill="none" aria-hidden="true">',
-  '<path d="M0 45C95 30 165 92 265 118C340 138 395 148 440 160H0V45Z" fill="#22151f"/>',
-  '<path d="M0 88C75 76 150 118 245 140C310 154 370 158 410 160H0V88Z" fill="#351923" opacity=".65"/>',
- '</svg>',
- '<svg class="home-wave-br" viewBox="0 0 520 180" fill="none" aria-hidden="true">',
-  '<path d="M520 22C420 28 355 95 245 122C145 146 72 150 0 180H520V22Z" fill="#261621"/>',
-  '<path d="M520 68C430 74 360 126 260 148C175 166 95 170 30 180H520V68Z" fill="#461b26" opacity=".75"/>',
- '</svg>',
  '<div class="home-brand-row">',
   '<div class="ogz-brand" aria-label="OGZ Game">',
    '<svg class="ogz-brand-crown" viewBox="0 0 48 40" fill="none" aria-hidden="true">',

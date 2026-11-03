@@ -15,5 +15,8 @@ fs.writeFileSync('public/mascot.jpg', Buffer.from(await resMascot.arrayBuffer())
 const resLogo = await worker.fetch(new Request('http://localhost/logo.png'), {});
 fs.writeFileSync('public/logo.png', Buffer.from(await resLogo.arrayBuffer()));
 
+const background=await worker.fetch(new Request('http://localhost/home-background-v1.webp'),{});
+fs.writeFileSync('public/home-background-v1.webp',Buffer.from(await background.arrayBuffer()));
+
 fs.writeFileSync('public/.gitkeep', '');
 console.log('Vercel build complete: static index.html, mascot.jpg, logo.png generated.');

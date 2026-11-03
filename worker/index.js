@@ -14,7 +14,7 @@ import { guessInputClient } from "./ui/guess-input.js";
 import { deploymentRequest } from "./services/deployment.js";
 import { tesseractScript } from "./ocr/ocr-engine.js";
 import { gameListings, syncSupabase } from "./services/supabase.js";
-import { logoPng, mascotJpg } from "./ui/assets.js";
+import { logoPng, mascotJpg, homeBackgroundWebp } from "./ui/assets.js";
 import { adminApi, adminMedia, adminHtml } from "./services/admin.js";
 import { selectListings } from "./selection.js";
 import { cars } from "./modes/car/catalog.js";
@@ -100,6 +100,9 @@ export default {
       if (u.pathname.startsWith('/media/admin/')) return await adminMedia(request, env, u.pathname);
       if (u.pathname.startsWith('/media/')) return await serveMedia(request, env, u.pathname, mediaManifest);
       if (u.pathname.startsWith('/api/media/')) return await uploadMedia(request, env, u.pathname, mediaManifest);
+      if (u.pathname === '/home-background-v1.webp') {
+        return new Response(request.method==='HEAD'?null:Uint8Array.from(atob(homeBackgroundWebp), c=>c.charCodeAt(0)), {headers:{'content-type':'image/webp','cache-control':'public, max-age=31536000, immutable'}});
+      }
       if (u.pathname === '/logo.png') {
         return new Response(Uint8Array.from(atob(logoPng), c => c.charCodeAt(0)), {
           headers: {
