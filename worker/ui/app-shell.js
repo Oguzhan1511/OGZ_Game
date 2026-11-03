@@ -132,6 +132,28 @@ body.game-mode{background:var(--bg)}body.game-mode main{max-width:none;padding:0
  .specs{grid-template-columns:1fr 1fr}.carphoto{height:220px}.box{padding:20px}.modal{padding:24px}
  body.game-mode main{padding:0 12px}.game-board{grid-template-columns:1fr}.game-visual{border-right:0;padding:16px}.game-details{padding:25px 20px}.photo-stage{height:290px}.game-photo{max-height:250px}.game-top{gap:12px}.game-damage>img{height:210px}.game-progress>div:first-child>span{display:none}
 }
+/* Keep the desktop home in one viewport, including shorter laptop windows. */
+@media(min-width:900px){
+ .home-mode main{height:100svh;min-height:0;max-width:1440px;padding:clamp(10px,2.4svh,24px) clamp(24px,3vw,48px)}
+ .home-mode #content{height:100%;min-height:0;display:grid;grid-template-rows:clamp(36px,6svh,48px) minmax(0,1fr) clamp(150px,28svh,260px);gap:clamp(8px,1.6svh,18px)}
+ .home-brand-row{min-height:0}
+ .home-hero{height:100%;min-height:0;margin:0;padding:0;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:24px}
+ .home-headline{font-size:clamp(28px,min(4.3vw,7svh),62px)}
+ .hero-title-wrap{padding-top:12px}
+ .hero-brush-underline{height:clamp(10px,2svh,18px)}
+ .home-subtext{font-size:clamp(12px,min(1.15vw,2.3svh),16px);margin:clamp(8px,1.7svh,18px) 0 clamp(12px,2.5svh,28px)}
+ .home-cta{height:clamp(36px,6svh,52px);font-size:clamp(13px,1.3vw,16px)}
+ .home-hero-art{height:100%;min-height:0;max-height:460px}
+ .mascot-canvas{height:100%;max-height:460px;min-height:0;max-width:440px}
+ .mascot-aura{width:min(32vw,44svh);height:min(32vw,44svh)}
+ .mascot-interactive-hint{bottom:0;font-size:10px}
+ .home-modes-section{height:100%;min-height:0;margin:0;display:flex;flex-direction:column}
+ .home-modes-track{min-height:0;flex:1;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(95px,.58fr);gap:clamp(12px,1.6vw,20px);padding-top:clamp(30px,6svh,64px)}
+ .mode-3d-card,.mode-3d-card.more-card{height:100%;min-height:0;grid-column:auto;padding:12px 14px}
+ .mode-3d-figure{top:calc(-1 * clamp(30px,6svh,64px));width:min(100%,215px);height:clamp(72px,15svh,148px)}
+ .mode-3d-title{margin-top:0;font-size:clamp(13px,min(1.35vw,2.8svh),20px)}
+ .home-dots{flex-shrink:0;margin-top:clamp(10px,1.6svh,18px)}
+}
 ${mobileGameStyles}
 ${roundRankingStyles}
 ${desktopGameStyles}
@@ -381,6 +403,8 @@ function init3DFox(){
  foxRenderer=renderer;
  renderer.setSize(width,height,false);
  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+ const canvasResize=new ResizeObserver(()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()});
+ canvasResize.observe(canvas);
  renderer.shadowMap.enabled=true;
 
  scene.add(new THREE.AmbientLight(0xfff5ea,0.75));
@@ -413,7 +437,7 @@ function init3DFox(){
  let clock=0;
  function animate(){
   if(!canvas.isConnected){
-   window.removeEventListener('mousemove',dragMove);
+   window.removeEventListener('mousemove',dragMove);canvasResize.disconnect();
    scene.traverse(obj=>{if(obj.geometry)obj.geometry.dispose();if(obj.material){for(const mat of [obj.material].flat())mat.dispose()}});
    renderer.dispose();if(foxRenderer===renderer)foxRenderer=null;foxAnimId=null;return;
   }
