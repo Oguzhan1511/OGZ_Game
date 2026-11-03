@@ -94,6 +94,35 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
       const row = await env.DB.prepare('SELECT data,version FROM rooms WHERE code=?').bind(code).first();
       if (!row) return json({ error: 'Bu oda kodu geçersiz veya oda kapatılmış.', closed: true }, 404);
       const r = JSON.parse(row.data);
+      if (action === 'change-mode') {
+        if (r.state === 'closed' || (r.expiresAt && Date.now() >= r.expiresAt)) return json({error:'Bu oda kapatıldı veya süresi doldu.',closed:true},410);
+        if (r.host !== token || !r.players.some(p=>p.token===token)) return json({error:'Oyun modunu yalnızca oda sahibi değiştirebilir.'},403);
+        if (!['finished','lobby'].includes(r.state)) return json({error:'Oyun modunu değiştirmek için mevcut oyunun bitmesini bekle.'},409);
+        if (b.gameId !== r.gameId) return json({error:'Oyun değişti. Güncel odada tekrar dene.'},409);
+        const mode = gameModes.get(b.mode);
+        if (!mode) return json({error:'Geçerli bir oyun modu seç.'},400);
+        const modeError = mode.validateOptions(b);
+        if (modeError) return json({error:modeError},400);
+        const next = {code:r.code,host:r.host,mode:b.mode,state:'lobby',gameId:crypto.randomUUID(),expiresAt:Date.now()+86400000,round:0,players:r.players.map(({id,token,name,avatar})=>({id,token,name,avatar,score:0}))};
+        if (b.mode === 'auction') {
+          if (r.players.length > 2) return json({error:'Açık artırma en fazla 2 oyuncuyla oynanır. Başka bir mod seç veya oyuncu sayısının ikiye düşmesini bekle.'},409);
+          const category=(await auctionCatalog(env)).catalog.categories.find(c=>c.id===b.category&&!c.archived);
+          if (!category || category.products.filter(p=>!p.archived).length<10) return json({error:'En az 10 aktif ürünü olan bir açık artırma kategorisi seç.'},400);
+          Object.assign(next,{category:category.id,categoryName:category.name,sales:[],bid:null,items:[],auctionVersion:0});
+          next.players.forEach(p=>Object.assign(p,{balance:20,plate:[]}));
+        } else {
+          if (![10,15,20].includes(b.rounds)) return json({error:'Tur sayısı geçersiz'},400);
+          if (!Number.isInteger(b.guessSeconds)||b.guessSeconds<10||b.guessSeconds>120) return json({error:'Tahmin süresi geçersiz'},400);
+          Object.assign(next,{categories:mode.normalizeOptions(b),rounds:b.rounds,guessSeconds:b.guessSeconds,guesses:{},order:[]});
+        }
+        const result = await env.DB.batch([
+          env.DB.prepare('DELETE FROM listing_reservations WHERE room_code=? AND EXISTS(SELECT 1 FROM rooms WHERE code=? AND version=?)').bind(code,code,row.version),
+          env.DB.prepare('UPDATE rooms SET data=?,version=version+1 WHERE code=? AND version=?').bind(JSON.stringify(next),code,row.version)
+        ]);
+        if (!result[result.length-1].meta.changes) continue;
+        if (next.mode==='auction') return auctionApi({...b,action:'get',gameId:next.gameId},env);
+        return json(view(next,token,cars));
+      }
       if (r.mode === 'auction' && auctionApi) return await auctionApi(b, env);
       if (r.state === 'closed') return json({ error: 'Bu oda kapatıldı. Oda kodu artık geçersiz.', closed: true }, 410);
       if (r.expiresAt && Date.now() >= r.expiresAt) {
