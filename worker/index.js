@@ -1,3 +1,5 @@
+import { auctionSeed } from "./modes/auction/auction-seed.js";
+import { selectAuctionItems } from "./modes/auction/auction-selection.js";
 import { finalStandingsStyles, finalStandingsClient } from "./ui/final-standings.js";
 import { gameAudioClient } from "./ui/game-audio.js";
 import { returnToLobby } from "./room-lifecycle.js";

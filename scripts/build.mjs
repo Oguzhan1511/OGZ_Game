@@ -1,6 +1,8 @@
 import fs from 'node:fs';
 
 const moduleMap = [
+  ['./modes/auction/auction-seed.js','worker/modes/auction/auction-seed.js'],
+  ['./modes/auction/auction-selection.js','worker/modes/auction/auction-selection.js'],
   ['./ui/final-standings.js','worker/ui/final-standings.js'],
   ['./ui/game-audio.js','worker/ui/game-audio.js'],
   ['./room-lifecycle.js','worker/room-lifecycle.js'],
@@ -58,6 +60,8 @@ code = code.replaceAll(/import \{[^\n]+\} from ["']\.\/room-service\.js["'];?/g,
 
 code=code.replaceAll(/import \{[^\n]+\} from ["'][^"']*performance\.js["'];?/g,'');
 code=code.replaceAll(/import \{[^\n]+\} from ["'][^"']*room-lifecycle\.js["'];?/g,'');
+code=code.replaceAll(/import \{[^\n]+\} from ["'][^"']*auction-selection\.js["'];?/g,'');
+code=code.replaceAll(/import \{[^\n]+\} from ["'][^"']*auction-seed\.js["'];?/g,'');
 fs.mkdirSync('dist/server', { recursive: true });
 fs.writeFileSync('dist/server/index.js', code);
 console.log('8. scripts/build.mjs updated and bundled successfully');

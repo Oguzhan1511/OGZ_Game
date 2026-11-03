@@ -1,5 +1,6 @@
+import {auctionSeed} from '../worker/modes/auction/auction-seed.js';
 import assert from 'node:assert/strict';import vm from 'node:vm';import worker from '../worker/index.js';import {createDB} from './test-db.mjs';
-const DB=createDB(),env={DB},origin='https://test.game',a=crypto.randomUUID(),b=crypto.randomUUID(),c=crypto.randomUUID();
+const DB=createDB(),env={DB,AUCTION_STORE:{catalog:{categories:auctionSeed.categories.map(c=>({...c,products:c.products.map(p=>({...p,startPrice:1}))}))}}},origin='https://test.game',a=crypto.randomUUID(),b=crypto.randomUUID(),c=crypto.randomUUID();
 async function call(token,action,extra={}){const response=await worker.fetch(new Request(origin+'/api/room',{method:'POST',body:JSON.stringify({token,action,...extra})}),env);return {status:response.status,data:await response.json()}}
 const profile=name=>({name,avatar:'a1'});
 assert.equal((await call(a,'create',{mode:'auction',category:'invalid',profile:profile('Ali')})).status,400);
