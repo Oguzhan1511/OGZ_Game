@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 
 const moduleMap = [
+  ['./ui/final-standings.js','worker/ui/final-standings.js'],
   ['./ui/game-audio.js','worker/ui/game-audio.js'],
   ['./room-lifecycle.js','worker/room-lifecycle.js'],
   ['./performance.js','worker/performance.js'],

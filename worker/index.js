@@ -1,3 +1,4 @@
+import { finalStandingsStyles, finalStandingsClient } from "./ui/final-standings.js";
 import { gameAudioClient } from "./ui/game-audio.js";
 import { returnToLobby } from "./room-lifecycle.js";
 import { gameImage } from "./performance.js";
@@ -43,6 +44,7 @@ const gameModes = createGameModes({
 
 const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
 const html = createAppShell({
+  finalStandingsStyles, finalStandingsClient,
   gameAudioClient,
   desktopGameStyles,
   roundRankingStyles,
