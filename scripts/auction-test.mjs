@@ -1,3 +1,4 @@
+import {auctionClient} from '../worker/modes/auction/auction-ui.js';
 import {auctionSeed} from '../worker/modes/auction/auction-seed.js';
 import assert from 'node:assert/strict';import vm from 'node:vm';import worker from '../worker/index.js';import {createDB} from './test-db.mjs';
 const DB=createDB(),env={DB,AUCTION_STORE:{catalog:{categories:auctionSeed.categories.map(c=>({...c,products:c.products.map(p=>({...p,startPrice:1}))}))}}},origin='https://test.game',a=crypto.randomUUID(),b=crypto.randomUUID(),c=crypto.randomUUID();
@@ -19,3 +20,5 @@ r=(await call(a,'restart',{code,gameId:r.gameId})).data;assert.equal(r.turnPlaye
 // Complete a fresh game with alternating opening players and one-TL purchases.
 while(r.state!=='lobby'){const n=r.round,starter=n%2===0?a:b,other=starter===a?b:a;assert.equal(r.turnPlayerId,n%2===0?aid:bid);r=(await call(starter,'bid',{code,round:n,amount:1})).data;r=(await call(other,'pass',{code,round:n})).data;r=(await call(a,'next',{code,round:n})).data}assert.deepEqual(r.lastGame.players.map(p=>p.plate.length),[5,5]);assert.ok(r.players.every(p=>p.balance>=0));await call(a,'close',{code});assert.equal((await call(b,'get',{code})).status,410);
 const html=await(await worker.fetch(new Request(origin),env)).text();new vm.Script(html.match(/<script>([\s\S]*?)<\/script>/)[1]);assert.ok(html.includes('Kal · Ürün rakibimin olsun'));assert.ok(!html.includes('Son tekliften sonra 15 saniye'));console.log('PASS: alternating first offers, strict turns, A1/B2/A-Kal sale, no deadline settlement, duplicate Kal safety, budget limits, free allocation, image metadata, restart and client syntax.');
+
+const chooserContext=vm.createContext({room:{category:'kahvalti'}});vm.runInContext(auctionClient,chooserContext);assert.ok(vm.runInContext('auctionChooser()',chooserContext).includes('value="kahvalti" checked'));console.log('PASS: existing auction category remains selected in lobby settings.');
