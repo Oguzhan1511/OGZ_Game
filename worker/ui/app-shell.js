@@ -30,7 +30,10 @@ body:not(.home-mode) main{padding-top:75px}
 
 /* === HOME MODE (NO NAVBAR, IMAGE 1 PALETTE + IMAGE 2 3D MODE CARDS) === */
 body.home-mode{isolation:isolate;background:var(--bg);min-height:100svh;overflow-x:hidden;position:relative}
-body.home-mode::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:#111220 url('/home-background-v1.webp') center center / cover no-repeat}
+body.home-mode::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;background:var(--bg)}
+.home-wave-bl,.home-wave-br{position:fixed;bottom:0;z-index:-1;pointer-events:none}
+.home-wave-bl{left:0;width:min(540px,46vw);height:auto}
+.home-wave-br{right:0;width:min(580px,50vw);height:auto}
 .home-mode main{min-height:100svh;display:flex;flex-direction:column;justify-content:space-between;padding:24px 40px 26px;max-width:1320px;margin:0 auto}
 .home-brand-row{display:flex;align-items:center;justify-content:space-between;min-height:48px}
 .ogz-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);user-select:none}
@@ -59,11 +62,7 @@ body.home-mode::before{content:"";position:fixed;inset:0;z-index:-2;pointer-even
 .mascot-aura{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,#e2404624 0%,#f0ad5f1a 42%,transparent 72%);filter:blur(36px);pointer-events:none;animation:auraPulse 6s ease-in-out infinite alternate}
 @keyframes auraPulse{0%{transform:scale(.92);opacity:.65}100%{transform:scale(1.08);opacity:.95}}
 .mascot-canvas{width:100%;max-width:440px;height:460px;display:block;cursor:grab;outline:none;filter:drop-shadow(0 20px 48px #000000ba)}
-.mascot-canvas:active{cursor:grabbing}
-.mascot-interactive-hint{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:11px;color:var(--gold);background:#111520cc;padding:4px 12px;border-radius:99px;border:1px solid #333d50;pointer-events:none;opacity:.88;white-space:nowrap}
-.mascot-speech{position:absolute;top:10px;right:-10px;background:#1c222e;border:1px solid var(--gold);color:#f8fafc;font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:8px 14px;border-radius:14px;box-shadow:0 10px 24px #0009,0 0 12px #f0ad5f33;z-index:10;opacity:0;transform:translateY(8px) scale(.9);transition:opacity .25s cubic-bezier(.18,.89,.32,1.28),transform .25s cubic-bezier(.18,.89,.32,1.28);pointer-events:none;white-space:nowrap}
-.mascot-speech::after{content:"";position:absolute;bottom:-6px;left:22px;width:10px;height:10px;background:#1c222e;border-right:1px solid var(--gold);border-bottom:1px solid var(--gold);transform:rotate(45deg)}
-.mascot-speech.visible{opacity:1;transform:translateY(0) scale(1)}
+.mascot-canvas:active{cursor:grabbing}
 
 /* 3D SLANTED MODE CARDS (FROM IMAGE 2, WITH IMAGE 1 PALETTE) */
 .home-modes-section{position:relative;z-index:2;margin-top:12px}
@@ -113,9 +112,6 @@ body.game-mode{background:var(--bg)}body.game-mode main{max-width:none;padding:0
  .home-subtext{margin:14px auto 22px}
  .home-cta-row{justify-content:center}
  .mascot-canvas{max-width:320px;height:350px}
- .mascot-speech{right:auto;left:50%;transform:translateX(-50%) translateY(8px) scale(.9)}
- .mascot-speech.visible{transform:translateX(-50%) translateY(0) scale(1)}
- .mascot-speech::after{left:50%;transform:translateX(-50%) rotate(45deg)}
  .roomlayout{grid-template-columns:1fr}
 }
 @media(max-width:700px){
@@ -146,7 +142,6 @@ body.game-mode{background:var(--bg)}body.game-mode main{max-width:none;padding:0
  .home-hero-art{height:100%;min-height:0;max-height:460px}
  .mascot-canvas{height:100%;max-height:460px;min-height:0;max-width:440px}
  .mascot-aura{width:min(32vw,44svh);height:min(32vw,44svh)}
- .mascot-interactive-hint{bottom:0;font-size:10px}
  .home-modes-section{height:100%;min-height:0;margin:0;display:flex;flex-direction:column}
  .home-modes-track{min-height:0;flex:1;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(95px,.58fr);gap:clamp(12px,1.6vw,20px);padding-top:clamp(30px,6svh,64px)}
  .mode-3d-card,.mode-3d-card.more-card{height:100%;min-height:0;grid-column:auto;padding:12px 14px}
@@ -191,15 +186,7 @@ function user(){ $('#userbutton').innerHTML='<img alt="Profil resmi" src="'+avat
 function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),4500)}
 function openModeRoom(mode){requireProfile(()=>createModal(mode))}
 
-let mascotQuotes=['Hazır mısın? Hadi tahmin et! 🎮','Kimin tahmini fiyata en yakın? 🏎️','Bana güven, tam isabet 1.000 puan! 👑','Arkadaşlarını çağır, rekabet başlasın! 🚀','İlan detaylarını iyi incele! 🔍','Tahminin konuşsun! 🏆'],mascotQuoteIdx=0,mascotTimeout=null;
-function petMascot(){
- const bubble=$('#mascotBubble');
- if(bubble){
-  bubble.textContent=mascotQuotes[mascotQuoteIdx%mascotQuotes.length];mascotQuoteIdx++;
-  bubble.classList.add('visible');clearTimeout(mascotTimeout);
-  mascotTimeout=setTimeout(()=>{bubble.classList.remove('visible')},2800);
- }
-}
+
 
 function build3DFox(THREE){
  const foxGroup=new THREE.Group();
@@ -422,7 +409,7 @@ function init3DFox(){
  scene.add(foxGroup);
 
  let mouseX=0,mouseY=0,targetHeadRotY=0,targetHeadRotX=0,isDragging=false,prevDragX=0,dragRotY=0,jumpTime=0,isJumping=false;
- const dragMove=e=>{if(isDragging){dragRotY+=(e.clientX-prevDragX)*0.01;prevDragX=e.clientX}};
+ const dragMove=e=>{if(isDragging){dragRotY=Math.max(-0.65,Math.min(0.65,dragRotY+(e.clientX-prevDragX)*0.005));prevDragX=e.clientX}};
  const stage=document.getElementById('hero-art-stage');
  if(stage){
   stage.onmousemove=e=>{
@@ -434,7 +421,7 @@ function init3DFox(){
   stage.onmousedown=e=>{isDragging=true;prevDragX=e.clientX};
   window.onmouseup=()=>{isDragging=false};
   window.addEventListener('mousemove',dragMove);
-  stage.onclick=()=>{if(!isJumping){isJumping=true;jumpTime=0;petMascot()}};
+  stage.onclick=()=>{if(!isJumping){isJumping=true;jumpTime=0}};
  }
 
  let clock=0;
@@ -446,24 +433,24 @@ function init3DFox(){
   }
   foxAnimId=requestAnimationFrame(animate);
   if(document.hidden)return;
-  clock+=0.025;
+  clock+=0.016;
   headGroup.rotation.y+=(targetHeadRotY-headGroup.rotation.y)*0.08;
   headGroup.rotation.x+=(targetHeadRotX-headGroup.rotation.x)*0.08;
   crownGroup.position.y=2.75+Math.sin(clock*2)*0.08;
-  crownGroup.rotation.y+=0.015;
+  crownGroup.rotation.y+=0.012;
   tailGroup.rotation.y=Math.sin(clock*1.5)*0.22;
   tailGroup.rotation.z=Math.cos(clock*1.5)*0.08;
   earL.rotation.z=-0.42+Math.sin(clock*1.8)*0.03;
   earR.rotation.z=0.42-Math.sin(clock*1.8)*0.03;
   foxGroup.position.y=Math.sin(clock)*0.04;
+  const autoSweep=Math.sin(clock*0.45)*0.55;
+  const targetBodyY=isDragging?dragRotY:autoSweep;
+  foxGroup.rotation.y+=(targetBodyY-foxGroup.rotation.y)*0.05;
+  if(!isDragging)dragRotY+=(autoSweep-dragRotY)*0.04;
   if(isJumping){
    jumpTime+=0.08;
    foxGroup.position.y+=Math.sin(jumpTime*Math.PI)*0.35;
-   foxGroup.rotation.y=dragRotY+Math.sin(jumpTime*Math.PI*2)*0.2;
    if(jumpTime>=1){isJumping=false;jumpTime=0}
-  }else{
-   foxGroup.rotation.y+=(dragRotY-foxGroup.rotation.y)*0.08;
-   if(!isDragging)dragRotY+=0.002;
   }
   renderer.render(scene,camera);
  }
@@ -476,6 +463,32 @@ function home(){
  document.body.classList.add('home-mode');
  $('#breadcrumb').textContent='Ana sayfa';
  $('#content').innerHTML=[
+ '<svg class="home-wave-bl" viewBox="0 0 540 240" fill="none" aria-hidden="true">',
+  '<defs>',
+   '<linearGradient id="blGradBack" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#24131d" stop-opacity=".75"/><stop offset="100%" stop-color="#140f18" stop-opacity="0"/></linearGradient>',
+   '<linearGradient id="blGradMain" x1="0" y1="0" x2="0.8" y2="1"><stop offset="0%" stop-color="#3b1524"/><stop offset="60%" stop-color="#22111c"/><stop offset="100%" stop-color="#120e17"/></linearGradient>',
+   '<linearGradient id="blGlowStroke" x1="0" y1="0" x2="1" y2="0.8"><stop offset="0%" stop-color="#ff4d6d"/><stop offset="40%" stop-color="#e24046"/><stop offset="85%" stop-color="#9f1239" stop-opacity=".4"/><stop offset="100%" stop-color="#e24046" stop-opacity="0"/></linearGradient>',
+   '<linearGradient id="blAccentStroke" x1="0" y1="0" x2="1" y2="0.6"><stop offset="0%" stop-color="#e24046" stop-opacity=".7"/><stop offset="100%" stop-color="#e24046" stop-opacity="0"/></linearGradient>',
+  '</defs>',
+  '<path d="M0 60C140 30 280 110 440 180C480 198 510 216 540 240H0V60Z" fill="url(#blGradBack)"/>',
+  '<path d="M0 95C120 70 250 140 400 200C450 216 495 228 540 240H0V95Z" fill="url(#blGradMain)"/>',
+  '<path d="M0 95C120 70 250 140 400 200C450 216 495 228 540 240" stroke="url(#blGlowStroke)" stroke-width="3" stroke-linecap="round"/>',
+  '<path d="M0 145C95 125 190 170 310 215C365 228 420 236 470 240H0V145Z" fill="#2d121f" opacity=".5"/>',
+  '<path d="M0 145C95 125 190 170 310 215C365 228 420 236 470 240" stroke="url(#blAccentStroke)" stroke-width="1.8" stroke-linecap="round"/>',
+ '</svg>',
+ '<svg class="home-wave-br" viewBox="0 0 580 240" fill="none" aria-hidden="true">',
+  '<defs>',
+   '<linearGradient id="brGradBack" x1="1" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#26141f" stop-opacity=".75"/><stop offset="100%" stop-color="#140f18" stop-opacity="0"/></linearGradient>',
+   '<linearGradient id="brGradMain" x1="1" y1="0" x2="0.2" y2="1"><stop offset="0%" stop-color="#3d1626"/><stop offset="60%" stop-color="#24111d"/><stop offset="100%" stop-color="#120e17"/></linearGradient>',
+   '<linearGradient id="brGlowStroke" x1="1" y1="0" x2="0" y2="0.8"><stop offset="0%" stop-color="#ff4d6d"/><stop offset="40%" stop-color="#e24046"/><stop offset="85%" stop-color="#9f1239" stop-opacity=".4"/><stop offset="100%" stop-color="#e24046" stop-opacity="0"/></linearGradient>',
+   '<linearGradient id="brAccentStroke" x1="1" y1="0" x2="0" y2="0.6"><stop offset="0%" stop-color="#e24046" stop-opacity=".7"/><stop offset="100%" stop-color="#e24046" stop-opacity="0"/></linearGradient>',
+  '</defs>',
+  '<path d="M580 45C440 25 295 105 140 180C95 200 50 220 0 240H580V45Z" fill="url(#brGradBack)"/>',
+  '<path d="M580 80C450 60 310 135 155 198C105 215 55 228 0 240H580V80Z" fill="url(#brGradMain)"/>',
+  '<path d="M580 80C450 60 310 135 155 198C105 215 55 228 0 240" stroke="url(#brGlowStroke)" stroke-width="3" stroke-linecap="round"/>',
+  '<path d="M580 135C475 115 360 168 220 215C160 228 95 236 40 240H580V135Z" fill="#301321" opacity=".5"/>',
+  '<path d="M580 135C475 115 360 168 220 215C160 228 95 236 40 240" stroke="url(#brAccentStroke)" stroke-width="1.8" stroke-linecap="round"/>',
+ '</svg>',
  '<div class="home-brand-row">',
   '<div class="ogz-brand" aria-label="OGZ Game">',
    '<svg class="ogz-brand-crown" viewBox="0 0 48 40" fill="none" aria-hidden="true">',
@@ -511,9 +524,7 @@ function home(){
   '</div>',
   '<div class="home-hero-art" id="hero-art-stage">',
    '<div class="mascot-aura" aria-hidden="true"></div>',
-   '<div class="mascot-speech" id="mascotBubble" aria-live="polite">Hadi başlayalım! 👑</div>',
    '<canvas id="mascotCanvas" class="mascot-canvas" role="img" aria-label="OGZ 3D Tilki Maskotu"></canvas>',
-   '<div class="mascot-interactive-hint"><span>✦ 3D Model: Çevir &amp; Tıkla</span></div>',
   '</div>',
  '</section>',
  '<section class="home-modes-section" aria-label="Oyun Modları">',
