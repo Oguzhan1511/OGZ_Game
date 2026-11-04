@@ -1,3 +1,4 @@
+import {battleshipApi,battleshipState} from "../modes/battleship/battleship.js";
 import {numberRaceApi,numberRaceState,validGridSize} from "../modes/number/number-race.js";
 import { returnToLobby } from "../room-lifecycle.js";
 import { gameImage } from "../performance.js";
@@ -73,6 +74,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
     }
     if (['create', 'join'].includes(action) && !validProfile(b.profile)) return json({ error: 'Oda oluşturmak veya katılmak için önce profilini tamamlamalısın.' }, 400);
     if (typeof token !== 'string' || token.length < 20) return json({ error: 'Profil oturumu geçersiz' }, 400);
+    if(action==='create'&&b.mode==='battleship')return battleshipApi(b,env);
     if(action==='create'&&b.mode==='number-race')return numberRaceApi(b,env);
     if(action==='create'&&b.mode==='auction'&&auctionApi)return auctionApi(b,env);
     if (action === 'create') {
@@ -107,7 +109,10 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         const modeError = mode.validateOptions(b);
         if (modeError) return json({error:modeError},400);
         const next = {code:r.code,host:r.host,mode:b.mode,state:'lobby',gameId:crypto.randomUUID(),expiresAt:Date.now()+86400000,round:0,players:r.players.map(({id,token,name,avatar})=>({id,token,name,avatar,score:0}))};
-        if(b.mode==='number-race'){
+        if(b.mode==='battleship'){
+          if(r.players.length>2)return json({error:'Amiral Battı iki kişilik oynanır.'},409);
+          Object.assign(next,battleshipState());next.players.forEach(p=>Object.assign(p,{fleet:[],shots:[],ready:false}));
+        }else if(b.mode==='number-race'){
           if(r.players.length>2)return json({error:'Sayı Yarışı iki kişilik oynanır.'},409);
           if(!validGridSize(b.gridSize))return json({error:'4×4, 6×6 veya 10×10 tablo seç.'},400);
           Object.assign(next,numberRaceState(b.gridSize));next.players.forEach(p=>p.marks=[]);
@@ -127,10 +132,12 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
           env.DB.prepare('UPDATE rooms SET data=?,version=version+1 WHERE code=? AND version=?').bind(JSON.stringify(next),code,row.version)
         ]);
         if (!result[result.length-1].meta.changes) continue;
+        if(next.mode==='battleship')return battleshipApi({...b,action:'get',gameId:next.gameId},env);
         if(next.mode==='number-race')return numberRaceApi({...b,action:'get',gameId:next.gameId},env);
         if (next.mode==='auction') return auctionApi({...b,action:'get',gameId:next.gameId},env);
         return json(view(next,token,cars));
       }
+      if(r.mode==='battleship')return battleshipApi(b,env);
       if(r.mode==='number-race')return numberRaceApi(b,env);
       if (r.mode === 'auction' && auctionApi) return await auctionApi(b, env);
       if (r.state === 'closed') return json({ error: 'Bu oda kapatıldı. Oda kodu artık geçersiz.', closed: true }, 410);

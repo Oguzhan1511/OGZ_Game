@@ -74,6 +74,7 @@ export function createGameModes({
       adminHtml: productAdminHtml,
       adminApi: productAdminApi,
     },
+    'battleship':{id:'battleship',name:'Amiral Battı · 2 kişi',description:'Filonu yerleştir, rakibinin gemilerini batır. İsabet edersen tekrar ateş et.',validateOptions(){return null},normalizeOptions(){return null}},
     'number-race': {id:'number-race',name:'Sayı Yarışı · 2 kişi',description:'Sayıyı bul, rakibin doldurmadan tablonu tamamla.',validateOptions(b){return [4,6,10].includes(b.gridSize)?null:'4×4, 6×6 veya 10×10 tablo seç.'},normalizeOptions(){return null}},
     'auction': {
       id: 'auction',

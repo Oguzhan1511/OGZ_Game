@@ -1,3 +1,4 @@
+import {battleshipStyles,getBattleshipClient} from "./modes/battleship/battleship-ui.js";
 import {numberRaceStyles,numberRaceClient} from "./modes/number/number-ui.js";
 import { auctionSeed } from "./modes/auction/auction-seed.js";
 import { selectAuctionItems } from "./modes/auction/auction-selection.js";
@@ -46,7 +47,7 @@ const gameModes = createGameModes({
 });
 
 const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
-const html = createAppShell({numberRaceStyles,numberRaceClient,
+const html = createAppShell({battleshipStyles,battleshipClient:getBattleshipClient(),numberRaceStyles,numberRaceClient,
   finalStandingsStyles, finalStandingsClient,
   gameAudioClient,
   desktopGameStyles,

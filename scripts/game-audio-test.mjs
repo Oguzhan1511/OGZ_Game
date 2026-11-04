@@ -13,3 +13,5 @@ const unsupported=createGameAudio({createContext:()=>null});unsupported.unlock()
 console.log('PASS: gesture unlock, unique round cues across polling, countdown deduplication, submitted-guess silence, completion, auction rounds, mute/volume, hidden tabs and unavailable audio.');
 
 const taps=scheduled.length;assert.equal(audio.play('tap'),true);assert.equal(scheduled.length,taps+1);audio.configure(false);assert.equal(audio.play('tap'),false);console.log('PASS: immediate short tap cue respects mute.');
+
+audio.configure(true,.35);for(const cue of ['cannon','hit','splash','sunk']){const before=scheduled.length;assert.equal(audio.play(cue),true);assert.ok(scheduled.length>before)}console.log('PASS: battleship cannon, hit, miss and sinking cues.');
