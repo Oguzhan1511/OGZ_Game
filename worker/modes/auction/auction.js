@@ -5,16 +5,15 @@ import { gameImage } from "../../performance.js";
 import { auctionCatalog } from "./auction-admin.js";
 export const auctionCategories=Object.fromEntries(auctionSeed.categories.map(c=>[c.id,{name:c.name,icon:c.icon,items:c.products.map(p=>[p.name,p.icon,p.image,p.imageSource])}]));
 function auctionPicture(item){if(!item)return null;const match=Object.values(auctionCategories).flatMap(c=>c.items).find(row=>row[0]===item.name);return {...item,image:gameImage(item.image||match?.[2]),imageSource:item.imageSource||match?.[3]}}
-// Once bidding is no longer competitive, players choose their own remaining items.
+// Keep revealing one shuffled item at a time when only one player can bid.
 function auctionChoice(r){
  if(r.state!=='playing'||r.bid)return null;
  const slots=r.players.filter(p=>p.plate.length<5),minimum=r.items[r.round]?.startPrice||1;
  const eligible=slots.filter(p=>p.balance>=minimum);if(eligible.length===2)return null;
- const remaining=r.items.slice(r.round),paying=slots.filter(p=>remaining.some(item=>p.balance>=(item.startPrice||1)));
- const candidates=paying.length?paying:slots;
+ const candidates=eligible.length?eligible:slots.filter(p=>p.balance>0).length?slots.filter(p=>p.balance>0):slots;
  const player=candidates.find(p=>p.id===r.players[r.round%2]?.id)||candidates[0];
- const affordable=player?remaining.filter(item=>player.balance>=(item.startPrice||1)):[];
- return player?{playerId:player.id,items:(affordable.length?affordable:remaining).map(item=>({...auctionPicture(item),price:affordable.length?(item.startPrice||1):0}))}:null;
+ const other=r.players.find(p=>p.id!==player?.id);
+ return player?{playerId:player.id,price:player.balance>=minimum?minimum:0,canGive:other.plate.length<5}:null;
 }
 function auctionTurn(r){return r.state==='playing'?(auctionChoice(r)?.playerId||(r.bid?r.players.find(p=>p.id!==r.bid.playerId)?.id:r.players[r.round%2]?.id)):null}
 function auctionView(r,token){const p=r.players.find(p=>p.token===token);return {code:r.code,mode:'auction',state:r.state,gameId:r.gameId,category:r.category,categoryName:r.categoryName||auctionCategories[r.category]?.name||'Açık artırma',round:r.round,rounds:10,budget:20,turnPlayerId:auctionTurn(r),choice:auctionChoice(r),serverNow:Date.now(),isHost:r.host===token,me:p?.id,players:r.players.map(({token,...p})=>({...p,plate:p.plate.map(auctionPicture)})),item:r.state==='lobby'||r.state==='finished'?null:auctionPicture(r.items[r.round]),bid:r.bid,lastSale:auctionPicture(r.lastSale),sales:r.sales.map(auctionPicture),auctionVersion:r.auctionVersion||0,lastGame:r.lastGame}}
@@ -39,7 +38,7 @@ export async function auctionApi(b,env){
  const category=(await auctionCatalog(env)).catalog.categories.find(c=>c.id===r.category&&!c.archived);if(!category||category.products.filter(p=>!p.archived).length<10)return reply({error:'Bu kategoride en az 10 aktif ürün gerekli.'},409);r.categoryName=category.name;r.gameId=crypto.randomUUID();const tokens=r.players.map(p=>p.token);const history=await env.DB.prepare('SELECT listing_id,SUM(seen_count) AS seen_count,MAX(seen_at) AS last_seen FROM listing_history WHERE token IN ('+tokens.map(()=>'?').join(',')+') GROUP BY listing_id').bind(...tokens).all();r.items=selectAuctionItems(category.products.map(p=>({...p,historyKey:'auction:'+r.category+':'+p.id})),history.results);recordSelection=true;r.round=0;r.bid=null;r.sales=[];r.lastSale=null;r.players.forEach(p=>{p.balance=20;p.plate=[]});r.state='playing';r.deadline=null;r.expiresAt=Date.now()+86400000;changed=true;
  }else if(b.action==='bid'){
  const amount=Number(b.amount);if(r.state!=='playing'||b.round!==r.round)error='Bu ürünün açık artırması kapandı.';
- else if(auctionChoice(r))error='Kalan ürünlerden birini seç.';
+ else if(auctionChoice(r))error='Bu ürünü al veya rakibine ver.';
  else if(auctionTurn(r)!==player.id)error='Teklif sırası rakibinde.';
  else if(!Number.isSafeInteger(amount)||amount<1||amount>player.balance)error='Kalan bütçene uygun tam TL teklif et.';
  else if(player.plate.length>=5)error='Tabağın dolu; 5 ürün aldın.';
@@ -47,11 +46,12 @@ export async function auctionApi(b,env){
  else if(amount<Math.max((r.bid?.amount||0)+1,r.items[r.round].startPrice||1))error='Başlangıç fiyatına uygun, mevcut tekliften en az 1 TL fazla teklif et.';
  else{r.bid={amount,playerId:player.id};r.deadline=null;r.noBidNotice=false;changed=true}
  }else if(b.action==='choose'){
- const choice=auctionChoice(r),selected=choice?.items.find(item=>item.id===b.itemId);
+ const choice=auctionChoice(r),other=r.players.find(p=>p.id!==player.id);
  if(r.state!=='playing'||b.round!==r.round)error='Bu ürünün seçimi kapandı.';
  else if(!choice||choice.playerId!==player.id)error='Ürün seçme sırası rakibinde.';
- else if(!selected)error='Kalan ürünlerden birini seç.';
- else{const index=r.items.findIndex((item,i)=>i>=r.round&&item.id===selected.id);[r.items[r.round],r.items[index]]=[r.items[index],r.items[r.round]];auctionAward(r,player,selected.price,selected.price===0);r.state='reveal';r.deadline=null;changed=true}
+ else if(!['keep','give'].includes(b.decision))error='Bu ürünü al veya rakibine ver.';
+ else if(b.decision==='give'&&!choice.canGive)error='Rakibin 5 ürün aldı; bu ürünü kendine almalısın.';
+ else{const price=b.decision==='keep'?choice.price:0;auctionAward(r,b.decision==='keep'?player:other,price,price===0);r.state='reveal';r.deadline=null;changed=true}
  }else if(b.action==='pass'){
  if(r.state!=='playing'||b.round!==r.round)error='Bu ürünün açık artırması kapandı.';
  else if(auctionTurn(r)!==player.id)error='Teklif sırası rakibinde.';
