@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 
 const moduleMap = [
+  ['./modes/number/number-ui.js','worker/modes/number/number-ui.js'],
   ['./modes/auction/auction-seed.js','worker/modes/auction/auction-seed.js'],
   ['./modes/auction/auction-selection.js','worker/modes/auction/auction-selection.js'],
   ['./ui/final-standings.js','worker/ui/final-standings.js'],
@@ -29,6 +30,7 @@ const moduleMap = [
   ['./modes/car/media-manifest.js', 'worker/modes/car/media-manifest.js'],
   ['./game-modes.js', 'worker/game-modes.js'],
   ['./services/room-service.js', 'worker/services/room-service.js'],
+  ['../modes/number/number-race.js','worker/modes/number/number-race.js'],
   ['./services/media.js', 'worker/services/media.js'],
   ['./ui/app-shell.js', 'worker/ui/app-shell.js']
 ];

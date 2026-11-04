@@ -17,6 +17,7 @@ function renderAuctionFinal(){
  window.scrollTo({top:0,behavior:'instant'});
 }
 function renderFinalStandings(){
+ if(room.lastGame.mode==='number-race'){renderNumberFinal();return}
  if(room.lastGame.mode==='auction'){renderAuctionFinal();return}
  clearInterval(timer);resetMobileRoundRanking();document.body.classList.remove('game-mode','product-game','auction-active','home-mode');$('#breadcrumb').textContent='Oyun sonuçları';
  const players=rankFinalPlayers(room.lastGame.players),number=n=>new Intl.NumberFormat('tr-TR').format(n);

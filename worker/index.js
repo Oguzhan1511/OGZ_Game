@@ -1,3 +1,4 @@
+import {numberRaceStyles,numberRaceClient} from "./modes/number/number-ui.js";
 import { auctionSeed } from "./modes/auction/auction-seed.js";
 import { selectAuctionItems } from "./modes/auction/auction-selection.js";
 import { finalStandingsStyles, finalStandingsClient } from "./ui/final-standings.js";
@@ -45,7 +46,7 @@ const gameModes = createGameModes({
 });
 
 const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
-const html = createAppShell({
+const html = createAppShell({numberRaceStyles,numberRaceClient,
   finalStandingsStyles, finalStandingsClient,
   gameAudioClient,
   desktopGameStyles,

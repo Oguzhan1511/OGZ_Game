@@ -1,6 +1,7 @@
 // Small synthesized cues: no audio downloads or network requests in the game loop.
 export function createGameAudio({createContext,isHidden=()=>false}={}) {
   const notes={
+    tap:[[1250,0,.035]],
     round:[[523,0,.09],[659,.09,.09],[784,.18,.15]],
     hurry:[[880,0,.045],[880,.09,.045]],
     submit:[[659,0,.06],[988,.065,.12]],
