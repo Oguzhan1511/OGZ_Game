@@ -1177,6 +1177,47 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
 @media (max-width: 900px) {
   .lobby-selected-mode { grid-template-columns: 1fr; }
 }
+/* ===== Lobby: fit one viewport, edge to edge ===== */
+body.lobby-mode { overflow: hidden; }
+body.lobby-mode > main,
+body.lobby-mode main.lobby-main-grid {
+  max-width: none;
+  margin: 0;
+}
+body.lobby-mode > main {
+  height: 100vh;
+  padding: 64px 0 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.lobby-dashboard,
+.lobby-settings { height: 100%; width: 100%; min-height: 0; }
+.lobby-settings { display: block; }
+body.lobby-mode main.lobby-main-grid {
+  height: 100%;
+  padding: 0;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 0;
+}
+.lobby-left-column,
+.lobby-sidebar { gap: 0; min-height: 0; height: 100%; }
+.lobby-left-column > .lobby-panel:first-child { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.lobby-sidebar > .lobby-panel:nth-child(2) { flex: 1 1 auto; min-height: 0; overflow: auto; }
+.lobby-panel { padding: clamp(14px, 2vh, 26px) clamp(16px, 2vw, 32px); gap: clamp(10px, 1.6vh, 18px); border-width: 0 0 1px 0; }
+.lobby-sidebar > .lobby-panel { border-left: 1px solid var(--line-light); }
+.lobby-selected-mode .lobby-art-box { max-height: 24vh; width: auto; justify-self: center; }
+.lobby-selected-mode { grid-template-columns: minmax(160px, 280px) minmax(0, 1fr); }
+.lobby-bottom-bar { padding: 14px clamp(16px, 2vw, 32px); background: var(--panel); border-top: 1px solid var(--line-light); margin: 0; }
+@media (max-width: 900px) {
+  body.lobby-mode { overflow: auto; }
+  body.lobby-mode > main { height: auto; overflow: visible; }
+  .lobby-dashboard, .lobby-settings, body.lobby-mode main.lobby-main-grid { height: auto; }
+  body.lobby-mode main.lobby-main-grid { grid-template-columns: 1fr; }
+  .lobby-left-column, .lobby-sidebar { height: auto; }
+  .lobby-sidebar > .lobby-panel { border-left: 0; }
+}
 .box {
   background: var(--panel);
   border: 1px solid var(--line);
