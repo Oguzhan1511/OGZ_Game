@@ -9,7 +9,10 @@ const dbPath = path.join(root, 'game.sqlite');
 const sqlite = new DatabaseSync(dbPath);
 
 // Ensure drizzle migrations run if table doesn't exist
-for (const file of fs.readdirSync('drizzle').filter(f => f.endsWith('.sql')).sort()) {
+for (const file of fs
+  .readdirSync('drizzle')
+  .filter(f => f.endsWith('.sql'))
+  .sort()) {
   try {
     sqlite.exec(fs.readFileSync('drizzle/' + file, 'utf8'));
   } catch (e) {
@@ -80,13 +83,15 @@ const seedItems = [
   // Oyuncak & Ofis & Yapı Market (3 ürün)
   { name: 'LEGO Star Wars Millennium Falcon 75257', category: 'toys', price: 6999 },
   { name: 'Logitech MX Master 3S Kablosuz Mouse', category: 'office', price: 3799 },
-  { name: 'Bosch Darbeli Matkap GSB 13 RE', category: 'diy', price: 2450 }
+  { name: 'Bosch Darbeli Matkap GSB 13 RE', category: 'diy', price: 2450 },
 ];
 
 fs.mkdirSync('data', { recursive: true });
 fs.writeFileSync('data/products-seed.json', JSON.stringify(seedItems, null, 2), 'utf8');
 
-const insertStmt = sqlite.prepare('INSERT OR REPLACE INTO products(id, data, created_at) VALUES(?, ?, ?)');
+const insertStmt = sqlite.prepare(
+  'INSERT OR REPLACE INTO products(id, data, created_at) VALUES(?, ?, ?)'
+);
 
 let count = 0;
 for (const item of seedItems) {
@@ -99,7 +104,7 @@ for (const item of seedItems) {
     price: item.price,
     image,
     createdAt: Date.now() - (seedItems.length - count) * 60000,
-    archived: false
+    archived: false,
   };
   insertStmt.run(id, JSON.stringify(record), record.createdAt);
   count++;
@@ -108,4 +113,3 @@ for (const item of seedItems) {
 console.log(`Successfully seeded ${count} products into .local/game.sqlite!`);
 const total = sqlite.prepare('SELECT count(*) as n FROM products').get().n;
 console.log(`Total products in local database: ${total}`);
-

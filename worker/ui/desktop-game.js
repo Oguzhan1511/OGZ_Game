@@ -1,4 +1,4 @@
-export const desktopGameStyles=String.raw`
+export const desktopGameStyles = String.raw`
 body.game-mode header.topbar{display:none}.game-damage .panel-heading,.game-damage .damage-summary{display:none}
 @media(min-width:701px){
  body.game-mode main{padding:0 16px 12px;max-width:none}.game-mode .game-top{height:64px;padding:8px 0 12px;gap:16px;box-sizing:border-box}.game-top .game-back{width:40px;height:40px;border-radius:11px;font-size:23px}.game-top .game-progress>div:first-child{margin-bottom:7px}.game-top .round-timer{font-size:20px;padding:9px 16px;min-width:100px;text-align:center}
@@ -29,7 +29,7 @@ body.game-mode header.topbar{display:none}.game-damage .panel-heading,.game-dama
 `;
 
 // One viewport budget for active games; do not reserve the home/lobby toolbar twice.
-export const gameViewportStyles=String.raw`
+export const gameViewportStyles = String.raw`
 body:is(.auction-active,.number-active,.battleship-active)>main{max-width:none;padding:8px 16px}
 body.game-mode>main{padding:0 16px 12px;max-width:none}
 .bh-mobile-tabs{display:none}

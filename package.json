@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "bash scripts/build.sh",
+    "format": "node scripts/format-repo.mjs",
     "test": "node scripts/test.mjs && node scripts/catalog-test.mjs && node scripts/admin-test.mjs && node scripts/supabase-test.mjs && node scripts/ocr-test.mjs && node scripts/vercel-test.mjs && node scripts/guess-input-test.mjs && node scripts/mobile-guess-test.mjs && node scripts/restart-test.mjs && node scripts/round-ranking-test.mjs && node scripts/products-test.mjs && node scripts/product-supabase-test.mjs && node scripts/car-storage-test.mjs && node scripts/auction-test.mjs && node scripts/game-db-test.mjs && node scripts/performance-test.mjs && node scripts/change-mode-test.mjs && node scripts/game-audio-test.mjs && node scripts/final-standings-test.mjs && node scripts/auction-selection-test.mjs && node scripts/number-race-test.mjs && node scripts/battleship-test.mjs && node scripts/number-sync-test.mjs && node scripts/room-url-test.mjs",
     "dev": "node scripts/dev.mjs",
     "seed:products": "node scripts/seed-products.mjs",
@@ -11,6 +12,7 @@
     "build:room": "node scripts/build-room-function.mjs"
   },
   "devDependencies": {
+    "prettier": "^3.9.10",
     "tesseract.js": "7.0.0"
   },
   "engines": {

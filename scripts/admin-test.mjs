@@ -1,35 +1,267 @@
 import assert from 'node:assert/strict';
-import {parseListingNumber} from '../worker/services/admin.js';
+import { parseListingNumber } from '../worker/services/admin.js';
 import worker from '../worker/index.js';
-import {createDB} from './test-db.mjs';
-const DB=createDB(),objects=new Map(),BUCKET={async put(k,b,meta){objects.set(k,{body:b,httpMetadata:meta.httpMetadata})},async get(k){return objects.get(k)},async delete(k){objects.delete(k)}};
-const env={DB,BUCKET},url='https://example.test',headers={'oai-authenticated-user-email':'selenetarotspell@gmail.com',origin:url};
-assert.equal((await worker.fetch(new Request(url+'/api/admin/listings'),env)).status,403);
-assert.equal((await worker.fetch(new Request(url+'/api/admin/listings',{headers:{'oai-authenticated-user-email':'other@example.com'}}),env)).status,403);
-function form(valid=true){const f=new FormData();for(const [k,v] of Object.entries({mode:'car-price',brand:'Test',model:'Model',family:'Model',year:'2020',km:'10000',price:'1234567',fuel:'Benzin',gear:'Otomatik'}))f.set(k,v);for(const name of ['photo','diagram'])f.set(name,new File([valid?new Uint8Array([255,216,255,...Array(20).fill(0)]):'invalid image bytes'],name+'.jpg',{type:'image/jpeg'}));return f}
-assert.equal((await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:form(false)}),env)).status,400);
-assert.equal(objects.size,0);
-assert.equal((await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers:{...headers,origin:'https://other.test'},body:form()}),env)).status,403);
-const saved=await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:form()}),env);assert.equal(saved.status,201);const {listing}=await saved.json();assert.equal(objects.size,2);
-const read=await (await worker.fetch(new Request(url+'/api/admin/listings',{headers}),env)).json();assert.equal(read.listings[0].car[6],1234567);
-assert.equal((await worker.fetch(new Request(url+listing.car[10]),env)).status,200);
-const token=crypto.randomUUID();async function call(action,extra={}){return (await worker.fetch(new Request(url+'/api/room',{method:'POST',body:JSON.stringify({action,token,...extra})}),env)).json()}
-const room=await call('create',{profile:{name:'Test',avatar:'a0'},mode:'car-price',rounds:10,guessSeconds:30});const started=await call('start',{code:room.code});assert.equal(started.state,'playing');assert.equal(started.customCars,undefined);assert.equal(started.price,undefined);assert.equal(started.car.length,11);const stored=JSON.parse(DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(room.code).data);assert.equal(stored.customCars.length,stored.rounds);const selectedListing=stored.customCars.find(c=>c[11]?.id===listing.id);if(selectedListing)assert.equal(selectedListing[6],1234567);
-const html=await(await worker.fetch(new Request(url+'/admin'),env)).text();new Function(html.match(/<script>([\s\S]*?)<\/script>/)[1]);console.log('PASS: admin authorization, origin checks, upload validation, persistent listings, media, game catalog snapshot and price privacy, browser syntax.');
+import { createDB } from './test-db.mjs';
+const DB = createDB(),
+  objects = new Map(),
+  BUCKET = {
+    async put(k, b, meta) {
+      objects.set(k, { body: b, httpMetadata: meta.httpMetadata });
+    },
+    async get(k) {
+      return objects.get(k);
+    },
+    async delete(k) {
+      objects.delete(k);
+    },
+  };
+const env = { DB, BUCKET },
+  url = 'https://example.test',
+  headers = { 'oai-authenticated-user-email': 'selenetarotspell@gmail.com', origin: url };
+assert.equal((await worker.fetch(new Request(url + '/api/admin/listings'), env)).status, 403);
+assert.equal(
+  (
+    await worker.fetch(
+      new Request(url + '/api/admin/listings', {
+        headers: { 'oai-authenticated-user-email': 'other@example.com' },
+      }),
+      env
+    )
+  ).status,
+  403
+);
+function form(valid = true) {
+  const f = new FormData();
+  for (const [k, v] of Object.entries({
+    mode: 'car-price',
+    brand: 'Test',
+    model: 'Model',
+    family: 'Model',
+    year: '2020',
+    km: '10000',
+    price: '1234567',
+    fuel: 'Benzin',
+    gear: 'Otomatik',
+  }))
+    f.set(k, v);
+  for (const name of ['photo', 'diagram'])
+    f.set(
+      name,
+      new File(
+        [valid ? new Uint8Array([255, 216, 255, ...Array(20).fill(0)]) : 'invalid image bytes'],
+        name + '.jpg',
+        { type: 'image/jpeg' }
+      )
+    );
+  return f;
+}
+assert.equal(
+  (
+    await worker.fetch(
+      new Request(url + '/api/admin/listings', { method: 'POST', headers, body: form(false) }),
+      env
+    )
+  ).status,
+  400
+);
+assert.equal(objects.size, 0);
+assert.equal(
+  (
+    await worker.fetch(
+      new Request(url + '/api/admin/listings', {
+        method: 'POST',
+        headers: { ...headers, origin: 'https://other.test' },
+        body: form(),
+      }),
+      env
+    )
+  ).status,
+  403
+);
+const saved = await worker.fetch(
+  new Request(url + '/api/admin/listings', { method: 'POST', headers, body: form() }),
+  env
+);
+assert.equal(saved.status, 201);
+const { listing } = await saved.json();
+assert.equal(objects.size, 2);
+const read = await (
+  await worker.fetch(new Request(url + '/api/admin/listings', { headers }), env)
+).json();
+assert.equal(read.listings[0].car[6], 1234567);
+assert.equal((await worker.fetch(new Request(url + listing.car[10]), env)).status, 200);
+const token = crypto.randomUUID();
+async function call(action, extra = {}) {
+  return (
+    await worker.fetch(
+      new Request(url + '/api/room', {
+        method: 'POST',
+        body: JSON.stringify({ action, token, ...extra }),
+      }),
+      env
+    )
+  ).json();
+}
+const room = await call('create', {
+  profile: { name: 'Test', avatar: 'a0' },
+  mode: 'car-price',
+  rounds: 10,
+  guessSeconds: 30,
+});
+const started = await call('start', { code: room.code });
+assert.equal(started.state, 'playing');
+assert.equal(started.customCars, undefined);
+assert.equal(started.price, undefined);
+assert.equal(started.car.length, 11);
+const stored = JSON.parse(
+  DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(room.code).data
+);
+assert.equal(stored.customCars.length, stored.rounds);
+const selectedListing = stored.customCars.find(c => c[11]?.id === listing.id);
+if (selectedListing) assert.equal(selectedListing[6], 1234567);
+const html = await (await worker.fetch(new Request(url + '/admin'), env)).text();
+new Function(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
+console.log(
+  'PASS: admin authorization, origin checks, upload validation, persistent listings, media, game catalog snapshot and price privacy, browser syntax.'
+);
 
-for(const [input,expected] of [['20.087',20087],['20087',20087],['20.087,5',20087.5],['20,5',20.5],['20.5',20.5],['6.750.000',6750000],['6750000',6750000],['6.750.000,50',6750000.5]])assert.equal(parseListingNumber(input),expected);
-for(const invalid of ['', '6.750000','1.2.3','-1','abc'])assert.ok(Number.isNaN(parseListingNumber(invalid)));
-const localized=form();localized.set('km','20.087,5');localized.set('price','6.750.000,50');const localizedResponse=await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:localized}),env);assert.equal(localizedResponse.status,201);const localizedData=await localizedResponse.json();assert.equal(localizedData.listing.car[3],20087.5);assert.equal(localizedData.listing.car[6],6750000.5);console.log('PASS: Turkish thousands separators, decimal km and price, malformed values.');
+for (const [input, expected] of [
+  ['20.087', 20087],
+  ['20087', 20087],
+  ['20.087,5', 20087.5],
+  ['20,5', 20.5],
+  ['20.5', 20.5],
+  ['6.750.000', 6750000],
+  ['6750000', 6750000],
+  ['6.750.000,50', 6750000.5],
+])
+  assert.equal(parseListingNumber(input), expected);
+for (const invalid of ['', '6.750000', '1.2.3', '-1', 'abc'])
+  assert.ok(Number.isNaN(parseListingNumber(invalid)));
+const localized = form();
+localized.set('km', '20.087,5');
+localized.set('price', '6.750.000,50');
+const localizedResponse = await worker.fetch(
+  new Request(url + '/api/admin/listings', { method: 'POST', headers, body: localized }),
+  env
+);
+assert.equal(localizedResponse.status, 201);
+const localizedData = await localizedResponse.json();
+assert.equal(localizedData.listing.car[3], 20087.5);
+assert.equal(localizedData.listing.car[6], 6750000.5);
+console.log('PASS: Turkish thousands separators, decimal km and price, malformed values.');
 
-for(const value of ['130.000.000','10.000.000.000']){const expensive=form();expensive.set('price',value);const response=await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:expensive}),env);assert.equal(response.status,201);assert.equal((await response.json()).listing.car[6],parseListingNumber(value))}
-const overLimit=form();overLimit.set('price','10.000.000.001');assert.equal((await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:overLimit}),env)).status,400);
-const expensiveRoom=await call('create',{profile:{name:'Luxury',avatar:'a0'},mode:'car-price',rounds:10,guessSeconds:30});await call('start',{code:expensiveRoom.code});const largeGuess=await call('guess',{code:expensiveRoom.code,guess:130000000});assert.equal(largeGuess.state,'reveal');assert.equal(largeGuess.results[0].guess,130000000);console.log('PASS: 130 million TL listings and guesses, 10 billion TL upper bound.');
+for (const value of ['130.000.000', '10.000.000.000']) {
+  const expensive = form();
+  expensive.set('price', value);
+  const response = await worker.fetch(
+    new Request(url + '/api/admin/listings', { method: 'POST', headers, body: expensive }),
+    env
+  );
+  assert.equal(response.status, 201);
+  assert.equal((await response.json()).listing.car[6], parseListingNumber(value));
+}
+const overLimit = form();
+overLimit.set('price', '10.000.000.001');
+assert.equal(
+  (
+    await worker.fetch(
+      new Request(url + '/api/admin/listings', { method: 'POST', headers, body: overLimit }),
+      env
+    )
+  ).status,
+  400
+);
+const expensiveRoom = await call('create', {
+  profile: { name: 'Luxury', avatar: 'a0' },
+  mode: 'car-price',
+  rounds: 10,
+  guessSeconds: 30,
+});
+await call('start', { code: expensiveRoom.code });
+const largeGuess = await call('guess', { code: expensiveRoom.code, guess: 130000000 });
+assert.equal(largeGuess.state, 'reveal');
+assert.equal(largeGuess.results[0].guess, 130000000);
+console.log('PASS: 130 million TL listings and guesses, 10 billion TL upper bound.');
 
-const originalImage=listing.car[10],originalDiagram=listing.car[11].damageImage;
-const edit=form();edit.set('editId',listing.id);edit.set('price','130.000.000');edit.delete('photo');edit.delete('diagram');let edited=await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:edit}),env);assert.equal(edited.status,201);edited=(await edited.json()).listing;assert.equal(edited.id,listing.id);assert.equal(edited.car[6],130000000);assert.equal(edited.car[10],originalImage);assert.equal(edited.car[11].damageImage,originalDiagram);
-const archive=async archived=>worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers:{...headers,'content-type':'application/json'},body:JSON.stringify({action:'archive',id:listing.id,archived})}),env);
-assert.equal((await archive(true)).status,200);let current=await(await worker.fetch(new Request(url+'/api/admin/listings',{headers}),env)).json();assert.equal(current.listings.find(x=>x.id===listing.id).archived,true);
-const archivedRoom=await call('create',{profile:{name:'Archive',avatar:'a0'},mode:'car-price',rounds:10,guessSeconds:30});await call('start',{code:archivedRoom.code});const archiveSnapshot=JSON.parse(DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(archivedRoom.code).data);assert.ok(!archiveSnapshot.customCars.some(c=>c[11]?.id===listing.id));
-assert.equal((await archive(false)).status,200);current=await(await worker.fetch(new Request(url+'/api/admin/listings',{headers}),env)).json();assert.equal(current.listings.find(x=>x.id===listing.id).archived,false);assert.equal(current.listings.find(x=>x.id===listing.id).car[6],130000000);
-const denied=await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers:{origin:url,'content-type':'application/json'},body:JSON.stringify({action:'archive',id:listing.id,archived:true})}),env);assert.equal(denied.status,403);console.log('PASS: edit prices while preserving IDs and images, archive exclusion from future games, restoration and authorization.');
-const suv=form();suv.set('vehicleType','suv');const suvResponse=await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:suv}),env);assert.equal(suvResponse.status,201);const suvListing=(await suvResponse.json()).listing;assert.equal(suvListing.car[11].vehicleType,'suv');const badCategory=form();badCategory.set('vehicleType','unknown');assert.equal((await worker.fetch(new Request(url+'/api/admin/listings',{method:'POST',headers,body:badCategory}),env)).status,400);console.log('PASS: SUV category storage and invalid category rejection.');
+const originalImage = listing.car[10],
+  originalDiagram = listing.car[11].damageImage;
+const edit = form();
+edit.set('editId', listing.id);
+edit.set('price', '130.000.000');
+edit.delete('photo');
+edit.delete('diagram');
+let edited = await worker.fetch(
+  new Request(url + '/api/admin/listings', { method: 'POST', headers, body: edit }),
+  env
+);
+assert.equal(edited.status, 201);
+edited = (await edited.json()).listing;
+assert.equal(edited.id, listing.id);
+assert.equal(edited.car[6], 130000000);
+assert.equal(edited.car[10], originalImage);
+assert.equal(edited.car[11].damageImage, originalDiagram);
+const archive = async archived =>
+  worker.fetch(
+    new Request(url + '/api/admin/listings', {
+      method: 'POST',
+      headers: { ...headers, 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'archive', id: listing.id, archived }),
+    }),
+    env
+  );
+assert.equal((await archive(true)).status, 200);
+let current = await (
+  await worker.fetch(new Request(url + '/api/admin/listings', { headers }), env)
+).json();
+assert.equal(current.listings.find(x => x.id === listing.id).archived, true);
+const archivedRoom = await call('create', {
+  profile: { name: 'Archive', avatar: 'a0' },
+  mode: 'car-price',
+  rounds: 10,
+  guessSeconds: 30,
+});
+await call('start', { code: archivedRoom.code });
+const archiveSnapshot = JSON.parse(
+  DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(archivedRoom.code).data
+);
+assert.ok(!archiveSnapshot.customCars.some(c => c[11]?.id === listing.id));
+assert.equal((await archive(false)).status, 200);
+current = await (
+  await worker.fetch(new Request(url + '/api/admin/listings', { headers }), env)
+).json();
+assert.equal(current.listings.find(x => x.id === listing.id).archived, false);
+assert.equal(current.listings.find(x => x.id === listing.id).car[6], 130000000);
+const denied = await worker.fetch(
+  new Request(url + '/api/admin/listings', {
+    method: 'POST',
+    headers: { origin: url, 'content-type': 'application/json' },
+    body: JSON.stringify({ action: 'archive', id: listing.id, archived: true }),
+  }),
+  env
+);
+assert.equal(denied.status, 403);
+console.log(
+  'PASS: edit prices while preserving IDs and images, archive exclusion from future games, restoration and authorization.'
+);
+const suv = form();
+suv.set('vehicleType', 'suv');
+const suvResponse = await worker.fetch(
+  new Request(url + '/api/admin/listings', { method: 'POST', headers, body: suv }),
+  env
+);
+assert.equal(suvResponse.status, 201);
+const suvListing = (await suvResponse.json()).listing;
+assert.equal(suvListing.car[11].vehicleType, 'suv');
+const badCategory = form();
+badCategory.set('vehicleType', 'unknown');
+assert.equal(
+  (
+    await worker.fetch(
+      new Request(url + '/api/admin/listings', { method: 'POST', headers, body: badCategory }),
+      env
+    )
+  ).status,
+  400
+);
+console.log('PASS: SUV category storage and invalid category rejection.');

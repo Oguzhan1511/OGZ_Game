@@ -1,1 +1,1 @@
-export * from "./modes/auction/auction-admin.js";
+export * from './modes/auction/auction-admin.js';

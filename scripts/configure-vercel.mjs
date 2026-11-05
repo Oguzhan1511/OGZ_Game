@@ -1,3 +1,26 @@
-import {spawnSync} from 'node:child_process';
-if(process.stdin.isTTY)process.stdin.setRawMode(true);process.stdout.write('Ready for Vercel environment JSON on stdin (hidden).\n');let input='';for await(const chunk of process.stdin){input+=chunk;if(input.includes('\n'))break}if(process.stdin.isTTY)process.stdin.setRawMode(false);const config=JSON.parse(input.trim());
-for(const [key,value] of Object.entries(config.values)){for(const target of ['production']){const result=spawnSync('vercel',['env','add',key,target,'--sensitive','--force','--yes','--scope',config.scope],{input:value+'\n',encoding:'utf8',maxBuffer:200000});if(result.status!==0){console.error('Environment configuration failed: '+key+' / '+target);console.error((result.stderr+result.stdout).replaceAll(value,'[redacted]').slice(-1500));process.exit(1)}}console.log('Configured '+key)}process.exit(0);
+import { spawnSync } from 'node:child_process';
+if (process.stdin.isTTY) process.stdin.setRawMode(true);
+process.stdout.write('Ready for Vercel environment JSON on stdin (hidden).\n');
+let input = '';
+for await (const chunk of process.stdin) {
+  input += chunk;
+  if (input.includes('\n')) break;
+}
+if (process.stdin.isTTY) process.stdin.setRawMode(false);
+const config = JSON.parse(input.trim());
+for (const [key, value] of Object.entries(config.values)) {
+  for (const target of ['production']) {
+    const result = spawnSync(
+      'vercel',
+      ['env', 'add', key, target, '--sensitive', '--force', '--yes', '--scope', config.scope],
+      { input: value + '\n', encoding: 'utf8', maxBuffer: 200000 }
+    );
+    if (result.status !== 0) {
+      console.error('Environment configuration failed: ' + key + ' / ' + target);
+      console.error((result.stderr + result.stdout).replaceAll(value, '[redacted]').slice(-1500));
+      process.exit(1);
+    }
+  }
+  console.log('Configured ' + key);
+}
+process.exit(0);

@@ -1,12 +1,93 @@
-import assert from 'node:assert/strict';import worker from '../worker/index.js';import {createDB} from './test-db.mjs';
-const DB=createDB(),host=crypto.randomUUID(),guest=crypto.randomUUID(),profile={name:'Host',avatar:'a0'};let code;
-async function call(action,token=host,extra={}){const response=await worker.fetch(new Request('https://game.test/api/room',{method:'POST',body:JSON.stringify({action,token,code,...extra})}),{DB});return {status:response.status,...await response.json()}}
-const stored=()=>JSON.parse(DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(code).data);
-const room=await call('create',host,{profile,mode:'car-price',rounds:10,guessSeconds:45});code=room.code;assert.equal((await call('restart')).status,403);await call('join',guest,{profile:{name:'Guest',avatar:'a1'}});await call('start');assert.equal((await call('restart')).status,403);
-const original=stored(),oldIds=original.order.map(i=>original.customCars[i][11].id),gameId=original.gameId;
-for(let i=0;i<10;i++){const current=stored(),price=current.customCars[current.order[current.round]][6];await call('guess',host,{guess:price,gameId});await call('guess',guest,{guess:price,gameId});await call('next',host,{gameId})}
-const finished=await call('get');assert.equal(finished.state,'lobby');assert.equal(finished.lastGame.players[0].score,10000);assert.equal(DB.sqlite.prepare('SELECT count(*) n FROM listing_reservations WHERE room_code=?').get(code).n,0);assert.equal((await call('restart',guest)).status,403);assert.ok(finished.players.every(p=>p.score===0));assert.notEqual(finished.gameId,gameId);
-const restarted=await call('restart',host,{gameId:finished.gameId});assert.equal(restarted.status,200);assert.equal(restarted.code,code);assert.equal(restarted.state,'playing');assert.equal(restarted.round,0);assert.notEqual(restarted.gameId,gameId);assert.equal(restarted.rounds,10);assert.equal(restarted.guessSeconds,45);assert.deepEqual(restarted.players.map(p=>[p.id,p.name,p.avatar]),finished.players.map(p=>[p.id,p.name,p.avatar]));assert.ok(restarted.players.every(p=>p.score===0));assert.equal(restarted.submitted,0);assert.equal(restarted.hasGuessed,false);assert.equal(restarted.results,undefined);assert.equal(restarted.price,undefined);assert.equal(restarted.customCars,undefined);assert.ok(restarted.deadline>Date.now());assert.equal(DB.sqlite.prepare('SELECT count(*) n FROM listing_reservations WHERE room_code=?').get(code).n,20);
-const newState=stored(),newIds=newState.order.map(i=>newState.customCars[i][11].id);assert.equal(new Set(newIds).size,10);assert.ok(newIds.filter(id=>oldIds.includes(id)).length<=1);for(const id of oldIds)assert.ok(DB.sqlite.prepare('SELECT seen_at FROM listing_history WHERE token=? AND listing_id=?').get(host,id));
-assert.equal((await call('get',guest)).gameId,restarted.gameId);assert.equal((await call('guess',host,{guess:1000000,gameId})).status,409);assert.equal((await call('restart')).status,403);assert.equal(stored().guesses[original.players[0].id],undefined);await call('close');assert.equal((await call('restart')).status,410);
-console.log('PASS: host-only finished-game restart, same code/players/settings, fresh scoreboard and timer, history-aware shuffle, stale-action rejection and closed-room protection.');
+import assert from 'node:assert/strict';
+import worker from '../worker/index.js';
+import { createDB } from './test-db.mjs';
+const DB = createDB(),
+  host = crypto.randomUUID(),
+  guest = crypto.randomUUID(),
+  profile = { name: 'Host', avatar: 'a0' };
+let code;
+async function call(action, token = host, extra = {}) {
+  const response = await worker.fetch(
+    new Request('https://game.test/api/room', {
+      method: 'POST',
+      body: JSON.stringify({ action, token, code, ...extra }),
+    }),
+    { DB }
+  );
+  return { status: response.status, ...(await response.json()) };
+}
+const stored = () =>
+  JSON.parse(DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(code).data);
+const room = await call('create', host, {
+  profile,
+  mode: 'car-price',
+  rounds: 10,
+  guessSeconds: 45,
+});
+code = room.code;
+assert.equal((await call('restart')).status, 403);
+await call('join', guest, { profile: { name: 'Guest', avatar: 'a1' } });
+await call('start');
+assert.equal((await call('restart')).status, 403);
+const original = stored(),
+  oldIds = original.order.map(i => original.customCars[i][11].id),
+  gameId = original.gameId;
+for (let i = 0; i < 10; i++) {
+  const current = stored(),
+    price = current.customCars[current.order[current.round]][6];
+  await call('guess', host, { guess: price, gameId });
+  await call('guess', guest, { guess: price, gameId });
+  await call('next', host, { gameId });
+}
+const finished = await call('get');
+assert.equal(finished.state, 'lobby');
+assert.equal(finished.lastGame.players[0].score, 10000);
+assert.equal(
+  DB.sqlite.prepare('SELECT count(*) n FROM listing_reservations WHERE room_code=?').get(code).n,
+  0
+);
+assert.equal((await call('restart', guest)).status, 403);
+assert.ok(finished.players.every(p => p.score === 0));
+assert.notEqual(finished.gameId, gameId);
+const restarted = await call('restart', host, { gameId: finished.gameId });
+assert.equal(restarted.status, 200);
+assert.equal(restarted.code, code);
+assert.equal(restarted.state, 'playing');
+assert.equal(restarted.round, 0);
+assert.notEqual(restarted.gameId, gameId);
+assert.equal(restarted.rounds, 10);
+assert.equal(restarted.guessSeconds, 45);
+assert.deepEqual(
+  restarted.players.map(p => [p.id, p.name, p.avatar]),
+  finished.players.map(p => [p.id, p.name, p.avatar])
+);
+assert.ok(restarted.players.every(p => p.score === 0));
+assert.equal(restarted.submitted, 0);
+assert.equal(restarted.hasGuessed, false);
+assert.equal(restarted.results, undefined);
+assert.equal(restarted.price, undefined);
+assert.equal(restarted.customCars, undefined);
+assert.ok(restarted.deadline > Date.now());
+assert.equal(
+  DB.sqlite.prepare('SELECT count(*) n FROM listing_reservations WHERE room_code=?').get(code).n,
+  20
+);
+const newState = stored(),
+  newIds = newState.order.map(i => newState.customCars[i][11].id);
+assert.equal(new Set(newIds).size, 10);
+assert.ok(newIds.filter(id => oldIds.includes(id)).length <= 1);
+for (const id of oldIds)
+  assert.ok(
+    DB.sqlite
+      .prepare('SELECT seen_at FROM listing_history WHERE token=? AND listing_id=?')
+      .get(host, id)
+  );
+assert.equal((await call('get', guest)).gameId, restarted.gameId);
+assert.equal((await call('guess', host, { guess: 1000000, gameId })).status, 409);
+assert.equal((await call('restart')).status, 403);
+assert.equal(stored().guesses[original.players[0].id], undefined);
+await call('close');
+assert.equal((await call('restart')).status, 410);
+console.log(
+  'PASS: host-only finished-game restart, same code/players/settings, fresh scoreboard and timer, history-aware shuffle, stale-action rejection and closed-room protection.'
+);

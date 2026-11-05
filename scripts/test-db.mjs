@@ -1,3 +1,50 @@
-import {DatabaseSync} from 'node:sqlite';
+import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
-export function createDB(){const sqlite=new DatabaseSync(':memory:');for(const file of ['0000_rooms.sql','0001_listing_history.sql','0002_admin_listings.sql','0003_listing_replay.sql','0004_admin_login_attempts.sql','0005_products.sql'])sqlite.exec(fs.readFileSync(new URL('../drizzle/'+file,import.meta.url),'utf8'));return {sqlite,prepare(sql){let args=[];return {bind(...values){args=values;return this},async first(){return sqlite.prepare(sql).get(...args)||null},async all(){return {results:sqlite.prepare(sql).all(...args)}},async run(){return this.sync()},sync(){const r=sqlite.prepare(sql).run(...args);return {meta:{changes:Number(r.changes)}}}}},async batch(statements){sqlite.exec('BEGIN');try{const result=statements.map(s=>s.sync());sqlite.exec('COMMIT');return result}catch(e){sqlite.exec('ROLLBACK');throw e}}}}
+export function createDB() {
+  const sqlite = new DatabaseSync(':memory:');
+  for (const file of [
+    '0000_rooms.sql',
+    '0001_listing_history.sql',
+    '0002_admin_listings.sql',
+    '0003_listing_replay.sql',
+    '0004_admin_login_attempts.sql',
+    '0005_products.sql',
+  ])
+    sqlite.exec(fs.readFileSync(new URL('../drizzle/' + file, import.meta.url), 'utf8'));
+  return {
+    sqlite,
+    prepare(sql) {
+      let args = [];
+      return {
+        bind(...values) {
+          args = values;
+          return this;
+        },
+        async first() {
+          return sqlite.prepare(sql).get(...args) || null;
+        },
+        async all() {
+          return { results: sqlite.prepare(sql).all(...args) };
+        },
+        async run() {
+          return this.sync();
+        },
+        sync() {
+          const r = sqlite.prepare(sql).run(...args);
+          return { meta: { changes: Number(r.changes) } };
+        },
+      };
+    },
+    async batch(statements) {
+      sqlite.exec('BEGIN');
+      try {
+        const result = statements.map(s => s.sync());
+        sqlite.exec('COMMIT');
+        return result;
+      } catch (e) {
+        sqlite.exec('ROLLBACK');
+        throw e;
+      }
+    },
+  };
+}

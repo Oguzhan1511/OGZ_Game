@@ -1,10 +1,30 @@
-export function buildRoundRanking(room){
- const results=new Map((room.results||[]).map(result=>[result.id,result]));
- const rows=room.players.map((player,index)=>{const result=results.get(player.id),gain=result?.points||0;return {id:player.id,name:player.name,avatar:player.avatar,before:player.score-gain,total:player.score,gain,missed:result?.guess==null,index}});
- const before=rows.slice().sort((a,b)=>b.before-a.before||a.index-b.index),after=rows.slice().sort((a,b)=>b.total-a.total||a.index-b.index);
- const positions=new Map(before.map((row,index)=>[row.id,index+1]));return after.map((row,index)=>({...row,rank:index+1,previousRank:positions.get(row.id),movement:positions.get(row.id)-index-1}));
+export function buildRoundRanking(room) {
+  const results = new Map((room.results || []).map(result => [result.id, result]));
+  const rows = room.players.map((player, index) => {
+    const result = results.get(player.id),
+      gain = result?.points || 0;
+    return {
+      id: player.id,
+      name: player.name,
+      avatar: player.avatar,
+      before: player.score - gain,
+      total: player.score,
+      gain,
+      missed: result?.guess == null,
+      index,
+    };
+  });
+  const before = rows.slice().sort((a, b) => b.before - a.before || a.index - b.index),
+    after = rows.slice().sort((a, b) => b.total - a.total || a.index - b.index);
+  const positions = new Map(before.map((row, index) => [row.id, index + 1]));
+  return after.map((row, index) => ({
+    ...row,
+    rank: index + 1,
+    previousRank: positions.get(row.id),
+    movement: positions.get(row.id) - index - 1,
+  }));
 }
-export const roundRankingStyles=String.raw`
+export const roundRankingStyles = String.raw`
 .mobile-round-ranking,.reveal-ranking-link{display:none}
 @media(max-width:700px){
  .game-board[data-state=reveal] .photo-stage{height:135px}.game-board[data-state=reveal] .game-vehicle-info>.vehicle-rows,.game-board[data-state=reveal] .vehicle-extra{display:none}.reveal-ranking-link{display:block;width:100%;margin-top:15px;padding:11px;border:1px solid #3a4559;border-radius:10px;background:#222938;color:#f0ad5f;font-size:12px}
@@ -13,7 +33,7 @@ export const roundRankingStyles=String.raw`
 }
 @media(prefers-reduced-motion:reduce){.mobile-rank-row{will-change:auto}}
 `;
-export const roundRankingClient=String.raw`
+export const roundRankingClient = String.raw`
 const buildRoundRanking=${buildRoundRanking.toString()};
 let rankingState={key:'',stage:'idle',at:0,panel:null},rankingDelay=null,rankingCountTimer=null,rankingMoveTimer=null,rankingFrame=null,rankingAnimations=[];const rankingPlayed=new Set();
 function rankingKey(){return room?room.code+'-'+(room.gameId||'legacy')+'-'+room.round:''}

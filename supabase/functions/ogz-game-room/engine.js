@@ -1,10 +1,27 @@
-import {createRoomService} from './room-service.js';
-import {createGameModes} from './game-modes.js';
-import {auctionApi} from './auction.js';
-import {auctionCatalog} from './auction-admin.js';
-import {gameListings} from './supabase.js';
-import {productCategories,productListings,normalizeProductCategories,productAsRound} from './products.js';
-import {selectListings} from './selection.js';
-import {cars} from './catalog.js';
-const gameModes=createGameModes({gameListings,productCategories,productListings,normalizeProductCategories,productAsRound});
-export const api=createRoomService({gameModes,cars,selectListings,auctionApi,auctionCatalog});
+import { createRoomService } from './room-service.js';
+import { createGameModes } from './game-modes.js';
+import { auctionApi } from './auction.js';
+import { auctionCatalog } from './auction-admin.js';
+import { gameListings } from './supabase.js';
+import {
+  productCategories,
+  productListings,
+  normalizeProductCategories,
+  productAsRound,
+} from './products.js';
+import { selectListings } from './selection.js';
+import { cars } from './catalog.js';
+const gameModes = createGameModes({
+  gameListings,
+  productCategories,
+  productListings,
+  normalizeProductCategories,
+  productAsRound,
+});
+export const api = createRoomService({
+  gameModes,
+  cars,
+  selectListings,
+  auctionApi,
+  auctionCatalog,
+});

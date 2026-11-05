@@ -1,12 +1,31 @@
-export function formatGuessAmount(value,decimal=false){
- if(decimal){const text=typeof value==='number'?value.toLocaleString('tr-TR',{maximumFractionDigits:2}):String(value??'');const [whole,...fraction]=text.split(',');return formatGuessAmount(whole)+(fraction.length?','+fraction.join('').replace(/\D/g,'').slice(0,2):'')}
- const digits=String(value??'').replace(/\D/g,'').replace(/^0+(?=\d)/,'');return digits.replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+export function formatGuessAmount(value, decimal = false) {
+  if (decimal) {
+    const text =
+      typeof value === 'number'
+        ? value.toLocaleString('tr-TR', { maximumFractionDigits: 2 })
+        : String(value ?? '');
+    const [whole, ...fraction] = text.split(',');
+    return (
+      formatGuessAmount(whole) +
+      (fraction.length ? ',' + fraction.join('').replace(/\D/g, '').slice(0, 2) : '')
+    );
+  }
+  const digits = String(value ?? '')
+    .replace(/\D/g, '')
+    .replace(/^0+(?=\d)/, '');
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
-export function parseGuessAmount(value,decimal=false){
- if(decimal){const text=String(value??'').replace(/[.\s]/g,'');return /^\d+(,\d{0,2})?$/.test(text)?Number(text.replace(',','.')):NaN}
- const digits=String(value??'').replace(/[.\s]/g,'');if(!/^\d+$/.test(digits))return NaN;const amount=Number(digits);return Number.isSafeInteger(amount)?amount:NaN;
+export function parseGuessAmount(value, decimal = false) {
+  if (decimal) {
+    const text = String(value ?? '').replace(/[.\s]/g, '');
+    return /^\d+(,\d{0,2})?$/.test(text) ? Number(text.replace(',', '.')) : NaN;
+  }
+  const digits = String(value ?? '').replace(/[.\s]/g, '');
+  if (!/^\d+$/.test(digits)) return NaN;
+  const amount = Number(digits);
+  return Number.isSafeInteger(amount) ? amount : NaN;
 }
-export const guessInputClient=String.raw`
+export const guessInputClient = String.raw`
 const formatGuessAmount=${formatGuessAmount.toString()};
 const parseGuessAmount=${parseGuessAmount.toString()};
 let guessDraftKey='',guessDraftValue='';

@@ -1,21 +1,116 @@
 import assert from 'node:assert/strict';
-import {scryptSync} from 'node:crypto';
-import {handleVercelRequest,createAdminSession,validAdminSession} from '../server/vercel-app.mjs';
+import { scryptSync } from 'node:crypto';
+import {
+  handleVercelRequest,
+  createAdminSession,
+  validAdminSession,
+} from '../server/vercel-app.mjs';
 import worker from '../worker/index.js';
-import {createDB} from './test-db.mjs';
-const salt='unit-test',env={OGZ_BACKEND_ORIGIN:'https://backend.test',OGZ_BACKEND_TOKEN:'test-only',OGZ_DEPLOYMENT_KEY:'test-deployment',ADMIN_USERNAME:'tester',ADMIN_PASSWORD_HASH:salt+':'+scryptSync('test-password',salt,64).toString('hex'),ADMIN_SESSION_SECRET:'test-session-secret'},backend={DB:createDB(),OGZ_DEPLOYMENT_KEY:env.OGZ_DEPLOYMENT_KEY,BUCKET:{}};
-const original=globalThis.fetch;globalThis.fetch=(url,options)=>worker.fetch(new Request(url,options),backend);
-const url='https://game.test',request=(path,options={})=>new Request(url+path,options);
-try{
- assert.equal((await handleVercelRequest(request('/'),env)).status,200);
- assert.equal((await handleVercelRequest(request('/admin'),env)).status,303);
- assert.equal((await handleVercelRequest(request('/api/admin/listings',{headers:{'oai-authenticated-user-email':'selenetarotspell@gmail.com'}}),env)).status,401);
- assert.equal((await worker.fetch(new Request('https://backend.test/api/vercel-bridge',{headers:{'x-ogz-admin':'1','x-ogz-origin':url,'x-ogz-path':'/api/admin/listings'}}),backend)).status,403);
- const login=(password,ip='test-ip')=>handleVercelRequest(request('/api/admin/login',{method:'POST',headers:{origin:url,'content-type':'application/json','x-real-ip':ip},body:JSON.stringify({username:'tester',password})}),env);
- for(let n=0;n<5;n++)assert.equal((await login('incorrect')).status,401);assert.equal((await login('test-password')).status,429);
- const signed=await login('test-password','another-ip');assert.equal(signed.status,200);const cookie=signed.headers.get('set-cookie');assert.ok(cookie.includes('HttpOnly'));assert.ok(cookie.includes('Secure'));assert.ok(cookie.includes('SameSite=Strict'));
- const authenticated=await handleVercelRequest(request('/admin',{headers:{cookie:cookie.split(';')[0]}}),env);assert.equal(authenticated.status,200);assert.ok((await authenticated.text()).includes('Hangi oyun modunu yönetelim?'));
- const token=createAdminSession(env,1000);assert.equal(validAdminSession(request('/admin',{headers:{cookie:'__Host-ogz_admin='+token}}),env,1001),true);assert.equal(validAdminSession(request('/admin',{headers:{cookie:'__Host-ogz_admin='+token}}),env,1000+9*3600000),false);assert.equal(validAdminSession(request('/admin',{headers:{cookie:'__Host-ogz_admin='+token+'x'}}),env,1001),false);
- assert.equal((await handleVercelRequest(request('/api/admin/login',{method:'POST',headers:{origin:'https://other.test'},body:'{}'}),env)).status,403);
- assert.equal((await handleVercelRequest(request('/api/deployment-import'),env)).status,404);
-}finally{globalThis.fetch=original}console.log('PASS: Vercel gateway, admin login, persistent rate limiting, signed cookies, expiry, forged-header denial and origin checks.');
+import { createDB } from './test-db.mjs';
+const salt = 'unit-test',
+  env = {
+    OGZ_BACKEND_ORIGIN: 'https://backend.test',
+    OGZ_BACKEND_TOKEN: 'test-only',
+    OGZ_DEPLOYMENT_KEY: 'test-deployment',
+    ADMIN_USERNAME: 'tester',
+    ADMIN_PASSWORD_HASH: salt + ':' + scryptSync('test-password', salt, 64).toString('hex'),
+    ADMIN_SESSION_SECRET: 'test-session-secret',
+  },
+  backend = { DB: createDB(), OGZ_DEPLOYMENT_KEY: env.OGZ_DEPLOYMENT_KEY, BUCKET: {} };
+const original = globalThis.fetch;
+globalThis.fetch = (url, options) => worker.fetch(new Request(url, options), backend);
+const url = 'https://game.test',
+  request = (path, options = {}) => new Request(url + path, options);
+try {
+  assert.equal((await handleVercelRequest(request('/'), env)).status, 200);
+  assert.equal((await handleVercelRequest(request('/admin'), env)).status, 303);
+  assert.equal(
+    (
+      await handleVercelRequest(
+        request('/api/admin/listings', {
+          headers: { 'oai-authenticated-user-email': 'selenetarotspell@gmail.com' },
+        }),
+        env
+      )
+    ).status,
+    401
+  );
+  assert.equal(
+    (
+      await worker.fetch(
+        new Request('https://backend.test/api/vercel-bridge', {
+          headers: { 'x-ogz-admin': '1', 'x-ogz-origin': url, 'x-ogz-path': '/api/admin/listings' },
+        }),
+        backend
+      )
+    ).status,
+    403
+  );
+  const login = (password, ip = 'test-ip') =>
+    handleVercelRequest(
+      request('/api/admin/login', {
+        method: 'POST',
+        headers: { origin: url, 'content-type': 'application/json', 'x-real-ip': ip },
+        body: JSON.stringify({ username: 'tester', password }),
+      }),
+      env
+    );
+  for (let n = 0; n < 5; n++) assert.equal((await login('incorrect')).status, 401);
+  assert.equal((await login('test-password')).status, 429);
+  const signed = await login('test-password', 'another-ip');
+  assert.equal(signed.status, 200);
+  const cookie = signed.headers.get('set-cookie');
+  assert.ok(cookie.includes('HttpOnly'));
+  assert.ok(cookie.includes('Secure'));
+  assert.ok(cookie.includes('SameSite=Strict'));
+  const authenticated = await handleVercelRequest(
+    request('/admin', { headers: { cookie: cookie.split(';')[0] } }),
+    env
+  );
+  assert.equal(authenticated.status, 200);
+  assert.ok((await authenticated.text()).includes('Hangi oyun modunu yönetelim?'));
+  const token = createAdminSession(env, 1000);
+  assert.equal(
+    validAdminSession(
+      request('/admin', { headers: { cookie: '__Host-ogz_admin=' + token } }),
+      env,
+      1001
+    ),
+    true
+  );
+  assert.equal(
+    validAdminSession(
+      request('/admin', { headers: { cookie: '__Host-ogz_admin=' + token } }),
+      env,
+      1000 + 9 * 3600000
+    ),
+    false
+  );
+  assert.equal(
+    validAdminSession(
+      request('/admin', { headers: { cookie: '__Host-ogz_admin=' + token + 'x' } }),
+      env,
+      1001
+    ),
+    false
+  );
+  assert.equal(
+    (
+      await handleVercelRequest(
+        request('/api/admin/login', {
+          method: 'POST',
+          headers: { origin: 'https://other.test' },
+          body: '{}',
+        }),
+        env
+      )
+    ).status,
+    403
+  );
+  assert.equal((await handleVercelRequest(request('/api/deployment-import'), env)).status, 404);
+} finally {
+  globalThis.fetch = original;
+}
+console.log(
+  'PASS: Vercel gateway, admin login, persistent rate limiting, signed cookies, expiry, forged-header denial and origin checks.'
+);

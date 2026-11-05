@@ -1,14 +1,140 @@
-import { auctionSeed } from "./auction-seed.js";
-import { hasSupabase, supabaseMedia } from "../../services/supabase.js";
-import { auctionCategories } from "./auction.js";
-export async function auctionCatalog(env){if(env.OGZ_DIRECT_RPC_HEADERS){const r=await fetch(env.OGZ_DIRECT_URL+'/rest/v1/ogz_game_auction_catalog?id=eq.main&select=data,version',{headers:env.OGZ_DIRECT_RPC_HEADERS});if(!r.ok)throw Error('Kategori okunamadı.');const rows=await r.json();return {catalog:rows[0].data,version:rows[0].version}}if(!hasSupabase(env))return {version:0,catalog:env.AUCTION_STORE?.catalog||env.AUCTION_LOCAL_CATALOG||structuredClone(auctionSeed)};const r=await fetch(env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-auction'),{headers:{'x-ogz-key':env.OGZ_SUPABASE_KEY},signal:AbortSignal.timeout(20000)});if(!r.ok)throw Error('Açık artırma kategorilerine erişilemiyor.');return r.json()}
-export async function auctionAdminApi(req,env){const reply=(v,status=200)=>Response.json(v,{status,headers:{'cache-control':'no-store'}});if(req.headers.get('oai-authenticated-user-email')?.toLowerCase()!=='selenetarotspell@gmail.com')return reply({error:'Yönetici girişi gerekli.'},403);if(req.method==='GET')return reply(await auctionCatalog(env));if(req.method!=='POST'||req.headers.get('origin')!==new URL(req.url).origin)return reply({error:'Geçersiz istek.'},403);
-const json=req.headers.get('content-type')?.includes('application/json'),body=json?await req.json():Object.fromEntries(await req.formData());const {catalog,version}=await auctionCatalog(env);let item;
-if(body.action==='category'){const name=String(body.name||'').trim();if(!name||name.length>100)return reply({error:'Kategori adı gir.'},400);item=body.id?catalog.categories.find(c=>c.id===body.id):null;if(body.id&&!item)return reply({error:'Kategori bulunamadı.'},404);if(item)item.name=name;else catalog.categories.push({id:'category-'+crypto.randomUUID(),name,icon:'🍽️',archived:false,products:[]})}
-else if(body.action==='archive-category'){item=catalog.categories.find(c=>c.id===body.id);if(!item)return reply({error:'Kategori bulunamadı.'},404);item.archived=body.archived===true}
-else{const category=catalog.categories.find(c=>c.id===body.category);if(!category)return reply({error:'Kategori seç.'},400);item=body.id?category.products.find(p=>p.id===body.id):null;if(body.id&&!item)return reply({error:'Ürün bulunamadı.'},404);if(body.action==='archive-product'){if(!item)return reply({error:'Ürün bulunamadı.'},404);item.archived=body.archived===true}else if(body.action==='product'){const name=String(body.name||'').trim(),startPrice=Number(body.startPrice);if(!name||name.length>100||!Number.isInteger(startPrice)||startPrice<1||startPrice>20)return reply({error:'Ürün adı ve 1–20 TL arasında tam sayı başlangıç fiyatı gir.'},400);let image=item?.image;const file=body.photo;if(file?.size){if(file.size>5000000)return reply({error:'Görsel en fazla 5 MB olabilir.'},400);const bytes=new Uint8Array(await file.arrayBuffer());if(!(bytes[0]===255&&bytes[1]===216||bytes[0]===137&&bytes[1]===80||String.fromCharCode(...bytes.slice(0,4))==='RIFF'))return reply({error:'JPG, PNG veya WebP seç.'},400);const path='media/admin/admin-'+crypto.randomUUID()+'-0';if(hasSupabase(env))image=await supabaseMedia(env,path,bytes);else{if(!env.BUCKET)return reply({error:'Görsel depolama hazır değil.'},503);const type=bytes[0]===255?'image/jpeg':bytes[0]===137?'image/png':'image/webp';await env.BUCKET.put(path,bytes,{httpMetadata:{contentType:type}});image='/'+path}}if(!image)return reply({error:'Ürün görseli yükle.'},400);if(item)Object.assign(item,{name,startPrice,image});else category.products.push({id:'item-'+crypto.randomUUID(),name,startPrice,image,icon:'🍽️',archived:false})}else return reply({error:'Geçersiz işlem.'},400)}
-if(hasSupabase(env)){const r=await fetch(env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/,'ogz-game-auction'),{method:'POST',headers:{'x-ogz-key':env.OGZ_SUPABASE_KEY,'content-type':'application/json'},body:JSON.stringify({catalog,version}),signal:AbortSignal.timeout(20000)});if(!r.ok)return reply({error:r.status===409?'Liste değişti. Yenileyip tekrar kaydet.':'Kayıt tamamlanamadı.'},r.status)}else{env.AUCTION_LOCAL_CATALOG=catalog;if(env.AUCTION_STORE)env.AUCTION_STORE.catalog=catalog;if(env.saveAuctionCatalog)await env.saveAuctionCatalog(catalog)}return reply({saved:true})}
-export const auctionAdminHtml=String.raw`<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Açık artırma yönetimi</title><style>*{box-sizing:border-box}body{margin:0;background:#101719;color:#eaf3ef;font:15px system-ui}main{max-width:1200px;margin:auto;padding:28px}a{color:#65dfbf}header{display:flex;justify-content:space-between}h1{margin:32px 0 8px}p,small{color:#a8beb2;line-height:1.6}.layout{display:grid;grid-template-columns:360px 1fr;gap:24px}.panel{background:#1a2827;border:1px solid #3c5147;border-radius:18px;padding:22px;margin:20px 0}label{display:block;margin:16px 0 7px}input,select,button{font:inherit;border-radius:9px;padding:12px}input,select{width:100%;background:#111d19;color:#fff;border:1px solid #496455}button{cursor:pointer;border:1px solid #496455;background:#294638;color:#d6f5e5;margin:5px 4px 5px 0}button.primary{background:#60e2be;color:#123528;font-weight:700;width:100%}button:disabled{opacity:.4}#status{padding:14px;background:#263a30;border-radius:10px;margin:20px 0}.record{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid #3b5045}.record img{width:100px;height:100px;object-fit:cover;border-radius:12px}.record p{margin:7px 0}.record button{font-size:12px;padding:8px}#preview{max-height:160px;width:100%;object-fit:contain}.check{display:flex;align-items:center;gap:9px}.check input{width:auto}@media(max-width:760px){main{padding:18px}.layout{grid-template-columns:1fr}}</style><main><header><a href="/admin">← Oyun modları</a><a href="/">Oyuna dön ↗</a></header><h1>Açık artırma yönetimi</h1><p>Kategorileri, ürün görsellerini ve başlangıç tekliflerini yönet. Oyunlar aktif ürünlerden rastgele 10 ürün seçer.</p><div id="status" role="status">Yükleniyor…</div><div class="layout"><div><section class="panel"><h2>Kategoriler</h2><label for="category">Kategori seç</label><select id="category"></select><p id="category-info"></p><form id="category-form"><input type="hidden" name="id"><label>Kategori adı<input name="name" maxlength="100" required></label><button class="primary">Yeni kategori ekle</button><button type="button" id="edit-category">Seçileni düzenle</button><button type="button" id="archive-category">Kategoriyi kaldır</button><button type="button" id="cancel-category">Yeni kategori</button></form></section><section class="panel"><h2 id="product-title">Yeni ürün</h2><form id="product-form"><input type="hidden" name="id"><label>Ürün adı<input name="name" maxlength="100" required></label><label>Başlangıç teklifi (TL)<input name="startPrice" type="number" min="1" max="20" step="1" value="1" required></label><label>Ürün görseli<input name="photo" type="file" accept="image/jpeg,image/png,image/webp" required></label><p>En fazla 5 MB. Düzenlerken görsel seçmezsen mevcut fotoğraf korunur.</p><img id="preview" hidden alt="Ürün önizlemesi"><button class="primary">Ürünü kaydet</button><button type="button" id="cancel-product">Yeni ürün / vazgeç</button></form></section></div><section class="panel"><h2>Ürünler</h2><label class="check"><input id="removed" type="checkbox">Kaldırılan ürünleri göster</label><input id="search" placeholder="Ürün ara" aria-label="Ürün ara"><button id="refresh">Listeyi yenile</button><div id="records"></div></section></div></main><script>
+import { auctionSeed } from './auction-seed.js';
+import { hasSupabase, supabaseMedia } from '../../services/supabase.js';
+import { auctionCategories } from './auction.js';
+export async function auctionCatalog(env) {
+  if (env.OGZ_DIRECT_RPC_HEADERS) {
+    const r = await fetch(
+      env.OGZ_DIRECT_URL + '/rest/v1/ogz_game_auction_catalog?id=eq.main&select=data,version',
+      { headers: env.OGZ_DIRECT_RPC_HEADERS }
+    );
+    if (!r.ok) throw Error('Kategori okunamadı.');
+    const rows = await r.json();
+    return { catalog: rows[0].data, version: rows[0].version };
+  }
+  if (!hasSupabase(env))
+    return {
+      version: 0,
+      catalog:
+        env.AUCTION_STORE?.catalog || env.AUCTION_LOCAL_CATALOG || structuredClone(auctionSeed),
+    };
+  const r = await fetch(env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/, 'ogz-game-auction'), {
+    headers: { 'x-ogz-key': env.OGZ_SUPABASE_KEY },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!r.ok) throw Error('Açık artırma kategorilerine erişilemiyor.');
+  return r.json();
+}
+export async function auctionAdminApi(req, env) {
+  const reply = (v, status = 200) =>
+    Response.json(v, { status, headers: { 'cache-control': 'no-store' } });
+  if (
+    req.headers.get('oai-authenticated-user-email')?.toLowerCase() !== 'selenetarotspell@gmail.com'
+  )
+    return reply({ error: 'Yönetici girişi gerekli.' }, 403);
+  if (req.method === 'GET') return reply(await auctionCatalog(env));
+  if (req.method !== 'POST' || req.headers.get('origin') !== new URL(req.url).origin)
+    return reply({ error: 'Geçersiz istek.' }, 403);
+  const json = req.headers.get('content-type')?.includes('application/json'),
+    body = json ? await req.json() : Object.fromEntries(await req.formData());
+  const { catalog, version } = await auctionCatalog(env);
+  let item;
+  if (body.action === 'category') {
+    const name = String(body.name || '').trim();
+    if (!name || name.length > 100) return reply({ error: 'Kategori adı gir.' }, 400);
+    item = body.id ? catalog.categories.find(c => c.id === body.id) : null;
+    if (body.id && !item) return reply({ error: 'Kategori bulunamadı.' }, 404);
+    if (item) item.name = name;
+    else
+      catalog.categories.push({
+        id: 'category-' + crypto.randomUUID(),
+        name,
+        icon: '🍽️',
+        archived: false,
+        products: [],
+      });
+  } else if (body.action === 'archive-category') {
+    item = catalog.categories.find(c => c.id === body.id);
+    if (!item) return reply({ error: 'Kategori bulunamadı.' }, 404);
+    item.archived = body.archived === true;
+  } else {
+    const category = catalog.categories.find(c => c.id === body.category);
+    if (!category) return reply({ error: 'Kategori seç.' }, 400);
+    item = body.id ? category.products.find(p => p.id === body.id) : null;
+    if (body.id && !item) return reply({ error: 'Ürün bulunamadı.' }, 404);
+    if (body.action === 'archive-product') {
+      if (!item) return reply({ error: 'Ürün bulunamadı.' }, 404);
+      item.archived = body.archived === true;
+    } else if (body.action === 'product') {
+      const name = String(body.name || '').trim(),
+        startPrice = Number(body.startPrice);
+      if (
+        !name ||
+        name.length > 100 ||
+        !Number.isInteger(startPrice) ||
+        startPrice < 1 ||
+        startPrice > 20
+      )
+        return reply({ error: 'Ürün adı ve 1–20 TL arasında tam sayı başlangıç fiyatı gir.' }, 400);
+      let image = item?.image;
+      const file = body.photo;
+      if (file?.size) {
+        if (file.size > 5000000) return reply({ error: 'Görsel en fazla 5 MB olabilir.' }, 400);
+        const bytes = new Uint8Array(await file.arrayBuffer());
+        if (!(
+          (bytes[0] === 255 && bytes[1] === 216) ||
+          (bytes[0] === 137 && bytes[1] === 80) ||
+          String.fromCharCode(...bytes.slice(0, 4)) === 'RIFF'
+        ))
+          return reply({ error: 'JPG, PNG veya WebP seç.' }, 400);
+        const path = 'media/admin/admin-' + crypto.randomUUID() + '-0';
+        if (hasSupabase(env)) image = await supabaseMedia(env, path, bytes);
+        else {
+          if (!env.BUCKET) return reply({ error: 'Görsel depolama hazır değil.' }, 503);
+          const type =
+            bytes[0] === 255 ? 'image/jpeg' : bytes[0] === 137 ? 'image/png' : 'image/webp';
+          await env.BUCKET.put(path, bytes, { httpMetadata: { contentType: type } });
+          image = '/' + path;
+        }
+      }
+      if (!image) return reply({ error: 'Ürün görseli yükle.' }, 400);
+      if (item) Object.assign(item, { name, startPrice, image });
+      else
+        category.products.push({
+          id: 'item-' + crypto.randomUUID(),
+          name,
+          startPrice,
+          image,
+          icon: '🍽️',
+          archived: false,
+        });
+    } else return reply({ error: 'Geçersiz işlem.' }, 400);
+  }
+  if (hasSupabase(env)) {
+    const r = await fetch(
+      env.OGZ_SUPABASE_URL.replace(/ogz-game-listings\/?$/, 'ogz-game-auction'),
+      {
+        method: 'POST',
+        headers: { 'x-ogz-key': env.OGZ_SUPABASE_KEY, 'content-type': 'application/json' },
+        body: JSON.stringify({ catalog, version }),
+        signal: AbortSignal.timeout(20000),
+      }
+    );
+    if (!r.ok)
+      return reply(
+        {
+          error:
+            r.status === 409 ? 'Liste değişti. Yenileyip tekrar kaydet.' : 'Kayıt tamamlanamadı.',
+        },
+        r.status
+      );
+  } else {
+    env.AUCTION_LOCAL_CATALOG = catalog;
+    if (env.AUCTION_STORE) env.AUCTION_STORE.catalog = catalog;
+    if (env.saveAuctionCatalog) await env.saveAuctionCatalog(catalog);
+  }
+  return reply({ saved: true });
+}
+export const auctionAdminHtml = String.raw`<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Açık artırma yönetimi</title><style>*{box-sizing:border-box}body{margin:0;background:#101719;color:#eaf3ef;font:15px system-ui}main{max-width:1200px;margin:auto;padding:28px}a{color:#65dfbf}header{display:flex;justify-content:space-between}h1{margin:32px 0 8px}p,small{color:#a8beb2;line-height:1.6}.layout{display:grid;grid-template-columns:360px 1fr;gap:24px}.panel{background:#1a2827;border:1px solid #3c5147;border-radius:18px;padding:22px;margin:20px 0}label{display:block;margin:16px 0 7px}input,select,button{font:inherit;border-radius:9px;padding:12px}input,select{width:100%;background:#111d19;color:#fff;border:1px solid #496455}button{cursor:pointer;border:1px solid #496455;background:#294638;color:#d6f5e5;margin:5px 4px 5px 0}button.primary{background:#60e2be;color:#123528;font-weight:700;width:100%}button:disabled{opacity:.4}#status{padding:14px;background:#263a30;border-radius:10px;margin:20px 0}.record{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid #3b5045}.record img{width:100px;height:100px;object-fit:cover;border-radius:12px}.record p{margin:7px 0}.record button{font-size:12px;padding:8px}#preview{max-height:160px;width:100%;object-fit:contain}.check{display:flex;align-items:center;gap:9px}.check input{width:auto}@media(max-width:760px){main{padding:18px}.layout{grid-template-columns:1fr}}</style><main><header><a href="/admin">← Oyun modları</a><a href="/">Oyuna dön ↗</a></header><h1>Açık artırma yönetimi</h1><p>Kategorileri, ürün görsellerini ve başlangıç tekliflerini yönet. Oyunlar aktif ürünlerden rastgele 10 ürün seçer.</p><div id="status" role="status">Yükleniyor…</div><div class="layout"><div><section class="panel"><h2>Kategoriler</h2><label for="category">Kategori seç</label><select id="category"></select><p id="category-info"></p><form id="category-form"><input type="hidden" name="id"><label>Kategori adı<input name="name" maxlength="100" required></label><button class="primary">Yeni kategori ekle</button><button type="button" id="edit-category">Seçileni düzenle</button><button type="button" id="archive-category">Kategoriyi kaldır</button><button type="button" id="cancel-category">Yeni kategori</button></form></section><section class="panel"><h2 id="product-title">Yeni ürün</h2><form id="product-form"><input type="hidden" name="id"><label>Ürün adı<input name="name" maxlength="100" required></label><label>Başlangıç teklifi (TL)<input name="startPrice" type="number" min="1" max="20" step="1" value="1" required></label><label>Ürün görseli<input name="photo" type="file" accept="image/jpeg,image/png,image/webp" required></label><p>En fazla 5 MB. Düzenlerken görsel seçmezsen mevcut fotoğraf korunur.</p><img id="preview" hidden alt="Ürün önizlemesi"><button class="primary">Ürünü kaydet</button><button type="button" id="cancel-product">Yeni ürün / vazgeç</button></form></section></div><section class="panel"><h2>Ürünler</h2><label class="check"><input id="removed" type="checkbox">Kaldırılan ürünleri göster</label><input id="search" placeholder="Ürün ara" aria-label="Ürün ara"><button id="refresh">Listeyi yenile</button><div id="records"></div></section></div></main><script>
 const q=s=>document.querySelector(s),endpoint='/api/admin/listings?mode=auction',cf=q('#category-form'),pf=q('#product-form');let catalog={categories:[]},busy=false,previewUrl;
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])),status=t=>q('#status').textContent=t,selected=()=>catalog.categories.find(c=>c.id===q('#category').value);
 async function request(options={}){const r=await fetch(endpoint,{cache:'no-store',...options}),data=await r.json();if(!r.ok)throw Error(data.error);return data}

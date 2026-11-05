@@ -1,11 +1,11 @@
 /**
-* Game Modes Architecture (Strategy Pattern + Registry)
-* 
-* Bu modül oyun modlarını tek bir çatı altında toplar ve modüler hale getirir.
-* İleride 5-10 farklı oyun modu eklendiğinde (örn: 'crypto-price', 'real-estate', vb.)
-* index.js dosyasındaki oda mantığına dokunmadan sadece yeni bir mod stratejisi tanımlayıp
-* sisteme kaydetmek yeterlidir (Open/Closed Principle).
-*/
+ * Game Modes Architecture (Strategy Pattern + Registry)
+ *
+ * Bu modül oyun modlarını tek bir çatı altında toplar ve modüler hale getirir.
+ * İleride 5-10 farklı oyun modu eklendiğinde (örn: 'crypto-price', 'real-estate', vb.)
+ * index.js dosyasındaki oda mantığına dokunmadan sadece yeni bir mod stratejisi tanımlayıp
+ * sisteme kaydetmek yeterlidir (Open/Closed Principle).
+ */
 
 export function createGameModes({
   adminHtml,
@@ -18,7 +18,7 @@ export function createGameModes({
   productAdminHtml,
   productAdminApi,
   auctionAdminHtml,
-  auctionAdminApi
+  auctionAdminApi,
 }) {
   const modes = {
     'car-price': {
@@ -66,17 +66,46 @@ export function createGameModes({
           .map(productAsRound);
       },
       formatSelectionError(selection, rounds) {
-        return 'Seçilen kategorilerde ' + selection.available + ' uygun ürün var. ' + rounds + ' tur için yeterli ürün ekle veya kategori seçimini genişlet.';
+        return (
+          'Seçilen kategorilerde ' +
+          selection.available +
+          ' uygun ürün var. ' +
+          rounds +
+          ' tur için yeterli ürün ekle veya kategori seçimini genişlet.'
+        );
       },
       formatLobbyNotice(room) {
-        return 'Ürün fiyatı tahmini · ' + (room.categories || []).map(key => productCategories[key] || key).join(', ');
+        return (
+          'Ürün fiyatı tahmini · ' +
+          (room.categories || []).map(key => productCategories[key] || key).join(', ')
+        );
       },
       adminHtml: productAdminHtml,
       adminApi: productAdminApi,
     },
-    'battleship':{id:'battleship',name:'Amiral Battı · 2 kişi',description:'Filonu yerleştir, rakibinin gemilerini batır. İsabet edersen tekrar ateş et.',validateOptions(){return null},normalizeOptions(){return null}},
-    'number-race': {id:'number-race',name:'Sayı Yarışı · 2 kişi',description:'Sayıyı bul, rakibin doldurmadan tablonu tamamla.',validateOptions(b){return [4,6,10].includes(b.gridSize)?null:'4×4, 6×6 veya 10×10 tablo seç.'},normalizeOptions(){return null}},
-    'auction': {
+    battleship: {
+      id: 'battleship',
+      name: 'Amiral Battı · 2 kişi',
+      description: 'Filonu yerleştir, rakibinin gemilerini batır. İsabet edersen tekrar ateş et.',
+      validateOptions() {
+        return null;
+      },
+      normalizeOptions() {
+        return null;
+      },
+    },
+    'number-race': {
+      id: 'number-race',
+      name: 'Sayı Yarışı · 2 kişi',
+      description: 'Sayıyı bul, rakibin doldurmadan tablonu tamamla.',
+      validateOptions(b) {
+        return [4, 6, 10].includes(b.gridSize) ? null : '4×4, 6×6 veya 10×10 tablo seç.';
+      },
+      normalizeOptions() {
+        return null;
+      },
+    },
+    auction: {
       id: 'auction',
       name: 'Açık artırma · 2 kişi',
       description: '20 TL ile en güzel tabağı sen kur. Teklif ver, rakibini geç, ürünü kap.',
@@ -95,7 +124,7 @@ export function createGameModes({
       },
       adminHtml: auctionAdminHtml,
       adminApi: auctionAdminApi,
-    }
+    },
   };
 
   return {
@@ -111,6 +140,6 @@ export function createGameModes({
     all() {
       return Object.values(modes);
     },
-    raw: modes
+    raw: modes,
   };
 }

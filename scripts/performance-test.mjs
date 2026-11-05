@@ -1,4 +1,61 @@
-import assert from 'node:assert/strict';import {gameDatabase} from '../worker/game-db.js';import worker from '../worker/index.js';import {createDB} from './test-db.mjs';
-const original=globalThis.fetch;let requests=0;try{globalThis.fetch=async()=>{requests++;return Response.json({results:[{results:[{data:'{}',version:1}],meta:{changes:1}}]})};const db=gameDatabase({OGZ_SUPABASE_URL:'https://test/functions/v1/ogz-game-listings',OGZ_SUPABASE_KEY:'test'});await db.prepare('SELECT data,version FROM rooms WHERE code=?').bind('ABCDEF').first();await db.prepare('SELECT data,version FROM rooms WHERE code=?').bind('ABCDEF').first();assert.equal(requests,1);await db.prepare('UPDATE rooms SET data=?,version=version+1 WHERE code=? AND version=?').bind('{}','ABCDEF',1).run();await db.prepare('SELECT data,version FROM rooms WHERE code=?').bind('ABCDEF').first();assert.equal(requests,3)}finally{globalThis.fetch=original}
-const DB=createDB(),token=crypto.randomUUID();async function call(action,more={}){return (await worker.fetch(new Request('https://test/api/room',{method:'POST',body:JSON.stringify({action,token,...more})}),{DB})).json()}
-const room=await call('create',{mode:'car-price',rounds:10,guessSeconds:30,profile:{name:'Performance test',avatar:'a1'}});const started=await call('start',{code:room.code});const stored=JSON.parse(DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(room.code).data);assert.equal(stored.customCars.length,10);assert.deepEqual(stored.order,[0,1,2,3,4,5,6,7,8,9]);assert.equal(started.nextImages,undefined);const reveal=await call('guess',{code:room.code,guess:1000000});assert.ok(reveal.nextImages.every(url=>!url.includes('price')));assert.equal(reveal.customCars,undefined);console.log('PASS: request-scoped reads, cache invalidation after writes, compact game snapshots, no future-image prefetch before reveal.');
+import assert from 'node:assert/strict';
+import { gameDatabase } from '../worker/game-db.js';
+import worker from '../worker/index.js';
+import { createDB } from './test-db.mjs';
+const original = globalThis.fetch;
+let requests = 0;
+try {
+  globalThis.fetch = async () => {
+    requests++;
+    return Response.json({
+      results: [{ results: [{ data: '{}', version: 1 }], meta: { changes: 1 } }],
+    });
+  };
+  const db = gameDatabase({
+    OGZ_SUPABASE_URL: 'https://test/functions/v1/ogz-game-listings',
+    OGZ_SUPABASE_KEY: 'test',
+  });
+  await db.prepare('SELECT data,version FROM rooms WHERE code=?').bind('ABCDEF').first();
+  await db.prepare('SELECT data,version FROM rooms WHERE code=?').bind('ABCDEF').first();
+  assert.equal(requests, 1);
+  await db
+    .prepare('UPDATE rooms SET data=?,version=version+1 WHERE code=? AND version=?')
+    .bind('{}', 'ABCDEF', 1)
+    .run();
+  await db.prepare('SELECT data,version FROM rooms WHERE code=?').bind('ABCDEF').first();
+  assert.equal(requests, 3);
+} finally {
+  globalThis.fetch = original;
+}
+const DB = createDB(),
+  token = crypto.randomUUID();
+async function call(action, more = {}) {
+  return (
+    await worker.fetch(
+      new Request('https://test/api/room', {
+        method: 'POST',
+        body: JSON.stringify({ action, token, ...more }),
+      }),
+      { DB }
+    )
+  ).json();
+}
+const room = await call('create', {
+  mode: 'car-price',
+  rounds: 10,
+  guessSeconds: 30,
+  profile: { name: 'Performance test', avatar: 'a1' },
+});
+const started = await call('start', { code: room.code });
+const stored = JSON.parse(
+  DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(room.code).data
+);
+assert.equal(stored.customCars.length, 10);
+assert.deepEqual(stored.order, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+assert.equal(started.nextImages, undefined);
+const reveal = await call('guess', { code: room.code, guess: 1000000 });
+assert.ok(reveal.nextImages.every(url => !url.includes('price')));
+assert.equal(reveal.customCars, undefined);
+console.log(
+  'PASS: request-scoped reads, cache invalidation after writes, compact game snapshots, no future-image prefetch before reveal.'
+);

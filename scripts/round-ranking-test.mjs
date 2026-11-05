@@ -1,10 +1,39 @@
 import assert from 'node:assert/strict';
-import {buildRoundRanking} from '../worker/ui/round-ranking.js';
-const room={players:[{id:'a',score:1100},{id:'b',score:1500},{id:'c',score:1100},{id:'d',score:200}],results:[{id:'a',points:100,guess:1},{id:'b',points:1000,guess:1},{id:'c',points:900,guess:1}]};
-const original=JSON.stringify(room),rows=buildRoundRanking(room);
-assert.deepEqual(rows.map(x=>x.id),['b','a','c','d']);
-assert.deepEqual(rows.map(x=>x.previousRank),[2,1,3,4]);
-assert.deepEqual(rows.map(x=>x.movement),[1,-1,0,0]);
-assert.deepEqual(rows.map(x=>x.before),[500,1000,200,200]);
-assert.equal(rows[3].missed,true);assert.equal(rows[3].gain,0);assert.equal(JSON.stringify(room),original);
-console.log('PASS: cumulative round totals, animated rank origins, stable ties, missed guesses and immutable room data.');
+import { buildRoundRanking } from '../worker/ui/round-ranking.js';
+const room = {
+  players: [
+    { id: 'a', score: 1100 },
+    { id: 'b', score: 1500 },
+    { id: 'c', score: 1100 },
+    { id: 'd', score: 200 },
+  ],
+  results: [
+    { id: 'a', points: 100, guess: 1 },
+    { id: 'b', points: 1000, guess: 1 },
+    { id: 'c', points: 900, guess: 1 },
+  ],
+};
+const original = JSON.stringify(room),
+  rows = buildRoundRanking(room);
+assert.deepEqual(
+  rows.map(x => x.id),
+  ['b', 'a', 'c', 'd']
+);
+assert.deepEqual(
+  rows.map(x => x.previousRank),
+  [2, 1, 3, 4]
+);
+assert.deepEqual(
+  rows.map(x => x.movement),
+  [1, -1, 0, 0]
+);
+assert.deepEqual(
+  rows.map(x => x.before),
+  [500, 1000, 200, 200]
+);
+assert.equal(rows[3].missed, true);
+assert.equal(rows[3].gain, 0);
+assert.equal(JSON.stringify(room), original);
+console.log(
+  'PASS: cumulative round totals, animated rank origins, stable ties, missed guesses and immutable room data.'
+);

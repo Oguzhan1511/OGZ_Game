@@ -1,4 +1,4 @@
-export const mobileGameStyles=String.raw`
+export const mobileGameStyles = String.raw`
 .game-vehicle-info,.game-round-result{display:contents}.mobile-game-tabs,.guess-submit-mobile{display:none}.round-actions{margin-top:16px}
 @media(max-width:700px){
  body.game-mode main{padding:0 10px 12px}.game-mode header.topbar{display:none}.game-top{position:sticky;top:0;z-index:35;gap:12px;height:58px;padding:8px 2px;background:#111520}.game-back{width:38px;height:38px;border-radius:11px;font-size:22px}.game-progress>div:first-child{margin-bottom:7px}.game-progress>div:first-child>strong{font-size:14px}.game-progress .progress{height:4px}.game-top .round-timer{font-size:17px;padding:8px 10px;border-radius:9px}
@@ -13,7 +13,7 @@ export const mobileGameStyles=String.raw`
 }
 @media(max-width:700px) and (max-height:650px){.photo-stage{height:135px}.game-details h1{font-size:18px}.game-vehicle-info>.vehicle-rows>div{padding:5px 0}}
 `;
-export const mobileGameClient=String.raw`
+export const mobileGameClient = String.raw`
 let gameDockObserver=null,observedGameDock=null;
 function updateMobileGameViewport(){const mobile=window.matchMedia('(max-width:700px)').matches,viewport=window.visualViewport;const gap=mobile&&viewport?Math.max(0,window.innerHeight-viewport.height-viewport.offsetTop):0;document.documentElement.style.setProperty('--keyboard-gap',Math.round(gap)+'px');const dock=document.querySelector('.guess-card,.round-actions');document.documentElement.style.setProperty('--guess-dock-height',mobile&&dock?Math.ceil(dock.getBoundingClientRect().height+14)+'px':'0px')}
 function setupMobileGameViewport(){const dock=document.querySelector('.guess-card,.round-actions');if(dock!==observedGameDock){gameDockObserver?.disconnect();observedGameDock=dock;if(dock&&typeof ResizeObserver!=='undefined'){gameDockObserver=new ResizeObserver(updateMobileGameViewport);gameDockObserver.observe(dock)}}updateMobileGameViewport()}

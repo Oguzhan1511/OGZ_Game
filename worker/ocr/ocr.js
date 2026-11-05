@@ -1,35 +1,161 @@
-export function parseListingScreenshot(text){
- const norm=s=>s.normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/ı/g,'i').toLowerCase().replace(/[^a-z0-9]/g,'');
- const labels=[['brand',['Marka']],['family',['Seri']],['model',['Model']],['year',['Model Yılı','Yıl']],['km',['Kilometre','KM']],['fuel',['Yakıt / Motor Tipi','Yakıt Tipi','Yakıt']],['gear',['Vites']],['heavy',['Ağır Hasar Kayıtlı','Ağır Hasar Kaydı']],['listingId',['İlan No']]];
- const lines=text.split(/\n/).map(s=>s.trim()).filter(Boolean),out={};
- for(const [key,names] of labels){for(let i=0;i<lines.length;i++){
-  for(const label of names){const tokens=lines[i].split(/\s+/);let end=0,found=false;for(let n=1;n<=Math.min(tokens.length,6);n++){if(norm(tokens.slice(0,n).join(' '))===norm(label)){end=n;found=true;break}}
-   if(!found)continue;let value=tokens.slice(end).join(' ').replace(/^[:|—\-\s]+/,'');
-   if(!value&&i+1<lines.length&&!labels.some(([,variants])=>variants.some(v=>norm(lines[i+1]).startsWith(norm(v)))))value=lines[i+1];
-   if(value){out[key]=value;break}
-  }if(out[key])break;
- }}
- const price=text.match(/(\d[\d.\s]*\d|\d)(?:,\d{1,2})?\s*(?:TL|₺)/i);if(price)out.price=price[0].replace(/TL|₺/gi,'').replace(/\s/g,'');
- for(const name of ['year','km'])if(out[name]){const m=out[name].match(/\d[\d.,]*/);out[name]=m?m[0]:''}
- if(out.year&&!/^(19|20)\d{2}$/.test(out.year))delete out.year;
- if(out.fuel){const value=norm(out.fuel);out.fuel=value.includes('lpg')?'LPG':value.includes('hibrit')?'Hibrit':value.includes('elektrik')?'Elektrik':value.includes('dizel')?'Dizel':value.includes('benzin')?'Benzin':''}
- if(out.gear){const value=norm(out.gear);out.gear=value.includes('yari')?'Yarı otomatik':value.includes('otomatik')?'Otomatik':value.includes('manuel')?'Manuel':''}
- if(out.model&&out.family&&!norm(out.model).startsWith(norm(out.family)))out.model=out.family+' '+out.model;
- out.damage=out.heavy?'Ağır hasar kaydı: '+out.heavy:'Belirtilmedi';delete out.heavy;
- out.paint='Yüklenen şemada gösterilmiştir';out.changed='Yüklenen şemada gösterilmiştir';return out;
+export function parseListingScreenshot(text) {
+  const norm = s =>
+    s
+      .normalize('NFKD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ı/g, 'i')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '');
+  const labels = [
+    ['brand', ['Marka']],
+    ['family', ['Seri']],
+    ['model', ['Model']],
+    ['year', ['Model Yılı', 'Yıl']],
+    ['km', ['Kilometre', 'KM']],
+    ['fuel', ['Yakıt / Motor Tipi', 'Yakıt Tipi', 'Yakıt']],
+    ['gear', ['Vites']],
+    ['heavy', ['Ağır Hasar Kayıtlı', 'Ağır Hasar Kaydı']],
+    ['listingId', ['İlan No']],
+  ];
+  const lines = text
+      .split(/\n/)
+      .map(s => s.trim())
+      .filter(Boolean),
+    out = {};
+  for (const [key, names] of labels) {
+    for (let i = 0; i < lines.length; i++) {
+      for (const label of names) {
+        const tokens = lines[i].split(/\s+/);
+        let end = 0,
+          found = false;
+        for (let n = 1; n <= Math.min(tokens.length, 6); n++) {
+          if (norm(tokens.slice(0, n).join(' ')) === norm(label)) {
+            end = n;
+            found = true;
+            break;
+          }
+        }
+        if (!found) continue;
+        let value = tokens
+          .slice(end)
+          .join(' ')
+          .replace(/^[:|—\-\s]+/, '');
+        if (
+          !value &&
+          i + 1 < lines.length &&
+          !labels.some(([, variants]) => variants.some(v => norm(lines[i + 1]).startsWith(norm(v))))
+        )
+          value = lines[i + 1];
+        if (value) {
+          out[key] = value;
+          break;
+        }
+      }
+      if (out[key]) break;
+    }
+  }
+  const price = text.match(/(\d[\d.\s]*\d|\d)(?:,\d{1,2})?\s*(?:TL|₺)/i);
+  if (price) out.price = price[0].replace(/TL|₺/gi, '').replace(/\s/g, '');
+  for (const name of ['year', 'km'])
+    if (out[name]) {
+      const m = out[name].match(/\d[\d.,]*/);
+      out[name] = m ? m[0] : '';
+    }
+  if (out.year && !/^(19|20)\d{2}$/.test(out.year)) delete out.year;
+  if (out.fuel) {
+    const value = norm(out.fuel);
+    out.fuel = value.includes('lpg')
+      ? 'LPG'
+      : value.includes('hibrit')
+        ? 'Hibrit'
+        : value.includes('elektrik')
+          ? 'Elektrik'
+          : value.includes('dizel')
+            ? 'Dizel'
+            : value.includes('benzin')
+              ? 'Benzin'
+              : '';
+  }
+  if (out.gear) {
+    const value = norm(out.gear);
+    out.gear = value.includes('yari')
+      ? 'Yarı otomatik'
+      : value.includes('otomatik')
+        ? 'Otomatik'
+        : value.includes('manuel')
+          ? 'Manuel'
+          : '';
+  }
+  if (out.model && out.family && !norm(out.model).startsWith(norm(out.family)))
+    out.model = out.family + ' ' + out.model;
+  out.damage = out.heavy ? 'Ağır hasar kaydı: ' + out.heavy : 'Belirtilmedi';
+  delete out.heavy;
+  out.paint = 'Yüklenen şemada gösterilmiştir';
+  out.changed = 'Yüklenen şemada gösterilmiştir';
+  return out;
 }
-export function detectListingPhoto(pixels,width,height){
- const sample=(x,y)=>{const i=(y*width+x)*4;return [pixels[i],pixels[i+1],pixels[i+2]]};
- const right=Math.floor(width*.63),step=Math.max(2,Math.floor(width/350));let best={top:0,bottom:0},start=-1;
- for(let y=0;y<height;y+=step){let occupied=0,total=0;for(let x=0;x<right;x+=step){const [r,g,b]=sample(x,y);if(Math.max(r,g,b)-Math.min(r,g,b)>22||Math.max(r,g,b)<175)occupied++;total++}const dense=occupied/total>.48;
-  if(dense&&start<0)start=y;if((!dense||y+step>=height)&&start>=0){const bottom=dense?height:y;if(bottom-start>best.bottom-best.top)best={top:start,bottom};start=-1}}
- if(best.bottom-best.top<height*.15)return {x:0,y:0,width:Math.floor(width*.62),height:Math.floor(height*.65),uncertain:true};
- let left=0,end=right;const y=Math.floor((best.top+best.bottom)/2);
- for(let x=0;x<width*.78;x+=step){const [r,g,b]=sample(x,y);if(Math.max(r,g,b)-Math.min(r,g,b)>22||Math.max(r,g,b)<175){left=x;break}}
- let whites=0;for(let x=right;x<width*.85;x+=step){const [r,g,b]=sample(x,y);if(Math.min(r,g,b)>235)whites++;else whites=0;if(whites*step>width*.012){end=x-whites*step+step;break}}
- return {x:left,y:best.top,width:Math.max(1,end-left),height:best.bottom-best.top,uncertain:false};
+export function detectListingPhoto(pixels, width, height) {
+  const sample = (x, y) => {
+    const i = (y * width + x) * 4;
+    return [pixels[i], pixels[i + 1], pixels[i + 2]];
+  };
+  const right = Math.floor(width * 0.63),
+    step = Math.max(2, Math.floor(width / 350));
+  let best = { top: 0, bottom: 0 },
+    start = -1;
+  for (let y = 0; y < height; y += step) {
+    let occupied = 0,
+      total = 0;
+    for (let x = 0; x < right; x += step) {
+      const [r, g, b] = sample(x, y);
+      if (Math.max(r, g, b) - Math.min(r, g, b) > 22 || Math.max(r, g, b) < 175) occupied++;
+      total++;
+    }
+    const dense = occupied / total > 0.48;
+    if (dense && start < 0) start = y;
+    if ((!dense || y + step >= height) && start >= 0) {
+      const bottom = dense ? height : y;
+      if (bottom - start > best.bottom - best.top) best = { top: start, bottom };
+      start = -1;
+    }
+  }
+  if (best.bottom - best.top < height * 0.15)
+    return {
+      x: 0,
+      y: 0,
+      width: Math.floor(width * 0.62),
+      height: Math.floor(height * 0.65),
+      uncertain: true,
+    };
+  let left = 0,
+    end = right;
+  const y = Math.floor((best.top + best.bottom) / 2);
+  for (let x = 0; x < width * 0.78; x += step) {
+    const [r, g, b] = sample(x, y);
+    if (Math.max(r, g, b) - Math.min(r, g, b) > 22 || Math.max(r, g, b) < 175) {
+      left = x;
+      break;
+    }
+  }
+  let whites = 0;
+  for (let x = right; x < width * 0.85; x += step) {
+    const [r, g, b] = sample(x, y);
+    if (Math.min(r, g, b) > 235) whites++;
+    else whites = 0;
+    if (whites * step > width * 0.012) {
+      end = x - whites * step + step;
+      break;
+    }
+  }
+  return {
+    x: left,
+    y: best.top,
+    width: Math.max(1, end - left),
+    height: best.bottom - best.top,
+    uncertain: false,
+  };
 }
-export const ocrClient=String.raw`
+export const ocrClient = String.raw`
 const parseListingScreenshot=${parseListingScreenshot.toString()};
 const detectListingPhoto=${detectListingPhoto.toString()};
 let screenshotImage=null,ocrBusy=false,ocrWorker=null,cropFile=null,importGeneration=0;

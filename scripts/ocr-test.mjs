@@ -1,6 +1,40 @@
 import assert from 'node:assert/strict';
-import {parseListingScreenshot,detectListingPhoto} from '../worker/ocr/ocr.js';
-const result=parseListingScreenshot('765.000 TL\nMarka Daihatsu\nSeri Copen\nModel 1.3 Sport\nYıl 2006\nYakıt / Motor Tipi Benzin\nVites Manuel\nKM 136.000\nAğır Hasar Kayıtlı Hayır');
-assert.equal(result.brand,'Daihatsu');assert.equal(result.model,'Copen 1.3 Sport');assert.equal(result.km,'136.000');assert.equal(result.price,'765.000');assert.equal(result.damage,'Ağır hasar kaydı: Hayır');assert.equal(result.fuel,'Benzin');assert.equal(result.gear,'Manuel');
-const missing=parseListingScreenshot('Marka\nRenault\nSeri\nClio\nModel\n1.0 TCe\nYakıt Tipi Benzin (LPG)\nVites Yarı Otomatik');assert.equal(missing.brand,'Renault');assert.equal(missing.model,'Clio 1.0 TCe');assert.equal(missing.fuel,'LPG');assert.equal(missing.gear,'Yarı otomatik');assert.equal(missing.price,undefined);assert.equal(missing.year,undefined);assert.equal(missing.damage,'Belirtilmedi');
-const w=300,h=250,pixels=new Uint8ClampedArray(w*h*4).fill(255);for(let y=12;y<170;y++)for(let x=4;x<190;x++){const i=(y*w+x)*4;pixels[i]=150;pixels[i+1]=30;pixels[i+2]=20}const crop=detectListingPhoto(pixels,w,h);assert.ok(crop.x>=2&&crop.x<=6);assert.ok(crop.y>=10&&crop.y<=14);assert.ok(crop.width<200);assert.ok(crop.height>=155&&crop.height<=160);console.log('PASS: screenshot field parsing, Turkish variants, missing values, price and photo separation.');
+import { parseListingScreenshot, detectListingPhoto } from '../worker/ocr/ocr.js';
+const result = parseListingScreenshot(
+  '765.000 TL\nMarka Daihatsu\nSeri Copen\nModel 1.3 Sport\nYıl 2006\nYakıt / Motor Tipi Benzin\nVites Manuel\nKM 136.000\nAğır Hasar Kayıtlı Hayır'
+);
+assert.equal(result.brand, 'Daihatsu');
+assert.equal(result.model, 'Copen 1.3 Sport');
+assert.equal(result.km, '136.000');
+assert.equal(result.price, '765.000');
+assert.equal(result.damage, 'Ağır hasar kaydı: Hayır');
+assert.equal(result.fuel, 'Benzin');
+assert.equal(result.gear, 'Manuel');
+const missing = parseListingScreenshot(
+  'Marka\nRenault\nSeri\nClio\nModel\n1.0 TCe\nYakıt Tipi Benzin (LPG)\nVites Yarı Otomatik'
+);
+assert.equal(missing.brand, 'Renault');
+assert.equal(missing.model, 'Clio 1.0 TCe');
+assert.equal(missing.fuel, 'LPG');
+assert.equal(missing.gear, 'Yarı otomatik');
+assert.equal(missing.price, undefined);
+assert.equal(missing.year, undefined);
+assert.equal(missing.damage, 'Belirtilmedi');
+const w = 300,
+  h = 250,
+  pixels = new Uint8ClampedArray(w * h * 4).fill(255);
+for (let y = 12; y < 170; y++)
+  for (let x = 4; x < 190; x++) {
+    const i = (y * w + x) * 4;
+    pixels[i] = 150;
+    pixels[i + 1] = 30;
+    pixels[i + 2] = 20;
+  }
+const crop = detectListingPhoto(pixels, w, h);
+assert.ok(crop.x >= 2 && crop.x <= 6);
+assert.ok(crop.y >= 10 && crop.y <= 14);
+assert.ok(crop.width < 200);
+assert.ok(crop.height >= 155 && crop.height <= 160);
+console.log(
+  'PASS: screenshot field parsing, Turkish variants, missing values, price and photo separation.'
+);

@@ -1,9 +1,137 @@
-import assert from 'node:assert/strict';import vm from 'node:vm';import worker from '../worker/index.js';import {handleVercelRequest} from '../server/vercel-app.mjs';import {createDB} from './test-db.mjs';
-const html=await(await worker.fetch(new Request('https://game.test/oda/ABC123'),{})).text(),client=html.match(/<script>([\s\S]*?)<\/script>/)[1],helpers=client.slice(client.indexOf('function roomCodeFromPath('),client.indexOf('function openModeRoom('));
-const paths=[],copied=[],callbacks={};let joined,neededProfile=0,reloads=0;const location={origin:'https://game.test',pathname:'/',search:'',hash:'',reload(){reloads++}},context=vm.createContext({location,room:null,document:{title:''},history:{pushState(a,b,path){paths.push(['push',path]);location.pathname=path},replaceState(a,b,path){paths.push(['replace',path]);location.pathname=path}},navigator:{clipboard:{async writeText(text){copied.push(text)}}},toast(){},window:{addEventListener(name,fn){callbacks[name]=fn}},requireProfile(fn){neededProfile++;fn()},enterRoom(action,code){joined={action,code}}});vm.runInContext(helpers,context);for(const [path,expected] of [['/oda/ABC123','ABC123'],['/oda/abc123/','ABC123'],['/admin',null],['/oda/ABC123/extra',null],['/oda/ABC12G',null],['/',null]])assert.equal(vm.runInContext('roomCodeFromPath('+JSON.stringify(path)+')',context),expected);
-context.room={code:'ABC123'};vm.runInContext('syncRoomUrl()',context);assert.deepEqual(paths,[['push','/oda/ABC123']]);assert.match(context.document.title,/ABC123/);vm.runInContext('syncRoomUrl()',context);assert.equal(paths.length,1);await vm.runInContext('copyRoomLink()',context);assert.equal(copied[0],'https://game.test/oda/ABC123');location.pathname='/oda/abc123/';vm.runInContext('syncRoomUrl()',context);assert.deepEqual(paths.at(-1),['replace','/oda/ABC123']);context.room=null;vm.runInContext("openRoomLink('ABC123')",context);assert.equal(neededProfile,1);assert.deepEqual(joined,{action:'join',code:'ABC123'});location.pathname='/';callbacks.popstate();assert.equal(reloads,1);vm.runInContext('resetRoomUrl()',context);assert.equal(location.pathname,'/');
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import worker from '../worker/index.js';
+import { handleVercelRequest } from '../server/vercel-app.mjs';
+import { createDB } from './test-db.mjs';
+const html = await (await worker.fetch(new Request('https://game.test/oda/ABC123'), {})).text(),
+  client = html.match(/<script>([\s\S]*?)<\/script>/)[1],
+  helpers = client.slice(
+    client.indexOf('function roomCodeFromPath('),
+    client.indexOf('function openModeRoom(')
+  );
+const paths = [],
+  copied = [],
+  callbacks = {};
+let joined,
+  neededProfile = 0,
+  reloads = 0;
+const location = {
+    origin: 'https://game.test',
+    pathname: '/',
+    search: '',
+    hash: '',
+    reload() {
+      reloads++;
+    },
+  },
+  context = vm.createContext({
+    location,
+    room: null,
+    document: { title: '' },
+    history: {
+      pushState(a, b, path) {
+        paths.push(['push', path]);
+        location.pathname = path;
+      },
+      replaceState(a, b, path) {
+        paths.push(['replace', path]);
+        location.pathname = path;
+      },
+    },
+    navigator: {
+      clipboard: {
+        async writeText(text) {
+          copied.push(text);
+        },
+      },
+    },
+    toast() {},
+    window: {
+      addEventListener(name, fn) {
+        callbacks[name] = fn;
+      },
+    },
+    requireProfile(fn) {
+      neededProfile++;
+      fn();
+    },
+    enterRoom(action, code) {
+      joined = { action, code };
+    },
+  });
+vm.runInContext(helpers, context);
+for (const [path, expected] of [
+  ['/oda/ABC123', 'ABC123'],
+  ['/oda/abc123/', 'ABC123'],
+  ['/admin', null],
+  ['/oda/ABC123/extra', null],
+  ['/oda/ABC12G', null],
+  ['/', null],
+])
+  assert.equal(
+    vm.runInContext('roomCodeFromPath(' + JSON.stringify(path) + ')', context),
+    expected
+  );
+context.room = { code: 'ABC123' };
+vm.runInContext('syncRoomUrl()', context);
+assert.deepEqual(paths, [['push', '/oda/ABC123']]);
+assert.match(context.document.title, /ABC123/);
+vm.runInContext('syncRoomUrl()', context);
+assert.equal(paths.length, 1);
+await vm.runInContext('copyRoomLink()', context);
+assert.equal(copied[0], 'https://game.test/oda/ABC123');
+location.pathname = '/oda/abc123/';
+vm.runInContext('syncRoomUrl()', context);
+assert.deepEqual(paths.at(-1), ['replace', '/oda/ABC123']);
+context.room = null;
+vm.runInContext("openRoomLink('ABC123')", context);
+assert.equal(neededProfile, 1);
+assert.deepEqual(joined, { action: 'join', code: 'ABC123' });
+location.pathname = '/';
+callbacks.popstate();
+assert.equal(reloads, 1);
+vm.runInContext('resetRoomUrl()', context);
+assert.equal(location.pathname, '/');
 // A shared URL serves the app without admin credentials, while admin routes retain their protections.
-const env={OGZ_BACKEND_ORIGIN:'https://backend.test',OGZ_BACKEND_TOKEN:'test',OGZ_DEPLOYMENT_KEY:'test',ADMIN_PASSWORD_HASH:'unused',ADMIN_USERNAME:'test',ADMIN_SESSION_SECRET:'test'};for(const path of ['/oda/ABC123','/oda/abc123/']){const res=await handleVercelRequest(new Request('https://game.test'+path),env);assert.equal(res.status,200);assert.match(res.headers.get('content-type'),/text\/html/);assert.equal(res.headers.get('cache-control'),'no-store');assert.ok((await res.text()).includes('initialRoomCode'))}assert.equal((await handleVercelRequest(new Request('https://game.test/admin'),env)).status,303);
+const env = {
+  OGZ_BACKEND_ORIGIN: 'https://backend.test',
+  OGZ_BACKEND_TOKEN: 'test',
+  OGZ_DEPLOYMENT_KEY: 'test',
+  ADMIN_PASSWORD_HASH: 'unused',
+  ADMIN_USERNAME: 'test',
+  ADMIN_SESSION_SECRET: 'test',
+};
+for (const path of ['/oda/ABC123', '/oda/abc123/']) {
+  const res = await handleVercelRequest(new Request('https://game.test' + path), env);
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get('content-type'), /text\/html/);
+  assert.equal(res.headers.get('cache-control'), 'no-store');
+  assert.ok((await res.text()).includes('initialRoomCode'));
+}
+assert.equal((await handleVercelRequest(new Request('https://game.test/admin'), env)).status, 303);
 // Joining via the URL's code preserves an existing player and resumes an active game.
-const DB=createDB(),token=crypto.randomUUID();async function call(action,extra={}){const res=await worker.fetch(new Request('https://game.test/api/room',{method:'POST',body:JSON.stringify({action,token,...extra})}),{DB});return {status:res.status,...await res.json()}}
-const profile={name:'URL QA',avatar:'a1'},created=await call('create',{mode:'car-price',rounds:10,guessSeconds:30,profile});await call('start',{code:created.code});const rejoined=await call('join',{code:created.code,profile});assert.equal(rejoined.state,'playing');assert.equal(rejoined.players.length,1);assert.equal(rejoined.isHost,true);await call('close',{code:created.code});assert.equal((await call('join',{code:created.code,profile})).status,410);new vm.Script(client);console.log('PASS: unique canonical URLs, one history entry, copy links, profile-gated direct joins, browser navigation, public deep routes, active-game resume and closed-room rejection.');
+const DB = createDB(),
+  token = crypto.randomUUID();
+async function call(action, extra = {}) {
+  const res = await worker.fetch(
+    new Request('https://game.test/api/room', {
+      method: 'POST',
+      body: JSON.stringify({ action, token, ...extra }),
+    }),
+    { DB }
+  );
+  return { status: res.status, ...(await res.json()) };
+}
+const profile = { name: 'URL QA', avatar: 'a1' },
+  created = await call('create', { mode: 'car-price', rounds: 10, guessSeconds: 30, profile });
+await call('start', { code: created.code });
+const rejoined = await call('join', { code: created.code, profile });
+assert.equal(rejoined.state, 'playing');
+assert.equal(rejoined.players.length, 1);
+assert.equal(rejoined.isHost, true);
+await call('close', { code: created.code });
+assert.equal((await call('join', { code: created.code, profile })).status, 410);
+new vm.Script(client);
+console.log(
+  'PASS: unique canonical URLs, one history entry, copy links, profile-gated direct joins, browser navigation, public deep routes, active-game resume and closed-room rejection.'
+);

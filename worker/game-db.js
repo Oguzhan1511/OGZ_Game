@@ -1,1 +1,1 @@
-export * from "./services/game-db.js";
+export * from './services/game-db.js';

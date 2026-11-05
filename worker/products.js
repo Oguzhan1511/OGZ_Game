@@ -1,1 +1,1 @@
-export * from "./modes/product/products.js";
+export * from './modes/product/products.js';
