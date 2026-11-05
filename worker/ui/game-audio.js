@@ -1,6 +1,11 @@
 // Small synthesized cues: no audio downloads or network requests in the game loop.
 export function createGameAudio({createContext,isHidden=()=>false}={}) {
   const notes={
+    cannon:[[130,0,.08],[80,.05,.1]],
+    hit:[[196,0,.08],[330,.07,.12]],
+    splash:[[420,0,.04],[220,.05,.08]],
+    sunk:[[330,0,.1],[247,.1,.1],[165,.2,.22]],
+    tap:[[1250,0,.035]],
     round:[[523,0,.09],[659,.09,.09],[784,.18,.15]],
     hurry:[[880,0,.045],[880,.09,.045]],
     submit:[[659,0,.06],[988,.065,.12]],
@@ -25,7 +30,7 @@ export function createGameAudio({createContext,isHidden=()=>false}={}) {
     const key=room.code+'-'+room.gameId+'-'+room.mode+'-'+room.round;
     const completed=lastRoom?.code===room.code&&['playing','reveal'].includes(lastRoom.state)&&room.state==='lobby'&&room.lastGame?.finishedAt;
     if(completed||(room.state==='finished'&&lastRoom?.state!=='finished'))play('finish');
-    else if(room.state==='playing'&&(key!==countKey||!lastRoom||lastRoom.state==='lobby'))play('round');
+    else if(room.state==='playing'&&(room.mode!=='battleship'||lastRoom?.state==='lobby')&&(key!==countKey||!lastRoom||lastRoom.state==='lobby'))play('round');
     if(key!==countKey){countKey=key;lastSecond=null}
     lastRoom={code:room.code,state:room.state};
   }

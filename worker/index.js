@@ -1,3 +1,5 @@
+import {battleshipStyles,getBattleshipClient} from "./modes/battleship/battleship-ui.js";
+import {numberRaceStyles,numberRaceClient} from "./modes/number/number-ui.js";
 import { auctionSeed } from "./modes/auction/auction-seed.js";
 import { selectAuctionItems } from "./modes/auction/auction-selection.js";
 import { finalStandingsStyles, finalStandingsClient } from "./ui/final-standings.js";
@@ -11,7 +13,7 @@ import { auctionCatalog, auctionAdminApi, auctionAdminHtml } from "./modes/aucti
 import { auctionApi } from "./modes/auction/auction.js";
 import { auctionStyles, auctionClient } from "./modes/auction/auction-ui.js";
 import { gameDatabase, databaseMigration } from "./services/game-db.js";
-import { desktopGameStyles } from "./ui/desktop-game.js";
+import { desktopGameStyles,gameViewportStyles } from "./ui/desktop-game.js";
 import { roundRankingStyles, roundRankingClient } from "./ui/round-ranking.js";
 import { mobileGameStyles, mobileGameClient } from "./ui/mobile-game.js";
 import { guessInputClient } from "./ui/guess-input.js";
@@ -45,7 +47,7 @@ const gameModes = createGameModes({
 });
 
 const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
-const html = createAppShell({
+const html = createAppShell({gameViewportStyles,battleshipStyles,battleshipClient:getBattleshipClient(),numberRaceStyles,numberRaceClient,
   finalStandingsStyles, finalStandingsClient,
   gameAudioClient,
   desktopGameStyles,
@@ -129,7 +131,8 @@ export default {
       return new Response(html, {
         headers: {
           'content-type': 'text/html; charset=utf-8',
-          'x-content-type-options': 'nosniff'
+          'x-content-type-options': 'nosniff',
+          'cache-control': 'no-store'
         }
       });
     } catch (e) {

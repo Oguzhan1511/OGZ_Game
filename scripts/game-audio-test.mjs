@@ -11,3 +11,7 @@ audio.configure(false);assert.ok(scheduled.every(n=>n.stopped));assert.equal(aud
 room={...room,mode:'auction',state:'playing'};audio.sync(room);assert.equal(scheduled.length,19);audio.countdown(room,3);assert.equal(scheduled.length,19);audio.sync({...room,round:2});assert.equal(scheduled.length,22);audio.sync({...room,state:'lobby',lastGame:{finishedAt:200}});assert.equal(scheduled.length,26);
 const unsupported=createGameAudio({createContext:()=>null});unsupported.unlock();assert.equal(unsupported.play('round'),false);const broken=createGameAudio({createContext:()=>{throw Error('Audio unavailable')}});assert.doesNotThrow(()=>broken.unlock());assert.equal(broken.play('round'),false);
 console.log('PASS: gesture unlock, unique round cues across polling, countdown deduplication, submitted-guess silence, completion, auction rounds, mute/volume, hidden tabs and unavailable audio.');
+
+const taps=scheduled.length;assert.equal(audio.play('tap'),true);assert.equal(scheduled.length,taps+1);audio.configure(false);assert.equal(audio.play('tap'),false);console.log('PASS: immediate short tap cue respects mute.');
+
+audio.configure(true,.35);for(const cue of ['cannon','hit','splash','sunk']){const before=scheduled.length;assert.equal(audio.play(cue),true);assert.ok(scheduled.length>before)}console.log('PASS: battleship cannon, hit, miss and sinking cues.');
