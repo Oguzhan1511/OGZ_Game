@@ -17,9 +17,10 @@ const foxWatermarkSvg =
   '</svg>';
 
 export function createAppShell({ gameViewportStyles, battleshipStyles, battleshipClient, numberRaceStyles, numberRaceClient, finalStandingsStyles, finalStandingsClient, gameAudioClient, desktopGameStyles, roundRankingStyles, mobileGameStyles, guessInputClient, productGameStyles, productGameClient, modeCardStyles, modeCardClient, roundRankingClient, mobileGameClient, validProfile, auctionStyles, auctionClient }) {
-  return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Bungee&family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Outfit:wght@700;800&family=Righteous&family=Russo+One&family=Montserrat:wght@800;900&family=Unbounded:wght@700;800;900&family=Chakra+Petch:wght@700&family=Bebas+Neue&display=swap" rel="stylesheet"><style>
+  return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Bungee&family=Bungee+Hairline&family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Outfit:wght@700;800&family=Righteous&family=Russo+One&family=Montserrat:wght@800;900&family=Unbounded:wght@700;800;900&family=Chakra+Petch:wght@700&family=Bebas+Neue&display=swap" rel="stylesheet"><style>
 :root {
   --brand-font: "Bungee", cursive, sans-serif;
+  --logo-font: "Bungee Hairline", "Bungee", cursive, sans-serif;
   --hero-font: "Fira Sans", sans-serif;
   --bg: #111520;
   --bg-wave: #241620;
@@ -623,18 +624,20 @@ body.home-mode::before {
   line-height: 1;
 }
 .ogz-brand-text strong {
-  font-family: var(--brand-font, "Bungee"), "Bungee", cursive, sans-serif;
+  font-family: var(--logo-font, var(--brand-font, "Bungee Hairline")), "Bungee Hairline", "Bungee", cursive, sans-serif;
   font-weight: 400;
   font-size: 38px;
   letter-spacing: 0.5px;
   color: #ffffff;
+  -webkit-text-stroke: 2.4px #ffffff;
 }
 .ogz-brand-text span {
-  font-family: var(--brand-font, "Bungee"), "Bungee", cursive, sans-serif;
+  font-family: var(--logo-font, var(--brand-font, "Bungee Hairline")), "Bungee Hairline", "Bungee", cursive, sans-serif;
   font-weight: 400;
   font-size: 11px;
   letter-spacing: 5.5px;
   color: #94a3b8;
+  -webkit-text-stroke: 0.6px #94a3b8;
   margin-top: 3px;
   padding-left: 2px;
 }
@@ -1473,10 +1476,12 @@ body.game-mode main {
   }
   .ogz-brand-text strong {
     font-size: 28px;
+    -webkit-text-stroke: 1.8px #ffffff;
   }
   .ogz-brand-text span {
     font-size: 10px;
     letter-spacing: 5px;
+    -webkit-text-stroke: 0.5px #94a3b8;
   }
   .ogz-brand-crown {
     width: 32px;
@@ -2320,7 +2325,7 @@ function home() {
     '</svg>',
     '<div class="home-brand-row">',
     '<div class="ogz-brand" aria-label="OGZ Game">',
-    '<img class="ogz-brand-logo" src="/logo.png" alt="OGZ Game" onerror="this.style.display=\'none\'">',
+    '<img class="ogz-brand-logo" src="/logo.png" alt="OGZ Game" onerror="if(!this.dataset.retried){this.dataset.retried=1;this.src=\'logo.png\';}else{this.style.display=\'none\';}">',
     '<div class="ogz-brand-text"><strong>OGZ</strong><span>GAME</span></div>',
     '</div>',
     '</div>',
