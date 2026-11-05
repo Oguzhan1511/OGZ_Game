@@ -34,3 +34,4 @@ Every primary, secondary, or major actionable button must have a two-layer struc
   - **Primary (OGZ Accent)**: Face `#e24046`, Base `#9f1c22`, White text.
   - **Secondary (Navy/Steel)**: Face `#1c2333` with 1px border `#303c54`, Base `#10141e`, Light slate text `#f1f5f9`.
   - **Gold / Accent**: Face `#f0ad5f`, Base `#a16f32`, Dark/White text.
+

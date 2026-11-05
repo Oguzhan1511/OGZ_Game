@@ -17,9 +17,10 @@ const foxWatermarkSvg =
   '</svg>';
 
 export function createAppShell({ gameViewportStyles, battleshipStyles, battleshipClient, numberRaceStyles, numberRaceClient, finalStandingsStyles, finalStandingsClient, gameAudioClient, desktopGameStyles, roundRankingStyles, mobileGameStyles, guessInputClient, productGameStyles, productGameClient, modeCardStyles, modeCardClient, roundRankingClient, mobileGameClient, validProfile, auctionStyles, auctionClient }) {
-  return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Outfit:wght@700;800&family=Righteous&family=Russo+One&family=Montserrat:wght@800;900&family=Unbounded:wght@700;800;900&family=Chakra+Petch:wght@700&family=Bebas+Neue&display=swap" rel="stylesheet"><style>
+  return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Bungee&family=Fira+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Outfit:wght@700;800&family=Righteous&family=Russo+One&family=Montserrat:wght@800;900&family=Unbounded:wght@700;800;900&family=Chakra+Petch:wght@700&family=Bebas+Neue&display=swap" rel="stylesheet"><style>
 :root {
-  --brand-font: "Space Grotesk";
+  --brand-font: "Bungee", cursive, sans-serif;
+  --hero-font: "Fira Sans", sans-serif;
   --bg: #111520;
   --bg-wave: #241620;
   --panel: #1c222e;
@@ -622,17 +623,17 @@ body.home-mode::before {
   line-height: 1;
 }
 .ogz-brand-text strong {
-  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
-  font-weight: 800;
+  font-family: var(--brand-font, "Bungee"), "Bungee", cursive, sans-serif;
+  font-weight: 400;
   font-size: 38px;
-  letter-spacing: -0.5px;
+  letter-spacing: 0.5px;
   color: #ffffff;
 }
 .ogz-brand-text span {
-  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 6.5px;
+  font-family: var(--brand-font, "Bungee"), "Bungee", cursive, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 5.5px;
   color: #94a3b8;
   margin-top: 3px;
   padding-left: 2px;
@@ -649,31 +650,23 @@ body.home-mode::before {
 .home-hero-copy {
   position: relative;
   z-index: 2;
-  max-width: 580px;
+  max-width: 620px;
 }
 .hero-title-wrap {
   position: relative;
   display: inline-block;
-  padding-top: 18px;
-}
-.hero-mini-crown {
-  position: absolute;
-  top: -6px;
-  left: -18px;
-  width: 36px;
-  height: 30px;
-  transform: rotate(-22deg);
+  padding-top: 0;
 }
 .home-headline {
   margin: 0;
-  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
-  font-weight: 800;
+  font-family: var(--hero-font, "Fira Sans"), "Fira Sans", sans-serif;
+  font-weight: 900;
   font-style: italic;
-  font-size: clamp(38px, 4.5vw, 62px);
-  line-height: 1.05;
-  letter-spacing: -1.5px;
+  font-size: clamp(42px, 5.2vw, 68px);
+  line-height: 1.06;
+  letter-spacing: -0.5px;
   color: #ffffff;
-  transform: skewX(-3deg);
+  transform: skewX(-2deg);
 }
 .home-headline .accent-red {
   display: block;
@@ -682,17 +675,18 @@ body.home-mode::before {
 }
 .hero-brush-underline {
   display: block;
-  width: min(350px, 78%);
+  width: min(390px, 85%);
   height: 18px;
-  margin-top: 4px;
-  margin-left: 18px;
+  margin-top: 6px;
+  margin-left: 10px;
 }
 .home-subtext {
-  margin: 18px 0 28px;
+  font-family: var(--hero-font, "Fira Sans"), "Fira Sans", sans-serif;
+  margin: 22px 0 32px;
   color: #cbd5e1;
-  font-size: clamp(14px, 1.15vw, 16.5px);
-  line-height: 1.6;
-  max-width: 490px;
+  font-size: clamp(16px, 1.25vw, 19px);
+  line-height: 1.65;
+  max-width: 550px;
   font-weight: 400;
 }
 .home-cta-row {
@@ -1438,9 +1432,6 @@ body.game-mode main {
   .home-hero-copy {
     margin: 0 auto;
   }
-  .hero-mini-crown {
-    left: 8px;
-  }
   .hero-brush-underline {
     margin: 4px auto 0;
   }
@@ -1607,16 +1598,16 @@ body.game-mode main {
     gap: 24px;
   }
   .home-headline {
-    font-size: clamp(28px, min(4.3vw, 7svh), 62px);
+    font-size: clamp(30px, min(4.8vw, 7.8svh), 68px);
   }
   .hero-title-wrap {
-    padding-top: 12px;
+    padding-top: 0;
   }
   .hero-brush-underline {
     height: clamp(10px, 2svh, 18px);
   }
   .home-subtext {
-    font-size: clamp(12px, min(1.15vw, 2.3svh), 16px);
+    font-size: clamp(13px, min(1.25vw, 2.5svh), 18px);
     margin: clamp(8px, 1.7svh, 18px) 0 clamp(12px, 2.5svh, 28px);
   }
   .home-cta-face {
@@ -2336,9 +2327,6 @@ function home() {
     '<section class="home-hero">',
     '<div class="home-hero-copy">',
     '<div class="hero-title-wrap">',
-    '<svg class="hero-mini-crown" viewBox="0 0 44 36" fill="none" aria-hidden="true">',
-    '<path d="M6 28L4 10L15 19L22 6L29 19L40 10L38 28H6Z" stroke="#f0ad5f" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>',
-    '</svg>',
     '<h1 class="home-headline">Arkadaşlarınla<br>Tahmin Et,<span class="accent-red">Yarış, Eğlen!</span></h1>',
     '<svg class="hero-brush-underline" viewBox="0 0 340 20" fill="none" aria-hidden="true">',
     '<path d="M4 13C88 4 218 4 336 15" stroke="#e24046" stroke-width="4.5" stroke-linecap="round"/>',
