@@ -1,18 +1,191 @@
 import { productCategories } from './products.js';
 export const productGameStyles = String.raw`
-.product-category-options{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.product-category-options label{display:flex;align-items:center;gap:7px;margin:0;padding:10px 12px;border:1px solid #2d3648;border-radius:10px;color:#cbd5e1;font-size:12px;cursor:pointer}.product-category-options label:has(input:checked){background:#2d2226;border-color:#f0ad5f;color:#ffffff}.product-category-options input{accent-color:#e24046}.product-mode-note{color:#94a3b8;font-size:11px;line-height:1.6}
-.product-game .game-visual{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:12px}.product-game .game-vehicle-info{grid-column:1;grid-row:1;display:block;min-width:0;min-height:0;max-height:160px;overflow:auto;padding:0;margin:0}.product-game .game-vehicle-info h1{margin:0;white-space:normal;overflow-wrap:anywhere;line-height:1.2;font-size:clamp(20px,1.8vw,28px)}.product-game .photo-stage{grid-column:1;grid-row:2;height:100%;min-height:0;min-width:0;overflow:hidden}.product-game .game-photo{object-fit:contain}.product-game .game-damage{display:none}
-@media(min-width:701px){.product-game .game-board{grid-template-columns:minmax(0,1fr) minmax(240px,.38fr);grid-template-rows:minmax(0,1fr) minmax(200px,.65fr)}.product-game .game-board>.game-visual{grid-column:1;grid-row:1;padding:20px}.product-game .game-board>.game-scores{grid-column:2;grid-row:1/3}.product-game .game-board .guess-card,.product-game .game-round-result{grid-column:1;grid-row:2;margin:0 20px 16px}.product-game .guess-card form{grid-template-columns:minmax(0,1fr) minmax(180px,.5fr);grid-template-areas:'label label' 'input submit' 'shortcuts shortcuts';grid-template-rows:auto minmax(48px,1fr) minmax(34px,.6fr)}.product-game .game-round-result{max-width:none}.product-game .actual-price strong{font-size:30px}}
-@media(max-width:700px){.product-game .game-visual{grid-template-rows:auto auto}.product-game .game-vehicle-info{max-height:none;overflow:visible}.product-game .photo-stage{height:clamp(180px,32svh,280px)}.product-game .game-vehicle-info h1{font-size:22px}.product-game .game-details{padding:0}.show-mobile-ranking.product-game .game-visual{display:none}.product-game .game-board[data-mobile-panel=scores] .game-visual{display:none}}
+.product-category-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.product-category-options label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid #2d3648;
+  border-radius: 10px;
+  color: #cbd5e1;
+  font-size: 12px;
+  cursor: pointer;
+}
+.product-category-options label:has(input:checked) {
+  background: #2d2226;
+  border-color: #f0ad5f;
+  color: #ffffff;
+}
+.product-category-options input {
+  accent-color: #e24046;
+}
+.product-mode-note {
+  color: #94a3b8;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.product-game .game-visual {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+}
+.product-game .game-vehicle-info {
+  grid-column: 1;
+  grid-row: 1;
+  display: block;
+  min-width: 0;
+  min-height: 0;
+  max-height: 160px;
+  overflow: auto;
+  padding: 0;
+  margin: 0;
+}
+.product-game .game-vehicle-info h1 {
+  margin: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.2;
+  font-size: clamp(20px, 1.8vw, 28px);
+}
+.product-game .photo-stage {
+  grid-column: 1;
+  grid-row: 2;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.product-game .game-photo {
+  object-fit: contain;
+}
+.product-game .game-damage {
+  display: none;
+}
+@media (min-width: 701px) {
+  .product-game .game-board {
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 0.38fr);
+    grid-template-rows: minmax(0, 1fr) minmax(200px, 0.65fr);
+  }
+  .product-game .game-board > .game-visual {
+    grid-column: 1;
+    grid-row: 1;
+    padding: 20px;
+  }
+  .product-game .game-board > .game-scores {
+    grid-column: 2;
+    grid-row: 1/3;
+  }
+  .product-game .game-board .guess-card,
+  .product-game .game-round-result {
+    grid-column: 1;
+    grid-row: 2;
+    margin: 0 20px 16px;
+  }
+  .product-game .guess-card form {
+    grid-template-columns: minmax(0, 1fr) minmax(180px, 0.5fr);
+    grid-template-areas: "label label" "input submit" "shortcuts shortcuts";
+    grid-template-rows: auto minmax(48px, 1fr) minmax(34px, 0.6fr);
+  }
+  .product-game .game-round-result {
+    max-width: none;
+  }
+  .product-game .actual-price strong {
+    font-size: 30px;
+  }
+}
+@media (max-width: 700px) {
+  .product-game .game-visual {
+    grid-template-rows: auto auto;
+  }
+  .product-game .game-vehicle-info {
+    max-height: none;
+    overflow: visible;
+  }
+  .product-game .photo-stage {
+    height: clamp(180px, 32svh, 280px);
+  }
+  .product-game .game-vehicle-info h1 {
+    font-size: 22px;
+  }
+  .product-game .game-details {
+    padding: 0;
+  }
+  .show-mobile-ranking.product-game .game-visual {
+    display: none;
+  }
+  .product-game .game-board[data-mobile-panel="scores"] .game-visual {
+    display: none;
+  }
+}
 `;
 export const productGameClient = String.raw`
-const productCategories=${JSON.stringify(productCategories)};
-function productCategoryChooser(initialMode='car-price'){return '<fieldset id="product-category-picker" '+(initialMode==='product-price'?'':'hidden')+' style="border:0;padding:0;margin:16px 0"><legend style="font-size:13px">Ürün kategorileri</legend><div class="product-category-options"><label><input id="product-mixed" type="checkbox" checked onchange="toggleProductMixed(this.checked)">Karışık · Tümü</label>'+Object.entries(productCategories).map(([key,name])=>'<label><input type="checkbox" name="product-category" value="'+key+'" checked onchange="updateProductMixed()">'+name+'</label>').join('')+'</div><p class="product-mode-note">Bir veya birden fazla kategori seçebilirsin. Karışık mod, tüm kategorilerden ürünleri içerir.</p></fieldset>'}
-function toggleProductCategories(){document.querySelector('#product-category-picker').hidden=document.querySelector('#game-mode').value!=='product-price';const note=document.querySelector('#game-mode-description');if(note?.classList.contains('notice'))note.textContent=document.querySelector('#game-mode').value==='product-price'?'Ürünün görselini ve adını incele, fiyatını tahmin et.':'Araç detaylarını incele, fiyata en yakın tahminle puan topla.'}
-function toggleProductMixed(checked){for(const input of document.querySelectorAll('[name=product-category]'))input.checked=checked}
-function updateProductMixed(){document.querySelector('#product-mixed').checked=[...document.querySelectorAll('[name=product-category]')].every(input=>input.checked)}
-function selectedProductCategories(){return [...document.querySelectorAll('[name=product-category]:checked')].map(input=>input.value)}
-function setupProductGame(){const input=document.querySelector('#guess');if(input){input.inputMode='decimal';input.placeholder='Örn. 1.299,90'}const visual=document.querySelector('.game-visual'),info=document.querySelector('.game-vehicle-info');if(visual&&info){for(const child of [...info.children])if(child.tagName!=='H1')child.remove();visual.prepend(info)}document.querySelector('.game-damage')?.remove();const carTab=document.querySelector('[data-panel=car]');if(carTab)carTab.textContent='Ürün';document.querySelector('.mobile-game-tabs')?.setAttribute('aria-label','Ürün inceleme')}
+const productCategories = ${JSON.stringify(productCategories)};
+function productCategoryChooser(initialMode = 'car-price') {
+  return (
+    '<fieldset id="product-category-picker" ' +
+    (initialMode === 'product-price' ? '' : 'hidden') +
+    ' style="border:0;padding:0;margin:16px 0"><legend style="font-size:13px">Ürün kategorileri</legend><div class="product-category-options"><label><input id="product-mixed" type="checkbox" checked onchange="toggleProductMixed(this.checked)">Karışık · Tümü</label>' +
+    Object.entries(productCategories)
+      .map(
+        ([key, name]) =>
+          '<label><input type="checkbox" name="product-category" value="' +
+          key +
+          '" checked onchange="updateProductMixed()">' +
+          name +
+          '</label>'
+      )
+      .join('') +
+    '</div><p class="product-mode-note">Bir veya birden fazla kategori seçebilirsin. Karışık mod, tüm kategorilerden ürünleri içerir.</p></fieldset>'
+  );
+}
+function toggleProductCategories() {
+  document.querySelector('#product-category-picker').hidden =
+    document.querySelector('#game-mode').value !== 'product-price';
+  const note = document.querySelector('#game-mode-description');
+  if (note?.classList.contains('notice'))
+    note.textContent =
+      document.querySelector('#game-mode').value === 'product-price'
+        ? 'Ürünün görselini ve adını incele, fiyatını tahmin et.'
+        : 'Araç detaylarını incele, fiyata en yakın tahminle puan topla.';
+}
+function toggleProductMixed(checked) {
+  for (const input of document.querySelectorAll('[name=product-category]')) input.checked = checked;
+}
+function updateProductMixed() {
+  document.querySelector('#product-mixed').checked = [
+    ...document.querySelectorAll('[name=product-category]'),
+  ].every(input => input.checked);
+}
+function selectedProductCategories() {
+  return [...document.querySelectorAll('[name=product-category]:checked')].map(
+    input => input.value
+  );
+}
+function setupProductGame() {
+  const input = document.querySelector('#guess');
+  if (input) {
+    input.inputMode = 'decimal';
+    input.placeholder = 'Örn. 1.299,90';
+  }
+  const visual = document.querySelector('.game-visual'),
+    info = document.querySelector('.game-vehicle-info');
+  if (visual && info) {
+    for (const child of [...info.children]) if (child.tagName !== 'H1') child.remove();
+    visual.prepend(info);
+  }
+  document.querySelector('.game-damage')?.remove();
+  const carTab = document.querySelector('[data-panel=car]');
+  if (carTab) carTab.textContent = 'Ürün';
+  document.querySelector('.mobile-game-tabs')?.setAttribute('aria-label', 'Ürün inceleme');
+}
 `;
 export const productAdminHtml = String.raw`<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Ürün yönetimi · OGZ Game</title><style>
 *{box-sizing:border-box}body{margin:0;background:#111520;color:#f8fafc;font:15px system-ui,sans-serif}main{max-width:1250px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;border-bottom:1px solid #252b37;padding-bottom:20px}a{color:#f0ad5f}h1{font-size:34px;margin-bottom:8px}p{color:#94a3b8;line-height:1.6}.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;margin-top:24px}.panel{background:#1c222e;border:1px solid #283040;padding:24px;border-radius:18px}h2{margin-top:0}label{display:block;color:#cbd5e1;margin-top:18px;font-size:13px}input,select,button{font:inherit}input,select{display:block;width:100%;margin-top:8px;padding:13px;border:1px solid #333d50;border-radius:10px;background:#111520;color:white}input[type=file]{font-size:12px}button{cursor:pointer;padding:12px 18px;border:1px solid #333d50;border-radius:10px;background:#242b3b;color:#f8fafc}button:disabled{opacity:.5;cursor:wait}button.primary{background:#e24046;color:#ffffff;border:0;font-weight:700;width:100%;margin-top:22px}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #f0ad5f;outline-offset:3px}#status{padding:15px;border-radius:10px;background:#181d28;border:1px solid #283040;margin-top:20px;min-height:48px}#preview{height:220px;margin-top:18px;display:flex;justify-content:center;align-items:center;background:#111520;border-radius:12px;color:#94a3b8}#preview img{width:100%;height:100%;object-fit:contain}.record{display:flex;gap:14px;padding:16px 0;border-bottom:1px solid #252b37}.record img{width:86px;height:86px;object-fit:contain;background:#111520;border-radius:10px}.record p{font-size:12px;margin:6px 0}.record button{padding:7px 10px;font-size:12px;margin-right:6px}.filters{display:flex;gap:10px;margin:15px 0}.filters input,.filters select{min-width:0;margin:0}.muted{font-size:12px;color:#94a3b8}.check{display:flex;align-items:center;gap:8px}.check input{width:auto;margin:0}#cancel{margin-top:10px}.badge{color:#f0ad5f;font-size:11px;letter-spacing:2px}@media(max-width:750px){main{padding:16px}.layout{grid-template-columns:1fr}.panel{padding:18px}h1{font-size:28px}.filters{flex-direction:column}}

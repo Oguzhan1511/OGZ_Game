@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import prettier from 'prettier';
 
-const prettierOptions = {
+const prettierJsOptions = {
   parser: 'babel',
   printWidth: 100,
   tabWidth: 2,
@@ -13,26 +13,123 @@ const prettierOptions = {
   arrowParens: 'avoid',
 };
 
+const prettierCssOptions = {
+  parser: 'css',
+  printWidth: 100,
+  tabWidth: 2,
+};
+
+function maskInterpolations(code) {
+  const interpolations = [];
+  let result = '';
+  let i = 0;
+
+  while (i < code.length) {
+    if (code[i] === '$' && code[i + 1] === '{') {
+      const start = i;
+      let depth = 1;
+      i += 2;
+      while (i < code.length && depth > 0) {
+        if (code[i] === '{') depth++;
+        else if (code[i] === '}') depth--;
+        i++;
+      }
+      const original = code.slice(start, i);
+      const token = `__INTERP_${interpolations.length}__`;
+      interpolations.push({ token, original });
+      result += token;
+    } else {
+      result += code[i];
+      i++;
+    }
+  }
+
+  return { masked: result, interpolations };
+}
+
+function restoreInterpolations(code, interpolations) {
+  let restored = code;
+  for (const item of interpolations) {
+    restored = restored.replace(item.token, item.original);
+  }
+  return restored;
+}
+
 async function formatJs(code, filepath = 'file.js') {
   try {
-    return await prettier.format(code, { ...prettierOptions, filepath });
+    return await prettier.format(code, { ...prettierJsOptions, filepath });
   } catch (err) {
     console.warn(`Could not format JS in ${filepath}:`, err.message);
     return code;
   }
 }
 
-async function formatCss(code) {
+async function formatJsWithInterpolations(code) {
+  const { masked, interpolations } = maskInterpolations(code);
+
   try {
-    return await prettier.format(code, {
-      parser: 'css',
-      printWidth: 100,
-      tabWidth: 2,
-    });
+    const formatted = await prettier.format(masked, prettierJsOptions);
+    return restoreInterpolations(formatted, interpolations);
   } catch (err) {
-    console.warn('Could not format CSS:', err.message);
+    console.warn('Could not format JS with interpolations:', err.message);
     return code;
   }
+}
+
+async function formatCssWithInterpolations(code) {
+  const { masked, interpolations } = maskInterpolations(code);
+
+  try {
+    const formatted = await prettier.format(masked, prettierCssOptions);
+    return restoreInterpolations(formatted, interpolations);
+  } catch (err) {
+    console.warn('Could not format CSS with interpolations:', err.message);
+    return code;
+  }
+}
+
+async function replaceAsync(str, regex, asyncFn) {
+  const matches = [];
+  str.replace(regex, (...args) => {
+    matches.push(args);
+  });
+  const replacements = await Promise.all(matches.map(m => asyncFn(...m)));
+  let i = 0;
+  return str.replace(regex, () => replacements[i++]);
+}
+
+const uiTemplateFiles = [
+  'worker/ui/desktop-game.js',
+  'worker/ui/mobile-game.js',
+  'worker/ui/mode-cards.js',
+  'worker/ui/round-ranking.js',
+  'worker/ui/final-standings.js',
+  'worker/ui/guess-input.js',
+  'worker/ui/game-audio.js',
+  'worker/modes/auction/auction-ui.js',
+  'worker/modes/battleship/battleship-ui.js',
+  'worker/modes/number/number-ui.js',
+  'worker/modes/product/product-ui.js',
+];
+
+async function formatUiTemplateFile(file) {
+  let content = fs.readFileSync(file, 'utf8');
+
+  // Format any Style template literals
+  const styleRegex = /(export const \w*Styles\w*\s*=\s*String\.raw`)([\s\S]*?)(`;)/g;
+  content = await replaceAsync(content, styleRegex, async (match, p1, p2, p3) => {
+    const formatted = await formatCssWithInterpolations(p2);
+    return p1 + '\n' + formatted.trim() + '\n' + p3;
+  });
+
+  // Format any Client template literals
+  const clientRegex = /(export const \w*Client\w*\s*=\s*String\.raw`)([\s\S]*?)(`;)/g;
+  content = await replaceAsync(content, clientRegex, async (match, p1, p2, p3) => {
+    const formatted = await formatJsWithInterpolations(p2);
+    return p1 + '\n' + formatted.trim() + '\n' + p3;
+  });
+
+  fs.writeFileSync(file, content, 'utf8');
 }
 
 async function formatAppShell() {
@@ -47,7 +144,7 @@ async function formatAppShell() {
 
   if (styleStart !== -1 && styleEnd !== -1) {
     const rawCss = content.slice(styleStart + styleStartTag.length, styleEnd);
-    const formattedCss = await formatCss(rawCss);
+    const formattedCss = await formatCssWithInterpolations(rawCss);
     content =
       content.slice(0, styleStart + styleStartTag.length) +
       '\n' +
@@ -80,12 +177,8 @@ function getAllJsFiles(dir) {
     if (entry.isDirectory()) {
       if (!skipDirs.includes(entry.name)) results.push(...getAllJsFiles(full));
     } else if (entry.name.endsWith('.js') || entry.name.endsWith('.mjs')) {
-      if (
-        full !== 'worker\\ui\\app-shell.js' &&
-        full !== 'worker/ui/app-shell.js' &&
-        full !== 'scripts\\format-repo.mjs' &&
-        full !== 'scripts/format-repo.mjs'
-      ) {
+      const norm = full.replace(/\\/g, '/');
+      if (norm !== 'worker/ui/app-shell.js' && !uiTemplateFiles.includes(norm) && norm !== 'scripts/format-repo.mjs') {
         results.push(full);
       }
     }
@@ -94,7 +187,7 @@ function getAllJsFiles(dir) {
 }
 
 const files = getAllJsFiles('.');
-console.log(`Formatting ${files.length} JavaScript files...`);
+console.log(`Formatting ${files.length} regular JavaScript files...`);
 
 for (const file of files) {
   const original = fs.readFileSync(file, 'utf8');
@@ -104,5 +197,12 @@ for (const file of files) {
   }
 }
 
+console.log(`Formatting ${uiTemplateFiles.length} UI submodules...`);
+for (const file of uiTemplateFiles) {
+  await formatUiTemplateFile(file);
+}
+
+console.log('Formatting worker/ui/app-shell.js...');
 await formatAppShell();
+
 console.log('Prettier formatting complete across all files!');

@@ -25,40 +25,406 @@ export function buildRoundRanking(room) {
   }));
 }
 export const roundRankingStyles = String.raw`
-.mobile-round-ranking,.reveal-ranking-link{display:none}
-@media(max-width:700px){
- .game-board[data-state=reveal] .photo-stage{height:135px}.game-board[data-state=reveal] .game-vehicle-info>.vehicle-rows,.game-board[data-state=reveal] .vehicle-extra{display:none}.reveal-ranking-link{display:block;width:100%;margin-top:15px;padding:11px;border:1px solid #3a4559;border-radius:10px;background:#222938;color:#f0ad5f;font-size:12px}
- .show-mobile-ranking .mobile-game-tabs{display:none}.show-mobile-ranking .game-board{display:contents}.show-mobile-ranking .game-board>.game-visual,.show-mobile-ranking .game-board>.game-scores,.show-mobile-ranking .game-board>.game-damage{display:none}.show-mobile-ranking .game-details{padding:0}.show-mobile-ranking .game-details>:not(.round-actions):not(.game-round-result){display:none}.show-mobile-ranking .game-round-result>:not(.round-actions){display:none}.show-mobile-ranking .mobile-round-ranking:not([hidden]){display:block}
- .mobile-round-ranking{padding:18px 2px calc(var(--guess-dock-height,90px) + 14px)}.ranking-kicker{font-size:10px;letter-spacing:2px;color:#f0ad5f}.mobile-round-ranking h2{font-size:28px;letter-spacing:-1px;margin:8px 0}.ranking-status{color:#94a3b8;font-size:12px;line-height:1.6;min-height:20px;margin:0 0 20px}.mobile-ranking-list{display:flex;flex-direction:column;gap:9px}.mobile-rank-row{display:flex;align-items:center;gap:10px;min-height:68px;padding:12px 10px;border:1px solid #283040;border-radius:14px;background:#1c222e;will-change:transform}.mobile-rank-row.is-me{background:#2b1d26;border-color:#e24046}.mobile-rank-row.is-leader{box-shadow:inset 3px 0 #f0ad5f}.mobile-rank-position{width:19px;text-align:center;font:700 16px 'Space Grotesk';color:#94a3b8}.mobile-rank-row.is-leader .mobile-rank-position{color:#f0ad5f}.mobile-rank-avatar{width:34px;height:34px;border-radius:10px}.mobile-rank-player{flex:1;min-width:0}.mobile-rank-player strong{display:block;font-size:13px;overflow-wrap:anywhere}.mobile-rank-player strong small{font-size:9px;color:#f0ad5f;margin-left:4px}.mobile-rank-meta{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;font-size:10px}.mobile-rank-gain{color:#f0ad5f;font-weight:700}.mobile-rank-movement{color:#94a3b8}.mobile-rank-movement.up{color:#4ade80}.mobile-rank-movement.down{color:#e24046}.mobile-rank-total{text-align:right;min-width:60px}.mobile-rank-total b{display:block;font:700 21px 'Space Grotesk';font-variant-numeric:tabular-nums;color:#ffffff}.mobile-rank-total small{font-size:8px;color:#94a3b8;letter-spacing:.5px}.ranking-back{display:block;width:100%;padding:12px;margin-top:17px;background:transparent;color:#94a3b8;font-size:12px}
+.mobile-round-ranking,
+.reveal-ranking-link {
+  display: none;
 }
-@media(prefers-reduced-motion:reduce){.mobile-rank-row{will-change:auto}}
+@media (max-width: 700px) {
+  .game-board[data-state="reveal"] .photo-stage {
+    height: 135px;
+  }
+  .game-board[data-state="reveal"] .game-vehicle-info > .vehicle-rows,
+  .game-board[data-state="reveal"] .vehicle-extra {
+    display: none;
+  }
+  .reveal-ranking-link {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+    padding: 11px;
+    border: 1px solid #3a4559;
+    border-radius: 10px;
+    background: #222938;
+    color: #f0ad5f;
+    font-size: 12px;
+  }
+  .show-mobile-ranking .mobile-game-tabs {
+    display: none;
+  }
+  .show-mobile-ranking .game-board {
+    display: contents;
+  }
+  .show-mobile-ranking .game-board > .game-visual,
+  .show-mobile-ranking .game-board > .game-scores,
+  .show-mobile-ranking .game-board > .game-damage {
+    display: none;
+  }
+  .show-mobile-ranking .game-details {
+    padding: 0;
+  }
+  .show-mobile-ranking .game-details > :not(.round-actions):not(.game-round-result) {
+    display: none;
+  }
+  .show-mobile-ranking .game-round-result > :not(.round-actions) {
+    display: none;
+  }
+  .show-mobile-ranking .mobile-round-ranking:not([hidden]) {
+    display: block;
+  }
+  .mobile-round-ranking {
+    padding: 18px 2px calc(var(--guess-dock-height, 90px) + 14px);
+  }
+  .ranking-kicker {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #f0ad5f;
+  }
+  .mobile-round-ranking h2 {
+    font-size: 28px;
+    letter-spacing: -1px;
+    margin: 8px 0;
+  }
+  .ranking-status {
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.6;
+    min-height: 20px;
+    margin: 0 0 20px;
+  }
+  .mobile-ranking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+  .mobile-rank-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 68px;
+    padding: 12px 10px;
+    border: 1px solid #283040;
+    border-radius: 14px;
+    background: #1c222e;
+    will-change: transform;
+  }
+  .mobile-rank-row.is-me {
+    background: #2b1d26;
+    border-color: #e24046;
+  }
+  .mobile-rank-row.is-leader {
+    box-shadow: inset 3px 0 #f0ad5f;
+  }
+  .mobile-rank-position {
+    width: 19px;
+    text-align: center;
+    font: 700 16px "Space Grotesk";
+    color: #94a3b8;
+  }
+  .mobile-rank-row.is-leader .mobile-rank-position {
+    color: #f0ad5f;
+  }
+  .mobile-rank-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+  .mobile-rank-player {
+    flex: 1;
+    min-width: 0;
+  }
+  .mobile-rank-player strong {
+    display: block;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .mobile-rank-player strong small {
+    font-size: 9px;
+    color: #f0ad5f;
+    margin-left: 4px;
+  }
+  .mobile-rank-meta {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+    font-size: 10px;
+  }
+  .mobile-rank-gain {
+    color: #f0ad5f;
+    font-weight: 700;
+  }
+  .mobile-rank-movement {
+    color: #94a3b8;
+  }
+  .mobile-rank-movement.up {
+    color: #4ade80;
+  }
+  .mobile-rank-movement.down {
+    color: #e24046;
+  }
+  .mobile-rank-total {
+    text-align: right;
+    min-width: 60px;
+  }
+  .mobile-rank-total b {
+    display: block;
+    font: 700 21px "Space Grotesk";
+    font-variant-numeric: tabular-nums;
+    color: #ffffff;
+  }
+  .mobile-rank-total small {
+    font-size: 8px;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+  }
+  .ranking-back {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 17px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mobile-rank-row {
+    will-change: auto;
+  }
+}
 `;
 export const roundRankingClient = String.raw`
-const buildRoundRanking=${buildRoundRanking.toString()};
-let rankingState={key:'',stage:'idle',at:0,panel:null},rankingDelay=null,rankingCountTimer=null,rankingMoveTimer=null,rankingFrame=null,rankingAnimations=[];const rankingPlayed=new Set();
-function rankingKey(){return room?room.code+'-'+(room.gameId||'legacy')+'-'+room.round:''}
-function rankingReducedMotion(){return document.body.classList.contains('no-motion')||window.matchMedia('(prefers-reduced-motion:reduce)').matches}
-function clearRankingAnimation(){clearTimeout(rankingDelay);clearTimeout(rankingCountTimer);clearTimeout(rankingMoveTimer);if(rankingFrame!==null)cancelAnimationFrame(rankingFrame);rankingAnimations.forEach(animation=>animation.cancel());rankingAnimations=[];rankingFrame=null}
-function lockRankingNext(locked){const button=document.querySelector('.round-actions button');if(!button||!room)return;if(!button.dataset.originalLabel)button.dataset.originalLabel=button.textContent;button.disabled=locked||!room.isHost;button.textContent=locked&&room.isHost?'Sıralama geliyor…':button.dataset.originalLabel}
-function resetMobileRoundRanking(){clearRankingAnimation();rankingState={key:'',stage:'idle',at:0,panel:null};document.body.classList.remove('show-mobile-ranking')}
-function mobileRoundRankingMarkup(current){const entries=buildRoundRanking(current).sort((a,b)=>a.previousRank-b.previousRank);return '<section id="mobile-round-ranking" class="mobile-round-ranking" aria-label="Tur sonu genel sıralama" hidden><span class="ranking-kicker">TUR '+(current.round+1)+' / '+current.rounds+' TAMAMLANDI</span><h2>Genel sıralama</h2><p id="ranking-status" class="ranking-status" role="status">Puanlar ekleniyor…</p><div id="mobile-ranking-list" class="mobile-ranking-list" role="list">'+entries.map(row=>'<div class="mobile-rank-row '+(row.id===current.me?'is-me':'')+'" role="listitem" data-player-id="'+esc(row.id)+'"><span class="mobile-rank-position">'+row.previousRank+'</span><img class="mobile-rank-avatar" src="'+avatar(row.avatar)+'" alt=""><div class="mobile-rank-player"><strong>'+esc(row.name)+(row.id===current.me?'<small>sen</small>':'')+'</strong><div class="mobile-rank-meta"><span class="mobile-rank-gain">Bu tur +'+row.gain+'</span><span class="mobile-rank-movement">'+(row.missed?'Tahmin yok':'—')+'</span></div></div><div class="mobile-rank-total"><b>'+new Intl.NumberFormat('tr-TR').format(row.before)+'</b><small>TOPLAM PUAN</small></div></div>').join('')+'</div><button type="button" class="ranking-back" onclick="showMobilePriceResult()">← Fiyatı ve tahminini gör</button></section>'}
-function finishMobileRanking(animate){const list=document.querySelector('#mobile-ranking-list');if(!list)return;const rows=buildRoundRanking(room),elements=new Map([...list.children].map(element=>[element.dataset.playerId,element]));const positions=new Map([...elements].map(([id,element])=>[id,element.getBoundingClientRect().top]));
- rows.forEach(row=>{const element=elements.get(row.id);if(!element)return;element.querySelector('.mobile-rank-position').textContent=row.rank;element.querySelector('.mobile-rank-total b').textContent=new Intl.NumberFormat('tr-TR').format(row.total);element.classList.toggle('is-leader',row.rank===1);const movement=element.querySelector('.mobile-rank-movement');movement.className='mobile-rank-movement '+(row.movement>0?'up':row.movement<0?'down':'');movement.textContent=row.movement>0?'↑ '+row.movement+' sıra':row.movement<0?'↓ '+Math.abs(row.movement)+' sıra':row.missed?'Tahmin yok':'Sıra aynı';list.appendChild(element)});
- if(animate&&!rankingReducedMotion())for(const [id,element] of elements){const delta=positions.get(id)-element.getBoundingClientRect().top;if(delta&&element.animate)rankingAnimations.push(element.animate([{transform:'translateY('+delta+'px)'},{transform:'translateY(0)'}],{duration:760,easing:'cubic-bezier(.22,1,.36,1)'}))}
- const done=()=>{rankingState.stage='done';rankingPlayed.add(rankingState.key);const status=document.querySelector('#ranking-status');if(status)status.textContent='Tur puanları eklendi. İşte güncel sıralama.';lockRankingNext(false)};
- if(animate&&!rankingReducedMotion())rankingMoveTimer=setTimeout(done,800);else done();
+const buildRoundRanking = ${buildRoundRanking.toString()};
+let rankingState = { key: '', stage: 'idle', at: 0, panel: null },
+  rankingDelay = null,
+  rankingCountTimer = null,
+  rankingMoveTimer = null,
+  rankingFrame = null,
+  rankingAnimations = [];
+const rankingPlayed = new Set();
+function rankingKey() {
+  return room ? room.code + '-' + (room.gameId || 'legacy') + '-' + room.round : '';
 }
-function showMobileRoundRanking(){if(!room||room.state!=='reveal'||!window.matchMedia('(max-width:700px)').matches)return;clearRankingAnimation();const panel=document.querySelector('#mobile-round-ranking');if(!panel)return;rankingState.panel=panel;rankingState.key=rankingKey();rankingState.stage='running';panel.hidden=false;document.body.classList.add('show-mobile-ranking');window.scrollTo({top:0,behavior:'auto'});setupMobileGameViewport();
- if(rankingPlayed.has(rankingState.key)||rankingReducedMotion()){finishMobileRanking(false);return}
- lockRankingNext(true);const elements=[...document.querySelectorAll('#mobile-ranking-list .mobile-rank-row')];elements.forEach((element,index)=>{if(element.animate)rankingAnimations.push(element.animate([{opacity:0,transform:'translateY(15px)'},{opacity:1,transform:'translateY(0)'}],{duration:350,delay:index*55,fill:'backwards',easing:'ease-out'}))});
- rankingCountTimer=setTimeout(()=>{const entries=new Map(buildRoundRanking(room).map(row=>[row.id,row]));const start=performance.now();function frame(now){const progress=Math.min(1,(now-start)/1050),eased=1-Math.pow(1-progress,3);for(const element of elements){const row=entries.get(element.dataset.playerId);if(row)element.querySelector('.mobile-rank-total b').textContent=new Intl.NumberFormat('tr-TR').format(Math.round(row.before+row.gain*eased))}if(progress<1)rankingFrame=requestAnimationFrame(frame);else finishMobileRanking(true)}rankingFrame=requestAnimationFrame(frame)},430);
+function rankingReducedMotion() {
+  return (
+    document.body.classList.contains('no-motion') ||
+    window.matchMedia('(prefers-reduced-motion:reduce)').matches
+  );
 }
-function showMobilePriceResult(){if(!room||room.state!=='reveal')return;clearRankingAnimation();finishMobileRanking(false);rankingState.stage='price';const panel=document.querySelector('#mobile-round-ranking');if(panel)panel.hidden=true;document.body.classList.remove('show-mobile-ranking');window.scrollTo({top:0,behavior:'auto'});setupMobileGameViewport()}
-function setupMobileRoundRanking(){const mobile=window.matchMedia('(max-width:700px)').matches;if(!room||room.state!=='reveal'){resetMobileRoundRanking();return}if(!mobile){clearRankingAnimation();if(rankingState.stage==='running'){finishMobileRanking(false)}document.body.classList.remove('show-mobile-ranking');lockRankingNext(false);return}
- const key=rankingKey(),panel=document.querySelector('#mobile-round-ranking');if(!panel)return;if(rankingState.key===key&&rankingState.panel===panel&&(rankingState.stage==='price'||(['running','done'].includes(rankingState.stage)&&document.body.classList.contains('show-mobile-ranking'))))return;
- const oldStage=rankingState.key===key?rankingState.stage:'idle',oldAt=rankingState.at;clearRankingAnimation();rankingState={key,stage:'delay',at:oldStage==='delay'?oldAt:Date.now()+2800,panel};
- if(oldStage==='running'||oldStage==='done')rankingPlayed.add(key);if(rankingPlayed.has(key)){showMobileRoundRanking();return}if(oldStage==='price'){rankingState.stage='price';document.body.classList.remove('show-mobile-ranking');lockRankingNext(false);return}
- document.body.classList.remove('show-mobile-ranking');lockRankingNext(true);rankingDelay=setTimeout(showMobileRoundRanking,Math.max(0,rankingState.at-Date.now()));
+function clearRankingAnimation() {
+  clearTimeout(rankingDelay);
+  clearTimeout(rankingCountTimer);
+  clearTimeout(rankingMoveTimer);
+  if (rankingFrame !== null) cancelAnimationFrame(rankingFrame);
+  rankingAnimations.forEach(animation => animation.cancel());
+  rankingAnimations = [];
+  rankingFrame = null;
 }
-window.matchMedia('(max-width:700px)').addEventListener('change',setupMobileRoundRanking);
+function lockRankingNext(locked) {
+  const button = document.querySelector('.round-actions button');
+  if (!button || !room) return;
+  if (!button.dataset.originalLabel) button.dataset.originalLabel = button.textContent;
+  button.disabled = locked || !room.isHost;
+  button.textContent = locked && room.isHost ? 'Sıralama geliyor…' : button.dataset.originalLabel;
+}
+function resetMobileRoundRanking() {
+  clearRankingAnimation();
+  rankingState = { key: '', stage: 'idle', at: 0, panel: null };
+  document.body.classList.remove('show-mobile-ranking');
+}
+function mobileRoundRankingMarkup(current) {
+  const entries = buildRoundRanking(current).sort((a, b) => a.previousRank - b.previousRank);
+  return (
+    '<section id="mobile-round-ranking" class="mobile-round-ranking" aria-label="Tur sonu genel sıralama" hidden><span class="ranking-kicker">TUR ' +
+    (current.round + 1) +
+    ' / ' +
+    current.rounds +
+    ' TAMAMLANDI</span><h2>Genel sıralama</h2><p id="ranking-status" class="ranking-status" role="status">Puanlar ekleniyor…</p><div id="mobile-ranking-list" class="mobile-ranking-list" role="list">' +
+    entries
+      .map(
+        row =>
+          '<div class="mobile-rank-row ' +
+          (row.id === current.me ? 'is-me' : '') +
+          '" role="listitem" data-player-id="' +
+          esc(row.id) +
+          '"><span class="mobile-rank-position">' +
+          row.previousRank +
+          '</span><img class="mobile-rank-avatar" src="' +
+          avatar(row.avatar) +
+          '" alt=""><div class="mobile-rank-player"><strong>' +
+          esc(row.name) +
+          (row.id === current.me ? '<small>sen</small>' : '') +
+          '</strong><div class="mobile-rank-meta"><span class="mobile-rank-gain">Bu tur +' +
+          row.gain +
+          '</span><span class="mobile-rank-movement">' +
+          (row.missed ? 'Tahmin yok' : '—') +
+          '</span></div></div><div class="mobile-rank-total"><b>' +
+          new Intl.NumberFormat('tr-TR').format(row.before) +
+          '</b><small>TOPLAM PUAN</small></div></div>'
+      )
+      .join('') +
+    '</div><button type="button" class="ranking-back" onclick="showMobilePriceResult()">← Fiyatı ve tahminini gör</button></section>'
+  );
+}
+function finishMobileRanking(animate) {
+  const list = document.querySelector('#mobile-ranking-list');
+  if (!list) return;
+  const rows = buildRoundRanking(room),
+    elements = new Map([...list.children].map(element => [element.dataset.playerId, element]));
+  const positions = new Map(
+    [...elements].map(([id, element]) => [id, element.getBoundingClientRect().top])
+  );
+  rows.forEach(row => {
+    const element = elements.get(row.id);
+    if (!element) return;
+    element.querySelector('.mobile-rank-position').textContent = row.rank;
+    element.querySelector('.mobile-rank-total b').textContent = new Intl.NumberFormat(
+      'tr-TR'
+    ).format(row.total);
+    element.classList.toggle('is-leader', row.rank === 1);
+    const movement = element.querySelector('.mobile-rank-movement');
+    movement.className =
+      'mobile-rank-movement ' + (row.movement > 0 ? 'up' : row.movement < 0 ? 'down' : '');
+    movement.textContent =
+      row.movement > 0
+        ? '↑ ' + row.movement + ' sıra'
+        : row.movement < 0
+          ? '↓ ' + Math.abs(row.movement) + ' sıra'
+          : row.missed
+            ? 'Tahmin yok'
+            : 'Sıra aynı';
+    list.appendChild(element);
+  });
+  if (animate && !rankingReducedMotion())
+    for (const [id, element] of elements) {
+      const delta = positions.get(id) - element.getBoundingClientRect().top;
+      if (delta && element.animate)
+        rankingAnimations.push(
+          element.animate(
+            [{ transform: 'translateY(' + delta + 'px)' }, { transform: 'translateY(0)' }],
+            { duration: 760, easing: 'cubic-bezier(.22,1,.36,1)' }
+          )
+        );
+    }
+  const done = () => {
+    rankingState.stage = 'done';
+    rankingPlayed.add(rankingState.key);
+    const status = document.querySelector('#ranking-status');
+    if (status) status.textContent = 'Tur puanları eklendi. İşte güncel sıralama.';
+    lockRankingNext(false);
+  };
+  if (animate && !rankingReducedMotion()) rankingMoveTimer = setTimeout(done, 800);
+  else done();
+}
+function showMobileRoundRanking() {
+  if (!room || room.state !== 'reveal' || !window.matchMedia('(max-width:700px)').matches) return;
+  clearRankingAnimation();
+  const panel = document.querySelector('#mobile-round-ranking');
+  if (!panel) return;
+  rankingState.panel = panel;
+  rankingState.key = rankingKey();
+  rankingState.stage = 'running';
+  panel.hidden = false;
+  document.body.classList.add('show-mobile-ranking');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  setupMobileGameViewport();
+  if (rankingPlayed.has(rankingState.key) || rankingReducedMotion()) {
+    finishMobileRanking(false);
+    return;
+  }
+  lockRankingNext(true);
+  const elements = [...document.querySelectorAll('#mobile-ranking-list .mobile-rank-row')];
+  elements.forEach((element, index) => {
+    if (element.animate)
+      rankingAnimations.push(
+        element.animate(
+          [
+            { opacity: 0, transform: 'translateY(15px)' },
+            { opacity: 1, transform: 'translateY(0)' },
+          ],
+          { duration: 350, delay: index * 55, fill: 'backwards', easing: 'ease-out' }
+        )
+      );
+  });
+  rankingCountTimer = setTimeout(() => {
+    const entries = new Map(buildRoundRanking(room).map(row => [row.id, row]));
+    const start = performance.now();
+    function frame(now) {
+      const progress = Math.min(1, (now - start) / 1050),
+        eased = 1 - Math.pow(1 - progress, 3);
+      for (const element of elements) {
+        const row = entries.get(element.dataset.playerId);
+        if (row)
+          element.querySelector('.mobile-rank-total b').textContent = new Intl.NumberFormat(
+            'tr-TR'
+          ).format(Math.round(row.before + row.gain * eased));
+      }
+      if (progress < 1) rankingFrame = requestAnimationFrame(frame);
+      else finishMobileRanking(true);
+    }
+    rankingFrame = requestAnimationFrame(frame);
+  }, 430);
+}
+function showMobilePriceResult() {
+  if (!room || room.state !== 'reveal') return;
+  clearRankingAnimation();
+  finishMobileRanking(false);
+  rankingState.stage = 'price';
+  const panel = document.querySelector('#mobile-round-ranking');
+  if (panel) panel.hidden = true;
+  document.body.classList.remove('show-mobile-ranking');
+  window.scrollTo({ top: 0, behavior: 'auto' });
+  setupMobileGameViewport();
+}
+function setupMobileRoundRanking() {
+  const mobile = window.matchMedia('(max-width:700px)').matches;
+  if (!room || room.state !== 'reveal') {
+    resetMobileRoundRanking();
+    return;
+  }
+  if (!mobile) {
+    clearRankingAnimation();
+    if (rankingState.stage === 'running') {
+      finishMobileRanking(false);
+    }
+    document.body.classList.remove('show-mobile-ranking');
+    lockRankingNext(false);
+    return;
+  }
+  const key = rankingKey(),
+    panel = document.querySelector('#mobile-round-ranking');
+  if (!panel) return;
+  if (
+    rankingState.key === key &&
+    rankingState.panel === panel &&
+    (rankingState.stage === 'price' ||
+      (['running', 'done'].includes(rankingState.stage) &&
+        document.body.classList.contains('show-mobile-ranking')))
+  )
+    return;
+  const oldStage = rankingState.key === key ? rankingState.stage : 'idle',
+    oldAt = rankingState.at;
+  clearRankingAnimation();
+  rankingState = {
+    key,
+    stage: 'delay',
+    at: oldStage === 'delay' ? oldAt : Date.now() + 2800,
+    panel,
+  };
+  if (oldStage === 'running' || oldStage === 'done') rankingPlayed.add(key);
+  if (rankingPlayed.has(key)) {
+    showMobileRoundRanking();
+    return;
+  }
+  if (oldStage === 'price') {
+    rankingState.stage = 'price';
+    document.body.classList.remove('show-mobile-ranking');
+    lockRankingNext(false);
+    return;
+  }
+  document.body.classList.remove('show-mobile-ranking');
+  lockRankingNext(true);
+  rankingDelay = setTimeout(showMobileRoundRanking, Math.max(0, rankingState.at - Date.now()));
+}
+window.matchMedia('(max-width:700px)').addEventListener('change', setupMobileRoundRanking);
 `;
