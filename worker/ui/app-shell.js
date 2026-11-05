@@ -334,9 +334,11 @@ body:not(.home-mode) > main {
 body.lobby-mode > main {
   padding-top: 80px;
   padding-bottom: 40px;
-  padding-left: clamp(16px, 3vw, 44px);
-  padding-right: clamp(16px, 3vw, 44px);
+  padding-left: 0;
+  padding-right: 0;
   max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
   width: 100%;
   box-sizing: border-box;
 }
