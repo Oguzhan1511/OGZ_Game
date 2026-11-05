@@ -13,7 +13,7 @@ import { auctionCatalog, auctionAdminApi, auctionAdminHtml } from "./modes/aucti
 import { auctionApi } from "./modes/auction/auction.js";
 import { auctionStyles, auctionClient } from "./modes/auction/auction-ui.js";
 import { gameDatabase, databaseMigration } from "./services/game-db.js";
-import { desktopGameStyles } from "./ui/desktop-game.js";
+import { desktopGameStyles,gameViewportStyles } from "./ui/desktop-game.js";
 import { roundRankingStyles, roundRankingClient } from "./ui/round-ranking.js";
 import { mobileGameStyles, mobileGameClient } from "./ui/mobile-game.js";
 import { guessInputClient } from "./ui/guess-input.js";
@@ -47,7 +47,7 @@ const gameModes = createGameModes({
 });
 
 const roomApi = createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog });
-const html = createAppShell({battleshipStyles,battleshipClient:getBattleshipClient(),numberRaceStyles,numberRaceClient,
+const html = createAppShell({gameViewportStyles,battleshipStyles,battleshipClient:getBattleshipClient(),numberRaceStyles,numberRaceClient,
   finalStandingsStyles, finalStandingsClient,
   gameAudioClient,
   desktopGameStyles,

@@ -1,4 +1,4 @@
-export function createAppShell({ battleshipStyles,battleshipClient, numberRaceStyles,numberRaceClient, finalStandingsStyles, finalStandingsClient, gameAudioClient, desktopGameStyles, roundRankingStyles, mobileGameStyles, guessInputClient, productGameStyles, productGameClient, modeCardStyles, modeCardClient, roundRankingClient, mobileGameClient, validProfile, auctionStyles, auctionClient }) {
+export function createAppShell({ gameViewportStyles, battleshipStyles,battleshipClient, numberRaceStyles,numberRaceClient, finalStandingsStyles, finalStandingsClient, gameAudioClient, desktopGameStyles, roundRankingStyles, mobileGameStyles, guessInputClient, productGameStyles, productGameClient, modeCardStyles, modeCardClient, roundRankingClient, mobileGameClient, validProfile, auctionStyles, auctionClient }) {
   return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
 :root{--bg:#111520;--bg-wave:#241620;--panel:#1c222e;--panel-hover:#232b3a;--line:#252b37;--line-light:#343d4e;--muted:#94a3b8;--a:#e24046;--a-hover:#f04f55;--gold:#f0ad5f;--text:#ffffff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}button,input,select{font:inherit}button{cursor:pointer;border:0}button:disabled{opacity:.5;cursor:default}button:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:4px}h1,h2,h3,.logo,.num{font-family:'Space Grotesk',sans-serif}
@@ -7,7 +7,7 @@ header.topbar{position:fixed;top:22px;right:28px;left:auto;z-index:20;height:aut
 .headeruser,.settings-button{height:42px;padding:6px 13px;display:flex;align-items:center;gap:9px;background:#1c222eeb;border:1px solid var(--line-light);border-radius:10px;color:#f8fafc;font-size:12px;font-weight:600;backdrop-filter:blur(10px);transition:border-color .18s,color .18s,transform .18s}
 .headeruser img{width:26px;height:26px;border-radius:7px}
 .headeruser:hover,.settings-button:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px)}
-body:not(.home-mode) main{padding-top:75px}
+body:not(.home-mode)>main{padding-top:75px}
 .pagehead{display:flex;justify-content:space-between;align-items:center;margin:32px 0 24px}.pagehead h1{margin:0 0 7px;font-size:30px;letter-spacing:-1px}.pagehead p{margin:0;color:var(--muted);font-size:13px}.pill{border:1px solid var(--line-light);border-radius:30px;padding:8px 13px;font-size:10px;color:#cbd5e1;display:flex;align-items:center;gap:8px}
 .tag{color:var(--gold);font-size:10px;font-weight:700;letter-spacing:1.8px;display:inline-flex;align-items:center;gap:7px;background:#f0ad5f14;border:1px solid #f0ad5f38;padding:6px 10px;border-radius:6px}
 .sectiontitle{display:flex;align-items:center;justify-content:space-between;margin:25px 0 17px}.sectiontitle h2{font-size:17px;margin:0;letter-spacing:-.4px}.sectiontitle span{font-size:11px;color:var(--muted)}
@@ -163,6 +163,7 @@ ${modeCardStyles}
 ${auctionStyles || ''}
 ${numberRaceStyles || ''}
 ${battleshipStyles || ''}
+${gameViewportStyles || ''}
 </style></head><body><main><header class="topbar"><span id="breadcrumb" class="hidden">Ana sayfa</span><button class="settings-button" onclick="showHow()" aria-label="Nasıl Oynanır?"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Nasıl oynanır?</span></button><button class="headeruser" onclick="profileModal()" id="userbutton" aria-label="Profil"></button><button class="settings-button" onclick="settingsModal()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3z"/><circle cx="12" cy="12" r="3"/></svg><span>Ayarlar</span></button></header><div id="content"></div></main><div id="overlay"></div><div id="toast" class="toast hidden" role="status"></div><script>
 ${finalStandingsClient}
 ${gameAudioClient}
