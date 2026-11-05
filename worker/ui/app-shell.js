@@ -330,6 +330,902 @@ body:not(.home-mode) > main {
   grid-template-columns: 1fr 300px;
   gap: 24px;
 }
+/* ==================== LOBBY HERO DASHBOARD ==================== */
+body.lobby-mode > main {
+  padding-top: 14px;
+  max-width: 1260px;
+}
+body.lobby-mode > main > header.topbar {
+  display: none !important;
+}
+.lobby-dashboard {
+  max-width: 1240px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.lobby-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #141924;
+  border: 1px solid #232b3a;
+  border-radius: 14px;
+}
+.lobby-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.lobby-brand-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lobby-brand-icon-box {
+  width: 36px;
+  height: 36px;
+  background: var(--a);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+}
+.lobby-brand-titles {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.lobby-brand-name {
+  font-family: var(--brand-font, "Bungee"), sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+.lobby-status-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #22c55e;
+  text-transform: uppercase;
+}
+.lobby-status-tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.lobby-nav-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 10px;
+}
+.lobby-nav-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+.lobby-nav-btn.active {
+  background: #1f2737;
+  color: #fff;
+  border-color: #2e394e;
+}
+.lobby-header-center {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #0f131c;
+  border: 1px solid #232b3a;
+  border-radius: 10px;
+  padding: 6px 14px;
+}
+.lobby-code-pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lobby-code-pill-text strong {
+  font-family: var(--brand-font, "Bungee"), monospace;
+  font-size: 14px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+.lobby-header-icon-btn {
+  background: #1a2230;
+  border: 1px solid #2e394e;
+  color: #cbd5e1;
+  border-radius: 6px;
+  padding: 4px 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+}
+.lobby-ping-tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lobby-ping-tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.lobby-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lobby-host-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 10px;
+  background: #1a202c;
+  border: 1px solid #2e394e;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+.lobby-host-tag {
+  background: #f0ad5f22;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.lobby-h-btn {
+  background: #1a202c;
+  border: 1px solid #2e394e;
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.lobby-leave-pill-btn {
+  background: #25161a;
+  border: 1px solid #481f26;
+  color: #f87171;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.lobby-leave-pill-btn:hover {
+  background: var(--a);
+  color: #fff;
+  border-color: var(--a);
+}
+.lobby-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.48fr) minmax(320px, 0.92fr);
+  gap: 18px;
+  align-items: start;
+}
+.lobby-panel {
+  background: #141924;
+  border: 1px solid #232b3a;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lobby-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lobby-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #cbd5e1;
+  text-transform: uppercase;
+}
+.lobby-title-square {
+  width: 8px;
+  height: 8px;
+  background: var(--a);
+  border-radius: 2px;
+}
+.lobby-panel-badge-green {
+  color: #22c55e;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lobby-panel-badge-green::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.lobby-panel-author {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+.lobby-mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.lobby-mode-tab {
+  background: #19202e;
+  border: 1px solid #252e40;
+  border-radius: 10px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+}
+.lobby-mode-tab:hover {
+  background: #20293a;
+  border-color: #3b4860;
+}
+.lobby-mode-tab.active {
+  background: #231b23;
+  border-color: var(--a);
+  box-shadow: 0 0 0 1px var(--a);
+}
+.lobby-mode-tab.active::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--a);
+}
+.lobby-mode-tab svg {
+  width: 20px;
+  height: 20px;
+  color: var(--muted);
+}
+.lobby-mode-tab.active svg {
+  color: var(--a);
+}
+.lobby-mode-tab-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+}
+.lobby-mode-tab-sub {
+  font-size: 9px;
+  font-weight: 600;
+  color: #64748b;
+}
+.lobby-selected-mode-card {
+  background: #0f131c;
+  border: 1px solid #232b3a;
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: grid;
+  grid-template-columns: 1fr 140px;
+  gap: 16px;
+  align-items: center;
+}
+.lobby-selected-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lobby-tags-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lobby-tag-pill {
+  background: #e2404622;
+  border: 1px solid #e2404655;
+  color: var(--a);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.lobby-id-pill {
+  font-size: 10px;
+  font-family: monospace;
+  color: #64748b;
+}
+.lobby-mode-big-title {
+  font-family: var(--hero-font, "Fira Sans"), sans-serif;
+  font-size: 21px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.3px;
+  text-transform: uppercase;
+}
+.lobby-mode-desc-text {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.lobby-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.lobby-info-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #161c28;
+  border: 1px solid #283346;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+.lobby-art-box {
+  width: 140px;
+  height: 104px;
+  background: #141924;
+  border: 1px solid #252e40;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.lobby-art-caption {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.lobby-param-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lobby-param-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lobby-param-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #cbd5e1;
+}
+.lobby-param-value {
+  font-size: 12px;
+  font-weight: 800;
+  color: #22c55e;
+}
+.lobby-rounds-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.lobby-round-btn {
+  background: #19202e;
+  border: 1px solid #252e40;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.lobby-round-btn:hover {
+  background: #20293a;
+  color: #fff;
+}
+.lobby-round-btn.active {
+  background: #231b23;
+  border-color: var(--a);
+  color: #fff;
+  box-shadow: 0 0 0 1px var(--a);
+}
+.lobby-field-desc {
+  font-size: 11px;
+  color: #64748b;
+}
+.lobby-slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.lobby-range-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #222a3a;
+  border-radius: 4px;
+  outline: none;
+}
+.lobby-range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--a);
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+.lobby-slider-milestones {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+}
+.lobby-slider-milestones .active {
+  color: var(--a);
+}
+.lobby-toggles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.lobby-toggle-card {
+  background: #0f131c;
+  border: 1px solid #232b3a;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lobby-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lobby-toggle-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+.lobby-toggle-desc {
+  font-size: 10px;
+  color: #64748b;
+}
+.lobby-switch {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.lobby-switch input { opacity: 0; width: 0; height: 0; }
+.lobby-switch-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #242c3c;
+  transition: .2s;
+  border-radius: 20px;
+}
+.lobby-switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .2s;
+  border-radius: 50%;
+}
+.lobby-switch input:checked + .lobby-switch-slider { background-color: var(--a); }
+.lobby-switch input:checked + .lobby-switch-slider:before { transform: translateX(16px); }
+.lobby-bottom-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+}
+.lobby-ready-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.lobby-ready-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #22c55e;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lobby-ready-title::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.lobby-ready-sub {
+  font-size: 11px;
+  color: #64748b;
+}
+.lobby-tactile-start {
+  position: relative;
+  display: inline-flex;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
+  user-select: none;
+}
+.lobby-tactile-start-base {
+  position: absolute;
+  inset: 0;
+  background: #a8242a;
+  border-radius: 12px;
+  transform: translateY(5px);
+}
+.lobby-tactile-start-face {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 34px;
+  background: var(--a);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+  transform: translateY(0);
+  transition: transform 0.08s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.lobby-tactile-start:hover .lobby-tactile-start-face {
+  background: var(--a-hover);
+}
+.lobby-tactile-start:active .lobby-tactile-start-face {
+  transform: translateY(5px);
+}
+.lobby-tactile-start:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.lobby-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.lobby-side-card {
+  background: #141924;
+  border: 1px solid #232b3a;
+  border-radius: 14px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.lobby-side-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lobby-side-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #cbd5e1;
+  text-transform: uppercase;
+}
+.lobby-secret-tag {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--gold);
+  background: #f0ad5f1a;
+  border: 1px solid #f0ad5f44;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.lobby-code-sub {
+  font-size: 10px;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: -6px;
+}
+.lobby-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.lobby-code-giant {
+  font-family: var(--brand-font, "Bungee"), monospace;
+  font-size: 34px;
+  letter-spacing: 5px;
+  color: var(--gold);
+  line-height: 1;
+}
+.lobby-copy-btn {
+  background: #1c2434;
+  border: 1px solid #2f3c52;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+.lobby-copy-btn:hover {
+  background: #253046;
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.lobby-url-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f131c;
+  border: 1px solid #232b3a;
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.lobby-url-text {
+  flex: 1;
+  font-size: 11px;
+  color: var(--muted);
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lobby-url-btn {
+  background: #1a2230;
+  border: 1px solid #2f3c52;
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.lobby-url-btn:hover {
+  border-color: var(--a);
+  color: var(--a);
+}
+.lobby-invite-link {
+  color: var(--a);
+  font-size: 11px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+.lobby-invite-link:hover {
+  color: var(--a-hover);
+}
+.lobby-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lobby-player-slot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: #0f131c;
+  border: 1px solid #232b3a;
+  border-radius: 10px;
+}
+.lobby-player-slot.filled {
+  border-color: #2b364c;
+}
+.lobby-slot-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.lobby-slot-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #e2404622;
+  border: 1px solid #e2404655;
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.lobby-slot-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lobby-slot-name-box {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.lobby-slot-username {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.lobby-slot-badge {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--gold);
+}
+.lobby-ready-pill {
+  background: #22c55e1a;
+  border: 1px solid #22c55e55;
+  color: #22c55e;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+.lobby-empty-title {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}
+.lobby-empty-sub {
+  font-size: 9px;
+  color: #475569;
+  font-family: monospace;
+}
+.lobby-slot-davet-btn {
+  background: #192130;
+  border: 1px solid #29364c;
+  color: #cbd5e1;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.lobby-slot-davet-btn:hover {
+  background: var(--panel-hover);
+  color: #fff;
+  border-color: var(--a);
+}
+.lobby-voice-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  border-top: 1px solid #1f2737;
+  font-size: 11px;
+  color: #64748b;
+}
+.lobby-audio-test-btn {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.lobby-audio-test-btn:hover {
+  color: var(--gold);
+}
+.lobby-log-stream {
+  background: #0b0e15;
+  border: 1px solid #1c2331;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #64748b;
+  max-height: 115px;
+  overflow-y: auto;
+}
+.lobby-log-time {
+  color: #475569;
+  margin-right: 5px;
+}
+.lobby-log-item {
+  display: block;
+}
+.lobby-log-item strong {
+  color: #cbd5e1;
+}
+.lobby-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px 0;
+  font-size: 11px;
+  color: #475569;
+  border-top: 1px solid #18202d;
+}
+@media (max-width: 900px) {
+  .lobby-main-grid {
+    grid-template-columns: 1fr;
+  }
+  .lobby-header-bar {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 640px) {
+  .lobby-mode-tabs {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .lobby-selected-mode-card {
+    grid-template-columns: 1fr;
+  }
+  .lobby-art-box {
+    display: none;
+  }
+  .lobby-toggles-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .box {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -2498,6 +3394,7 @@ function goHome() {
 function leaveView(updateUrl = true) {
   clearInterval(poll);
   clearInterval(timer);
+  document.body.classList.remove('lobby-mode');
   room = null;
   gameAudio.sync(null);
   closeModal();
@@ -2626,9 +3523,13 @@ function syncDuration(value, fromNumber = false) {
   const n = Number(value);
   if (Number.isInteger(n) && n >= 10 && n <= 120) {
     guessSeconds = n;
-    $('#guess-slider').value = n;
-    if (!fromNumber) $('#guess-seconds').value = n;
-    $('#guess-slider').style.setProperty('--fill', ((n - 10) / 110) * 100 + '%');
+    if ($('#guess-slider')) $('#guess-slider').value = n;
+    if (!fromNumber && $('#guess-seconds')) $('#guess-seconds').value = n;
+    if ($('#guess-slider')) $('#guess-slider').style.setProperty('--fill', ((n - 10) / 110) * 100 + '%');
+    const disp = $('#lobby-duration-display');
+    if (disp) disp.textContent = n + ' Saniye';
+    if (typeof updateLobbyMilestones === 'function') updateLobbyMilestones(n);
+    if (typeof updateLobbySummary === 'function') updateLobbySummary();
   }
 }
 function createModal(initialMode = 'car-price', changeMode = false) {
@@ -2991,6 +3892,220 @@ function lobbyResults() {
     '</details>'
   );
 }
+let lobbyLogs = [];
+
+const LOBBY_MODES = {
+  'car-price': {
+    id: 'AUTO-EST-01',
+    name: 'Araç Fiyatı',
+    title: 'Araç Fiyatı Tahmini',
+    sub: '1-8 Kişi',
+    desc: 'Ekrana gelen gerçek pazar ilanlarındaki model, yıl, kilometre ve hasar donanımlarını tartıp piyasa fiyatına en yakın tahmini yap. En yakın fiyata vuran puanı kapar!',
+    pills: ['👥 1 - 8 OYUNCU', '⏱ TUR BAŞINA HIZLI TAHMİN', '📊 FİYAT SAPMA PUANLAMASI'],
+    caption: 'OTO PAZAR KATALOĞU',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.9 2 11.2V16c0 .6.4 1 1 1h2m10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Zm-10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z"/></svg>',
+    art: '<svg width="60" height="38" viewBox="0 0 24 24" fill="none" stroke="#e24046" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.9 2 11.2V16c0 .6.4 1 1 1h2m10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Zm-10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z"/></svg>'
+  },
+  'product-price': {
+    id: 'PROD-EST-02',
+    name: 'Ürün Fiyatı',
+    title: 'Ürün Fiyatı Tahmini',
+    sub: '1-8 Kişi',
+    desc: 'Giyim, teknoloji, süpermarket ve popüler ürünlerin fiyatlarını tahmin et. En yakın tahminle turları topla!',
+    pills: ['👥 1 - 8 OYUNCU', '⏱ ÇOKLU KATEGORİ', '📊 FİYAT TAHMİNİ'],
+    caption: 'GÜNCEL ÜRÜN HAVUZU',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
+    art: '<svg width="56" height="38" viewBox="0 0 24 24" fill="none" stroke="#f0ad5f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+  },
+  'auction': {
+    id: 'AUCTION-BID-03',
+    name: 'Açık Artırma',
+    title: 'Açık Artırma Düellosu',
+    sub: '2-8 Kişi',
+    desc: '20 TL bütçe ile 10 tur boyunca stratejik açık artırma. Rakibini alt et, en değerli tabağı sen kur!',
+    pills: ['👥 2 OYUNCU (1v1)', '💰 20 TL BÜTÇE', '🎯 EN İYİ TABAK'],
+    caption: 'MÜZAYEDE SALONU',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 13-7.5 7.5c-.8.8-2 .8-2.8 0s-.8-2 0-2.8L11 10"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>',
+    art: '<svg width="54" height="38" viewBox="0 0 24 24" fill="none" stroke="#f0ad5f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-7.5 7.5c-.8.8-2 .8-2.8 0s-.8-2 0-2.8L11 10"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>'
+  },
+  'number-race': {
+    id: 'NUM-RACE-04',
+    name: 'Sayı Yarışı',
+    title: 'Sayı Yarışı · 2 kişi',
+    sub: '2-8 Kişi',
+    desc: 'Sayıyı bul, rakibin doldurmadan tablonu tamamla. Hızlı ve keskin taktiksel sayı mücadelesi!',
+    pills: ['👥 2 OYUNCU (1v1)', '⏱ 20 SN / TUR', '🧩 TABLO TAMAMLAMA'],
+    caption: 'SAYI MATRİSİ',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
+    art: '<svg width="54" height="38" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>'
+  },
+  'battleship': {
+    id: 'BATTLE-SHIP-05',
+    name: 'Amiral Battı',
+    title: 'Amiral Battı',
+    sub: '1v1 TAKTİK',
+    desc: 'Filonu gizlice yerleştir, düşman sularını tara! İsabet edersen atış hakkın devam eder.',
+    pills: ['👥 2 OYUNCU (1v1)', '🚢 5 GEMİLİK FİLO', '🎯 10x10 SAVAŞ ALANI'],
+    caption: 'DONANMA KOORDİNAT',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1"/><path d="M4 18 3 12h18l-1 6"/><path d="M12 12V4l4 2-4 2"/></svg>',
+    art: '<svg width="54" height="38" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1"/><path d="M4 18 3 12h18l-1 6"/><path d="M12 12V4l4 2-4 2"/></svg>'
+  }
+};
+
+function initLobbyLogs() {
+  if (lobbyLogs.length === 0 && room) {
+    const hostP = (room.players || []).find(p => p.id === room.host) || room.players?.[0];
+    const hostName = hostP ? hostP.name : 'Oda kurucusu';
+    const mode = LOBBY_MODES[room.mode]?.title || 'Araç Fiyatı Tahmini';
+    lobbyLogs = [
+      { time: '14:02:11', text: '<strong>' + esc(hostName) + '</strong> odayı kurdu (#' + room.code + ').' },
+      { time: '14:02:12', text: 'Oda modu <strong>"' + mode + '"</strong> olarak ayarlandı.' },
+      { time: '14:02:15', text: 'Sunucu pingi: <span style="color:var(--green)">18ms</span> (TR-Central).' },
+      { time: '14:03:00', text: 'Lobi oyuncu katılımı için dinleniyor...' }
+    ];
+  }
+}
+
+function addLobbyLog(text) {
+  const d = new Date();
+  const time = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0') + ':' + String(d.getSeconds()).padStart(2, '0');
+  lobbyLogs.push({ time, text });
+  if (lobbyLogs.length > 20) lobbyLogs.shift();
+  const el = $('#lobby-log-stream');
+  if (el) {
+    el.innerHTML = renderLobbyLogsHtml();
+    el.scrollTop = el.scrollHeight;
+  }
+}
+
+function renderLobbyLogsHtml() {
+  initLobbyLogs();
+  return lobbyLogs.map(l => '<span class="lobby-log-item"><span class="lobby-log-time">' + l.time + '</span> ' + l.text + '</span>').join('');
+}
+
+function lobbySlotsHtml() {
+  const players = room?.players || [];
+  const maxSlots = 4;
+  let html = '';
+  for (let i = 0; i < maxSlots; i++) {
+    if (i < players.length) {
+      const p = players[i];
+      const isMe = p.id === room.me;
+      const isHost = p.id === room.host || (room.isHost && isMe);
+      const initial = (p.name || '?').charAt(0).toUpperCase();
+      html +=
+        '<div class="lobby-player-slot filled">' +
+        '<div class="lobby-slot-info">' +
+        '<div class="lobby-slot-avatar">' +
+        (p.avatar ? '<img src="' + avatar(p.avatar) + '" alt="">' : initial) +
+        '</div>' +
+        '<div class="lobby-slot-name-box">' +
+        '<span class="lobby-slot-username">' +
+        esc(p.name) +
+        (isMe ? ' (Sen)' : '') +
+        '</span>' +
+        (isHost ? '<span class="lobby-slot-badge">👑 ODA SAHİBİ</span>' : '<span style="font-size:9px;color:var(--muted)">OYUNCU</span>') +
+        '</div>' +
+        '</div>' +
+        '<span class="lobby-ready-pill">HAZIR</span>' +
+        '</div>';
+    } else {
+      html +=
+        '<div class="lobby-player-slot">' +
+        '<div class="lobby-slot-info">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+        '<div class="lobby-slot-name-box">' +
+        '<span class="lobby-empty-title">Oyuncu Bekleniyor...</span>' +
+        '<span class="lobby-empty-sub">SLOT ' +
+        (i + 1) +
+        ' • BOŞ</span>' +
+        '</div>' +
+        '</div>' +
+        '<button type="button" class="lobby-slot-davet-btn" onclick="copyRoomLink()">+ DAVET</button>' +
+        '</div>';
+    }
+  }
+  return html;
+}
+
+function selectLobbyMode(mode) {
+  if (!room?.isHost) return;
+  const input = $('#game-mode');
+  if (input) input.value = mode;
+  selectGameMode(mode);
+  for (const tab of document.querySelectorAll('.lobby-mode-tab')) {
+    tab.classList.toggle('active', tab.dataset.mode === mode);
+  }
+  updateLobbyModeDetails(mode);
+  updateLobbySummary();
+  addLobbyLog('Oda modu <strong>"' + (LOBBY_MODES[mode]?.title || mode) + '"</strong> olarak ayarlandı.');
+}
+
+function updateLobbyModeDetails(mode) {
+  const info = LOBBY_MODES[mode] || LOBBY_MODES['car-price'];
+  const titleEl = $('#lobby-selected-title');
+  if (titleEl) titleEl.textContent = info.title;
+  const idEl = $('#lobby-selected-id');
+  if (idEl) idEl.textContent = 'ID: ' + info.id;
+  const descEl = $('#lobby-selected-desc');
+  if (descEl) descEl.textContent = info.desc;
+  const pillsEl = $('#lobby-selected-pills');
+  if (pillsEl) pillsEl.innerHTML = info.pills.map(p => '<span class="lobby-info-pill">' + p + '</span>').join('');
+  const artEl = $('#lobby-art-container');
+  if (artEl) {
+    artEl.innerHTML = info.art + '<span class="lobby-art-caption">' + info.caption + '</span>';
+  }
+}
+
+function selectLobbyRounds(n) {
+  if (!room?.isHost) return;
+  const sel = $('#room-rounds');
+  if (sel) sel.value = n;
+  for (const btn of document.querySelectorAll('.lobby-round-btn')) {
+    btn.classList.toggle('active', Number(btn.dataset.rounds) === n);
+  }
+  const display = $('#lobby-rounds-display');
+  if (display) display.textContent = n + ' Tur';
+  updateLobbySummary();
+}
+
+function updateLobbyMilestones(n) {
+  const m15 = $('#mile-15'), m30 = $('#mile-30'), m45 = $('#mile-45'), m60 = $('#mile-60');
+  if (m15) m15.classList.toggle('active', n <= 20);
+  if (m30) m30.classList.toggle('active', n > 20 && n <= 35);
+  if (m45) m45.classList.toggle('active', n > 35 && n <= 50);
+  if (m60) m60.classList.toggle('active', n > 50);
+}
+
+function updateLobbySummary() {
+  const mode = $('#game-mode')?.value || room.mode || 'car-price';
+  const info = LOBBY_MODES[mode] || LOBBY_MODES['car-price'];
+  const rounds = $('#room-rounds')?.value || room.rounds || 10;
+  const sec = $('#guess-seconds')?.value || room.guessSeconds || 30;
+  const sub = $('#lobby-ready-details');
+  if (sub) {
+    if (['number-race', 'battleship', 'auction'].includes(mode)) {
+      sub.textContent = 'Seçili: ' + info.name + ' • Özel Kurallar';
+    } else {
+      sub.textContent = 'Seçili: ' + info.name + ' • ' + rounds + ' Tur • ' + sec + 'sn';
+    }
+  }
+}
+
+function testLobbyAudio() {
+  if (typeof gameAudio?.tap === 'function') gameAudio.tap();
+  toast('Lobi ses kanalı aktif! ♫');
+}
+
+function updateLobbyPlayersOnly() {
+  const el = $('#lobby-players');
+  if (el) el.innerHTML = lobbySlotsHtml();
+  const cnt = $('#lobby-player-count');
+  if (cnt) cnt.textContent = room.players.length;
+  const readyCnt = $('#lobby-ready-count');
+  if (readyCnt) readyCnt.textContent = room.players.length + '/8 Oyuncu Hazır';
+}
+
 function renderLobby() {
   resetMobileRoundRanking();
   clearInterval(timer);
@@ -3002,85 +4117,309 @@ function renderLobby() {
     'battleship-active',
     'home-mode'
   );
+  document.body.classList.add('lobby-mode');
   $('#breadcrumb').textContent = 'Oyun lobisi';
   const existing = $('#lobby-settings');
   if (existing && existing.dataset.game === room.gameId && room.isHost) {
-    $('#lobby-players').innerHTML = playersHtml();
-    $('#lobby-player-count').textContent = room.players.length + ' oyuncu';
+    updateLobbyPlayersOnly();
     return;
   }
-  const host = room.isHost,
-    auction = room.mode === 'auction';
-  const modeName =
-    room.mode === 'battleship'
-      ? 'Amiral Battı'
-      : room.mode === 'number-race'
-        ? 'Sayı Yarışı'
-        : auction
-          ? 'Açık artırma'
-          : room.mode === 'product-price'
-            ? 'Ürün fiyatı tahmini'
-            : 'Araç fiyatı tahmini';
-  const controls = host
-    ? '<form id="lobby-settings" class="lobby-settings" data-game="' +
-      room.gameId +
-      '" onsubmit="startLobbyGame(event)">' +
-      modeCardChooser(room.mode) +
-      productCategoryChooser(room.mode) +
-      auctionChooser() +
-      numberRaceOptions() +
-      battleshipOptions() +
-      '<p id="game-mode-description" class="notice"></p><div id="guess-mode-settings"><label for="room-rounds">Tur sayısı</label><select class="input" id="room-rounds">' +
-      [10, 15, 20]
-        .map(
-          n =>
-            '<option value="' +
-            n +
-            '" ' +
-            (n === (room.rounds || 10) ? 'selected' : '') +
-            '>' +
-            n +
-            ' tur</option>'
-        )
-        .join('') +
-      '</select><label for="guess-seconds">Tur başına tahmin süresi (saniye)</label><div class="duration-control"><input id="guess-slider" class="duration-slider" type="range" min="10" max="120" value="' +
-      (room.guessSeconds || 30) +
-      '" aria-label="Tahmin süresini kaydırarak ayarla" oninput="syncDuration(this.value)"><div class="duration-value"><input id="guess-seconds" class="input" type="number" min="10" max="120" step="1" value="' +
-      (room.guessSeconds || 30) +
-      '" required oninput="syncDuration(this.value,true)"><span>saniye</span></div></div></div><p class="notice">Oda kodu ve oyuncular korunur. Ayarlarını seçip oyunu başlat.</p><button id="lobby-start" class="btn full" type="submit">Oyunu başlat →</button></form>'
-    : '<h2>' +
-      modeName +
-      '</h2><p class="notice">' +
-      (room.mode === 'battleship'
-        ? '2 oyuncu · 10×10 deniz · 5 gemi'
-        : room.mode === 'number-race'
-          ? room.gridSize + '×' + room.gridSize + ' · 2 oyuncu · 20 sn / tur'
-          : auction
-            ? '2 oyuncu · 10 ürün · Süre yok'
-            : room.rounds + ' tur · ' + room.guessSeconds + ' sn / tur') +
-      '</p><p role="status">Oda sahibi oyun modunu ve ayarları belirliyor…</p>';
+  const host = room.isHost;
+  const activeMode = room.mode || 'car-price';
+  const modeInfo = LOBBY_MODES[activeMode] || LOBBY_MODES['car-price'];
+  const myPlayer = (room.players || []).find(p => p.id === room.me) || { name: 'Oyuncu' };
+  const currentRounds = room.rounds || 10;
+  const currentSec = room.guessSeconds || 30;
+
+  const modeTabsHtml = ['car-price', 'product-price', 'auction', 'number-race', 'battleship'].map(m => {
+    const item = LOBBY_MODES[m];
+    const isActive = m === activeMode;
+    return (
+      '<div class="lobby-mode-tab ' + (isActive ? 'active' : '') + '" data-mode="' + m + '" onclick="selectLobbyMode(\'' + m + '\')">' +
+      item.icon +
+      '<span class="lobby-mode-tab-title">' + item.name + '</span>' +
+      '<span class="lobby-mode-tab-sub">' + item.sub + '</span>' +
+      '</div>'
+    );
+  }).join('');
+
+  const roundsHtml = [5, 10, 15, 20].map(n => {
+    const isActive = n === currentRounds;
+    return (
+      '<button type="button" class="lobby-round-btn ' + (isActive ? 'active' : '') + '" data-rounds="' + n + '" onclick="selectLobbyRounds(' + n + ')">' +
+      (n === 10 ? '10 Std' : n) +
+      '</button>'
+    );
+  }).join('');
+
+  const hiddenSelectRounds =
+    '<select class="input" id="room-rounds" style="display:none">' +
+    [5, 10, 15, 20].map(n => '<option value="' + n + '" ' + (n === currentRounds ? 'selected' : '') + '>' + n + ' tur</option>').join('') +
+    '</select>';
+
+  const shareUrl = (typeof window !== 'undefined' ? window.location.host : 'ogz.game') + '/oda/' + room.code;
+
   $('#content').innerHTML =
-    '<div class="pagehead"><div><h1>Oyun lobisi</h1><p id="connection">Oda ' +
-    room.code +
-    ' · ' +
-    (room.lastGame
-      ? 'Oyun tamamlandı. Yeni oyuna hazırsınız.'
-      : 'Ekibini davet et, oyuna başlayın.') +
-    '</p></div><button class="btn secondary" onclick="goHome()">' +
-    (host ? 'Odayı kapat' : 'Odadan ayrıl') +
-    '</button></div><div class="roomlayout"><section class="box"><span class="tag">' +
-    (host ? 'OYUNU AYARLA' : 'OYUN AYARLARI') +
+    '<div class="lobby-dashboard">' +
+
+    '<!-- TOP BAR -->' +
+    '<header class="lobby-header-bar">' +
+    '<div class="lobby-header-left">' +
+    '<div class="lobby-brand-block">' +
+    '<div class="lobby-brand-icon-box">' +
+    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4m-2-2v4m9-2h.01m3 0h.01"/></svg>' +
+    '</div>' +
+    '<div class="lobby-brand-titles">' +
+    '<span class="lobby-brand-name">OGZ GAME</span>' +
+    '<span class="lobby-status-tag">LOBİ AKTİF</span>' +
+    '</div>' +
+    '</div>' +
+    '<div class="lobby-nav-pills">' +
+    '<button type="button" class="lobby-nav-btn active">Lobi</button>' +
+    '<button type="button" class="lobby-nav-btn" onclick="openModeRoom(\'car-price\')">Oyunlar</button>' +
+    '<button type="button" class="lobby-nav-btn" onclick="showHow()">Sıralama</button>' +
+    '</div>' +
+    '</div>' +
+
+    '<div class="lobby-header-center">' +
+    '<span class="lobby-code-pill-text">ODA KODU: <strong>' + room.code + '</strong></span>' +
+    '<button type="button" class="lobby-header-icon-btn" title="Kodu Kopyala" onclick="copyCode()">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+    '</button>' +
+    '<button type="button" class="lobby-header-icon-btn" title="Bağlantıyı Kopyala" onclick="copyRoomLink()">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' +
+    '</button>' +
+    '<span class="lobby-ping-tag">18ms IST</span>' +
+    '</div>' +
+
+    '<div class="lobby-header-right">' +
+    '<div class="lobby-host-pill">' +
+    '<span>' + esc(myPlayer.name) + '</span>' +
+    (host ? '<span class="lobby-host-tag">HOST</span>' : '<span style="font-size:9px;color:var(--muted)">OYUNCU</span>') +
+    '</div>' +
+    '<button type="button" class="lobby-h-btn" onclick="showHow()">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+    '<span>Nasıl Oynanır?</span>' +
+    '</button>' +
+    '<button type="button" class="lobby-header-icon-btn" title="Ses Aç/Kapat" onclick="toggleGameSound()">' +
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>' +
+    '</button>' +
+    '<button type="button" class="lobby-leave-pill-btn" onclick="goHome()">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
+    '<span>' + (host ? 'Odayı kapat' : 'Odadan ayrıl') + '</span>' +
+    '</button>' +
+    '</div>' +
+    '</header>' +
+
+    '<!-- 2-COLUMN MAIN GRID -->' +
+    '<form id="lobby-settings" class="lobby-settings" data-game="' + room.gameId + '" onsubmit="startLobbyGame(event)">' +
+    '<input id="game-mode" type="hidden" value="' + activeMode + '">' +
+    hiddenSelectRounds +
+
+    '<div class="lobby-main-grid">' +
+
+    '<!-- LEFT COLUMN -->' +
+    '<div style="display:flex; flex-direction:column; gap:16px;">' +
+
+    '<!-- Panel 1: Oyun Modu Seçimi -->' +
+    '<section class="lobby-panel">' +
+    '<div class="lobby-panel-head">' +
+    '<div class="lobby-panel-title">' +
+    '<span class="lobby-title-square"></span>' +
+    '<span>Oyun Modu Seçimi</span>' +
+    '</div>' +
+    '<span class="lobby-panel-badge-green">5 MOD HAZIR</span>' +
+    '</div>' +
+
+    '<!-- 5 Tabs -->' +
+    '<div class="lobby-mode-tabs">' +
+    modeTabsHtml +
+    '</div>' +
+
+    '<!-- Selected Mode Details Card -->' +
+    '<div class="lobby-selected-mode-card">' +
+    '<div class="lobby-selected-left">' +
+    '<div class="lobby-tags-row">' +
+    '<span class="lobby-tag-pill">SEÇİLİ MOD</span>' +
+    '<span id="lobby-selected-id" class="lobby-id-pill">ID: ' + modeInfo.id + '</span>' +
+    '</div>' +
+    '<h2 id="lobby-selected-title" class="lobby-mode-big-title">' + modeInfo.title + '</h2>' +
+    '<p id="lobby-selected-desc" class="lobby-mode-desc-text">' + modeInfo.desc + '</p>' +
+    '<div id="lobby-selected-pills" class="lobby-pills-row">' +
+    modeInfo.pills.map(p => '<span class="lobby-info-pill">' + p + '</span>').join('') +
+    '</div>' +
+    '</div>' +
+
+    '<div id="lobby-art-container" class="lobby-art-box">' +
+    modeInfo.art +
+    '<span class="lobby-art-caption">' + modeInfo.caption + '</span>' +
+    '</div>' +
+    '</div>' +
+
+    '<!-- Mode Extra Pickers -->' +
+    '<div id="lobby-mode-extra-options" style="margin-top:4px;">' +
+    productCategoryChooser(room.mode) +
+    auctionChooser() +
+    numberRaceOptions() +
+    battleshipOptions() +
+    '<p id="game-mode-description" class="notice"></p>' +
+    '</div>' +
+    '</section>' +
+
+    '<!-- Panel 2: Maç Parametreleri -->' +
+    '<section class="lobby-panel">' +
+    '<div class="lobby-panel-head">' +
+    '<div class="lobby-panel-title">' +
+    '<span class="lobby-title-square"></span>' +
+    '<span>Maç Parametreleri</span>' +
+    '</div>' +
+    '<span class="lobby-panel-author">' + (host ? 'Yalnızca Oda Kurucusu Düzenleyebilir' : 'Oda Kurucusu Ayarlıyor') + '</span>' +
+    '</div>' +
+
+    '<div id="guess-mode-settings" style="display:flex; flex-direction:column; gap:16px;">' +
+    '<div class="lobby-param-item">' +
+    '<div class="lobby-param-header">' +
+    '<span class="lobby-param-label">Tur Sayısı</span>' +
+    '<span id="lobby-rounds-display" class="lobby-param-value" style="color:var(--gold);">' + currentRounds + ' Tur</span>' +
+    '</div>' +
+    '<div class="lobby-rounds-row">' +
+    roundsHtml +
+    '</div>' +
+    '<span class="lobby-field-desc">Her turda yeni bir araç ve teknik karne sunulur.</span>' +
+    '</div>' +
+
+    '<div class="lobby-param-item">' +
+    '<div class="lobby-param-header">' +
+    '<span class="lobby-param-label">Tahmin Süresi</span>' +
+    '<span id="lobby-duration-display" class="lobby-param-value" style="color:var(--green);">' + currentSec + ' Saniye</span>' +
+    '</div>' +
+    '<div class="lobby-slider-container">' +
+    '<input id="guess-slider" class="lobby-range-slider" type="range" min="10" max="120" value="' + currentSec + '" aria-label="Tahmin süresi" oninput="syncDuration(this.value)">' +
+    '<input id="guess-seconds" class="input" type="number" min="10" max="120" value="' + currentSec + '" style="display:none" oninput="syncDuration(this.value,true)">' +
+    '<div class="lobby-slider-milestones">' +
+    '<span id="mile-15" class="' + (currentSec <= 20 ? 'active' : '') + '">15S HIZLI</span>' +
+    '<span id="mile-30" class="' + (currentSec > 20 && currentSec <= 35 ? 'active' : '') + '">30S STANDART</span>' +
+    '<span id="mile-45" class="' + (currentSec > 35 && currentSec <= 50 ? 'active' : '') + '">45S DETAYLI</span>' +
+    '<span id="mile-60" class="' + (currentSec > 50 ? 'active' : '') + '">60S RAHAT</span>' +
+    '</div>' +
+    '</div>' +
+    '</div>' +
+
+    '<!-- Toggles Row -->' +
+    '<div class="lobby-toggles-grid">' +
+    '<div class="lobby-toggle-card">' +
+    '<div class="lobby-toggle-text">' +
+    '<span class="lobby-toggle-title">Hasar & Tramer Bilgisi</span>' +
+    '<span class="lobby-toggle-desc">İlandaki boya ve değişen parçaları göster</span>' +
+    '</div>' +
+    '<label class="lobby-switch">' +
+    '<input type="checkbox" checked>' +
+    '<span class="lobby-switch-slider"></span>' +
+    '</label>' +
+    '</div>' +
+
+    '<div class="lobby-toggle-card">' +
+    '<div class="lobby-toggle-text">' +
+    '<span class="lobby-toggle-title">Seri Çarpan Bonusu</span>' +
+    '<span class="lobby-toggle-desc">Arka arkaya %5 sapma altı bilenlere x1.5 puan</span>' +
+    '</div>' +
+    '<label class="lobby-switch">' +
+    '<input type="checkbox" checked>' +
+    '<span class="lobby-switch-slider"></span>' +
+    '</label>' +
+    '</div>' +
+    '</div>' +
+    '</div>' +
+    '</section>' +
+
+    '<!-- Bottom Action Bar -->' +
+    '<div class="lobby-bottom-bar">' +
+    '<div class="lobby-ready-info">' +
+    '<span id="lobby-ready-count" class="lobby-ready-title">' + room.players.length + '/8 Oyuncu Hazır</span>' +
+    '<span id="lobby-ready-details" class="lobby-ready-sub">Seçili: ' + modeInfo.name + ' • ' + currentRounds + ' Tur • ' + currentSec + 'sn</span>' +
+    '</div>' +
+
+    '<button id="lobby-start" class="lobby-tactile-start" type="submit" ' + (!host ? 'disabled' : '') + '>' +
+    '<span class="lobby-tactile-start-base"></span>' +
+    '<span class="lobby-tactile-start-face">' +
+    '<span>' + (host ? 'OYUNU BAŞLAT ▶' : 'Kurucu Bekleniyor...') + '</span>' +
     '</span>' +
-    controls +
-    '</section><section><div class="box"><div class="sectiontitle" style="margin-top:0"><h2>Oyuncular</h2><span id="lobby-player-count">' +
-    room.players.length +
-    ' oyuncu</span></div><div class="code num">' +
-    room.code +
-    '</div><button type="button" class="btn secondary" onclick="copyCode()">Kodu kopyala</button><button type="button" class="btn secondary" style="margin-left:8px" onclick="copyRoomLink()">Bağlantıyı kopyala</button><div id="lobby-players">' +
-    playersHtml() +
-    '</div></div>' +
+    '</button>' +
+    '</div>' +
+
+    '</div>' +
+
+    '<!-- RIGHT COLUMN (SIDEBAR) -->' +
+    '<div class="lobby-sidebar">' +
+
+    '<!-- Card 1: Oda Erişim Kodu -->' +
+    '<div class="lobby-side-card">' +
+    '<div class="lobby-side-header">' +
+    '<span class="lobby-side-title">ODA ERİŞİM KODU</span>' +
+    '<span class="lobby-secret-tag">GİZLİ ODA</span>' +
+    '</div>' +
+
+    '<span class="lobby-code-sub">KATILIM KODU</span>' +
+    '<div class="lobby-code-row">' +
+    '<span class="lobby-code-giant code num">' + room.code + '</span>' +
+    '<button type="button" class="lobby-copy-btn" onclick="copyCode()">' +
+    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
+    '<span>Kopyala</span>' +
+    '</button>' +
+    '</div>' +
+
+    '<div class="lobby-url-row">' +
+    '<span class="lobby-url-text">' + shareUrl + '</span>' +
+    '<button type="button" class="lobby-url-btn" onclick="copyRoomLink()">Bağlantı</button>' +
+    '</div>' +
+    '</div>' +
+
+    '<!-- Card 2: Oyuncular -->' +
+    '<div class="lobby-side-card">' +
+    '<div class="lobby-side-header">' +
+    '<span class="lobby-side-title" style="color:var(--text); display:flex; align-items:center; gap:6px;">' +
+    '<span style="width:6px; height:6px; border-radius:50%; background:var(--green);"></span>' +
+    'LOBİDEKİ OYUNCULAR (<span id="lobby-player-count">' + room.players.length + '</span> / 8)' +
+    '</span>' +
+    '<button type="button" class="lobby-invite-link" onclick="copyRoomLink()" style="background:none;border:none;">+ DAVET ET</button>' +
+    '</div>' +
+
+    '<div id="lobby-players" class="lobby-slots-list">' +
+    lobbySlotsHtml() +
+    '</div>' +
+
+    '<div class="lobby-voice-row">' +
+    '<span>🎙 Lobi Ses Kanalı: Açık</span>' +
+    '<button type="button" class="lobby-audio-test-btn" onclick="testLobbyAudio()">SESİ TEST ET</button>' +
+    '</div>' +
+    '</div>' +
+
+    '<!-- Card 3: Olay Günlüğü -->' +
+    '<div class="lobby-side-card">' +
+    '<div class="lobby-side-header">' +
+    '<span class="lobby-side-title">LOBİ OLAY GÜNLÜĞÜ</span>' +
+    '<span class="lobby-secret-tag" style="color:var(--green); border-color:#22c55e44; background:#22c55e1a;">LIVE_WS: OK</span>' +
+    '</div>' +
+
+    '<div id="lobby-log-stream" class="lobby-log-stream">' +
+    renderLobbyLogsHtml() +
+    '</div>' +
+    '</div>' +
+
     lobbyResults() +
-    '</section></div>';
+
+    '</div>' +
+    '</div>' +
+    '</form>' +
+
+    '<!-- FOOTER -->' +
+    '<footer class="lobby-footer">' +
+    '<div><strong>OGZ GAME</strong> • © 2025 OGZ Games Studio. Tüm hakları saklıdır. <span style="background:#19202e; border:1px solid #283346; padding:2px 6px; border-radius:4px; margin-left:6px;">v2.4.0</span></div>' +
+    '<div>• Bölge: TR-Central (Istanbul) | Gizlilik & Kurallar</div>' +
+    '</footer>' +
+
+    '</div>';
+
   if (host) {
     if (room.mode === 'product-price') {
       for (const input of document.querySelectorAll('[name=product-category]'))
