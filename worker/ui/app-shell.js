@@ -1,6 +1,25 @@
+const foxWatermarkSvg =
+  '<svg class="app-bg-watermark" aria-hidden="true">' +
+  '<defs>' +
+  '<g id="ogzFoxWatermark">' +
+  '<path d="M165,0 Q165,0 166,0 Q167,0 169,2 Q171,4 176,14 Q181,24 183,31.5 Q185,39 185.5,46.5 Q186,54 181.5,50 Q177,46 176,46 Q175,46 174.5,44 Q174,42 168.5,37 Q163,32 155.5,29.5 Q148,27 148,25.5 Q148,24 149,23.5 Q150,23 151,20 Q152,17 158.5,8.5Z M66,5 Q66,5 71.5,6 Q77,7 85,11 Q93,15 98.5,19.5 Q104,24 105,24 Q106,24 110.5,28.5 Q115,33 122,30.5 Q129,28 138,28 Q147,28 150,29.5 Q153,31 145,30.5 Q137,30 129,33 Q121,36 114,42 Q107,48 107,49 Q107,50 103.5,54 Q100,58 99,61 Q98,64 103.5,66.5 Q109,69 112,72.5 Q115,76 117,80.5 Q119,85 118.5,94.5 Q118,104 113.5,111 Q109,118 101,122 Q93,126 88,126 Q83,126 77,123.5 Q71,121 67.5,117.5 Q64,114 63,111.5 Q62,109 60.5,104.5 Q59,100 59,96.5 Q59,93 62,84.5 Q65,76 68.5,72.5 Q72,69 77,66.5 Q82,64 87,63.5 Q92,63 96.5,55 Q101,47 106,42.5 Q111,38 110,37.5 Q109,37 105,41 Q101,45 98.5,40.5 Q96,36 91,31 Q86,26 79.5,22 Q73,18 79,38.5 Q85,59 78.5,62 Q72,65 70,67 Q68,69 67,71.5 Q66,74 65,74 Q64,74 61.5,64 Q59,54 59,40.5 Q59,27 60,22 Q61,17 63.5,11Z   M144,44 Q144,44 150,44.5 Q156,45 164.5,48.5 Q173,52 181,59 Q189,66 191.5,71 Q194,76 198.5,81 Q203,86 206,87 Q209,88 209.5,89 Q210,90 218.5,92.5 Q227,95 230.5,95 Q234,95 235,96 Q236,97 235.5,99.5 Q235,102 234.5,101 Q234,100 229,100 Q224,100 225,103 Q226,106 228,107.5 Q230,109 224,114 Q218,119 212.5,121.5 Q207,124 195.5,126.5 Q184,129 180.5,130.5 Q177,132 173.5,135 Q170,138 168.5,141 Q167,144 167,149 Q167,154 168,156.5 Q169,159 173,163.5 Q177,168 185.5,172.5 Q194,177 187,179 Q180,181 169,181 Q158,181 155.5,182 Q153,183 151,185 Q149,187 147.5,191.5 Q146,196 147,200.5 Q148,205 150,209 Q152,213 155.5,217 Q159,221 157.5,221 Q156,221 152,219 Q148,217 147.5,216 Q147,215 142.5,212.5 Q138,210 133.5,205.5 Q129,201 126,196 Q123,191 122,187 Q121,183 121,177.5 Q121,172 122.5,167 Q124,162 126.5,157.5 Q129,153 133.5,148 Q138,143 133,145.5 Q128,148 123,152.5 Q118,157 115.5,162 Q113,167 112,167.5 Q111,168 110,173.5 Q109,179 107.5,177.5 Q106,176 105,172.5 Q104,169 104,161.5 Q104,154 108.5,145 Q113,136 121,128.5 Q129,121 135,117.5 Q141,114 142.5,114 Q144,114 139.5,113.5 Q135,113 130,114.5 Q125,116 128.5,110 Q132,104 139,98 Q146,92 139,93.5 Q132,95 130.5,86 Q129,77 127,73.5 Q125,70 123.5,69 Q122,68 122,66.5 Q122,65 124.5,61 Q127,57 131,53 Q135,49 139.5,46.5Z M86,68 Q86,68 82.5,69 Q79,70 74,74 Q69,78 66.5,83 Q64,88 63.5,93.5 Q63,99 64,103 Q65,107 68,110.5 Q71,114 71,115 Q71,116 76,118.5 Q81,121 85,121 Q89,121 93.5,120 Q98,119 103,114.5 Q108,110 110.5,104 Q113,98 113,92.5 Q113,87 111.5,83 Q110,79 107,75.5 Q104,72 99,70 Q94,68 90,68Z M163,73 Q163,73 158,75 Q153,77 151.5,79 Q150,81 158,80.5 Q166,80 169.5,81.5 Q173,83 178.5,84.5 Q184,86 180.5,81 Q177,76 173.5,74.5 Q170,73 166.5,73Z M50,109 Q50,109 51,112 Q52,115 46,120.5 Q40,126 36,134 Q32,142 32,148.5 Q32,155 33,158 Q34,161 37.5,166.5 Q41,172 49.5,179 Q58,186 70,191.5 Q82,197 91.5,199 Q101,201 102,202.5 Q103,204 107.5,206.5 Q112,209 101,208.5 Q90,208 76,205.5 Q62,203 49,198 Q36,193 35.5,192 Q35,191 33,190.5 Q31,190 27,186.5 Q23,183 22,183 Q21,183 16.5,178 Q12,173 10,169 Q8,165 7.5,157 Q7,149 11,141.5 Q15,134 22,127.5 Q29,121 39.5,115Z M107,131 Q107,131 108,131.5 Q109,132 105.5,135 Q102,138 97.5,145.5 Q93,153 91.5,159 Q90,165 90,170 Q90,175 87.5,173 Q85,171 85,170 Q85,169 82.5,165.5 Q80,162 79,158 Q78,154 78,150 Q78,146 80,140.5 Q82,135 90,135 Q98,135 102.5,133Z M260,146 Q260,146 256.5,151.5 Q253,157 245,165 Q237,173 236,173 Q235,173 233.5,175 Q232,177 231,177 Q230,177 229,178.5 Q228,180 227,180 Q226,180 221,184 Q216,188 207,192.5 Q198,197 188,200.5 Q178,204 169.5,206 Q161,208 160,208 Q159,208 158.5,206.5 Q158,205 156.5,201.5 Q155,198 165,196.5 Q175,195 190.5,189.5 Q206,184 222.5,174.5 Q239,165 249.5,155.5Z" fill="currentColor" fill-rule="evenodd"/>' +
+  '</g>' +
+  '<pattern id="foxWatermarkPattern" width="140" height="120" patternUnits="userSpaceOnUse">' +
+  '<g transform="translate(16, 12) scale(0.18)" opacity="0.04" style="color: #ffffff;">' +
+  '<use href="#ogzFoxWatermark"/>' +
+  '</g>' +
+  '<g transform="translate(86, 72) scale(0.18)" opacity="0.04" style="color: #ffffff;">' +
+  '<use href="#ogzFoxWatermark"/>' +
+  '</g>' +
+  '</pattern>' +
+  '</defs>' +
+  '<rect width="100%" height="100%" fill="url(#foxWatermarkPattern)"/>' +
+  '</svg>';
+
 export function createAppShell({ gameViewportStyles, battleshipStyles, battleshipClient, numberRaceStyles, numberRaceClient, finalStandingsStyles, finalStandingsClient, gameAudioClient, desktopGameStyles, roundRankingStyles, mobileGameStyles, guessInputClient, productGameStyles, productGameClient, modeCardStyles, modeCardClient, roundRankingClient, mobileGameClient, validProfile, auctionStyles, auctionClient }) {
-  return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>
+  return String.raw`<!DOCTYPE html><html lang="tr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>OGZ Game — Tahminin konuşsun.</title><link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,700&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=Outfit:wght@700;800&family=Righteous&family=Russo+One&family=Montserrat:wght@800;900&family=Unbounded:wght@700;800;900&family=Chakra+Petch:wght@700&family=Bebas+Neue&display=swap" rel="stylesheet"><style>
 :root {
+  --brand-font: "Space Grotesk";
   --bg: #111520;
   --bg-wave: #241620;
   --panel: #1c222e;
@@ -22,6 +41,20 @@ body {
   color: var(--text);
   font-family: "DM Sans", sans-serif;
   font-size: 14px;
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+.app-bg-watermark {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  pointer-events: none;
+}
+body:is(.game-mode, .auction-active, .number-active, .battleship-active) .app-bg-watermark {
+  display: none;
 }
 button,
 input,
@@ -46,7 +79,7 @@ h2,
 h3,
 .logo,
 .num {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
 }
 main {
   margin: 0 auto;
@@ -526,7 +559,7 @@ body.home-mode::before {
   content: "";
   position: fixed;
   inset: 0;
-  z-index: -2;
+  z-index: -3;
   pointer-events: none;
   background: var(--bg);
 }
@@ -565,17 +598,23 @@ body.home-mode::before {
 .ogz-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   text-decoration: none;
   color: var(--text);
   user-select: none;
 }
+.ogz-brand-logo {
+  width: auto;
+  height: clamp(52px, 6.2svh, 68px);
+  max-width: 80px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
 .ogz-brand-crown {
-  width: 38px;
-  height: 32px;
+  width: 44px;
+  height: 38px;
   flex-shrink: 0;
   transform: rotate(-14deg);
-  filter: drop-shadow(0 4px 10px #e2404644);
 }
 .ogz-brand-text {
   display: flex;
@@ -583,19 +622,19 @@ body.home-mode::before {
   line-height: 1;
 }
 .ogz-brand-text strong {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
   font-weight: 800;
-  font-size: 30px;
-  letter-spacing: -1px;
+  font-size: 38px;
+  letter-spacing: -0.5px;
   color: #ffffff;
 }
 .ogz-brand-text span {
-  font-family: "Space Grotesk", sans-serif;
-  font-weight: 600;
-  font-size: 10px;
-  letter-spacing: 5.5px;
-  color: #cbd5e1;
-  margin-top: 2px;
+  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 6.5px;
+  color: #94a3b8;
+  margin-top: 3px;
   padding-left: 2px;
 }
 
@@ -627,7 +666,7 @@ body.home-mode::before {
 }
 .home-headline {
   margin: 0;
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
   font-weight: 800;
   font-style: italic;
   font-size: clamp(38px, 4.5vw, 62px);
@@ -663,43 +702,73 @@ body.home-mode::before {
   gap: 14px;
 }
 .home-cta {
-  height: 52px;
-  padding: 0 28px;
-  border-radius: 26px;
-  font-family: "DM Sans", sans-serif;
-  font-weight: 700;
-  font-size: 16px;
+  position: relative;
   display: inline-flex;
+  padding: 0;
+  padding-bottom: 5px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+  font-family: "DM Sans", sans-serif;
+  text-decoration: none;
+  border-radius: 14px;
+  outline: none;
+}
+.home-cta:focus-visible {
+  outline: 2px solid var(--a);
+  outline-offset: 4px;
+}
+.home-cta-base {
+  position: absolute;
+  inset-inline: 0;
+  top: 5px;
+  bottom: 0;
+  border-radius: 14px;
+  pointer-events: none;
+}
+.home-cta-face {
+  position: relative;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 11px;
-  transition:
-    transform 0.18s,
-    background 0.18s,
-    border-color 0.18s,
-    box-shadow 0.18s;
+  height: 50px;
+  padding: 0 28px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 15.5px;
+  line-height: 1;
+  transition: transform 0.12s cubic-bezier(0.23, 1, 0.32, 1);
 }
-.home-cta.primary {
-  background: var(--a);
+.home-cta:hover .home-cta-face {
+  transform: translateY(1.5px);
+}
+.home-cta:active .home-cta-face {
+  transform: translateY(5px);
+}
+.home-cta.primary .home-cta-base {
+  background: #9f1c22;
+  box-shadow: inset 0 -1px 0 #6e1014;
+}
+.home-cta.primary .home-cta-face {
+  background: #e24046;
   color: #ffffff;
-  box-shadow: 0 10px 28px #e2404640;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 2px 8px rgba(0, 0, 0, 0.25);
 }
-.home-cta.primary:hover {
-  background: var(--a-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 34px #e2404659;
+.home-cta.secondary .home-cta-base {
+  background: #10141e;
+  box-shadow: inset 0 -1px 0 #080a10;
 }
-.home-cta.secondary {
-  background: #141824cc;
+.home-cta.secondary .home-cta-face {
+  background: #1c2333;
+  color: #f1f5f9;
+  border: 1px solid #303c54;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+.home-cta.secondary:hover .home-cta-face {
   color: #ffffff;
-  border: 1.5px solid #e2e8f0cc;
-  padding: 0 26px;
-}
-.home-cta.secondary:hover {
-  background: #1c222e;
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: translateY(-2px);
+  border-color: #445474;
 }
 .home-cta svg {
   width: 18px;
@@ -712,13 +781,13 @@ body.home-mode::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 460px;
+  min-height: 520px;
   perspective: 1200px;
 }
 .mascot-aura {
   position: absolute;
-  width: 420px;
-  height: 420px;
+  width: 480px;
+  height: 480px;
   border-radius: 50%;
   background: radial-gradient(circle, #e2404624 0%, #f0ad5f1a 42%, transparent 72%);
   filter: blur(36px);
@@ -737,8 +806,8 @@ body.home-mode::before {
 }
 .mascot-canvas {
   width: 100%;
-  max-width: 440px;
-  height: 460px;
+  max-width: 520px;
+  height: 520px;
   display: block;
   cursor: grab;
   outline: none;
@@ -786,19 +855,13 @@ body.home-mode::before {
   position: absolute;
   inset: 0;
   border-radius: 19px;
-  background: radial-gradient(circle at 55% 24%, var(--card-glow, #e2404629) 0%, transparent 68%);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 60%);
   pointer-events: none;
-  transition: opacity 0.22s;
-}
-.mode-3d-card.gold-glow {
-  --card-glow: #f0ad5f29;
 }
 .mode-3d-card:hover {
   transform: skewX(-6deg) translateY(-8px);
   border-color: var(--card-accent, var(--a));
-  box-shadow:
-    0 22px 48px #00000080,
-    0 0 32px var(--card-glow, #e2404633);
+  box-shadow: 0 22px 48px #00000099;
 }
 .mode-3d-card.gold-glow:hover {
   --card-accent: var(--gold);
@@ -835,7 +898,7 @@ body.home-mode::before {
   filter: drop-shadow(0 14px 22px #00000099);
 }
 .mode-3d-title {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
   font-weight: 800;
   font-style: italic;
   font-size: clamp(16px, 1.35vw, 20px);
@@ -900,7 +963,7 @@ body.home-mode::before {
   gap: 8px;
 }
 .more-plus {
-  font-family: "Space Grotesk", sans-serif;
+  font-family: var(--brand-font, "Space Grotesk"), "Space Grotesk", sans-serif;
   font-size: 36px;
   font-weight: 400;
   line-height: 1;
@@ -1388,8 +1451,8 @@ body.game-mode main {
     justify-content: center;
   }
   .mascot-canvas {
-    max-width: 320px;
-    height: 350px;
+    max-width: 380px;
+    height: 400px;
   }
   .roomlayout {
     grid-template-columns: 1fr;
@@ -1410,12 +1473,23 @@ body.game-mode main {
   .headeruser small {
     display: none;
   }
+  .ogz-brand {
+    gap: 10px;
+  }
+  .ogz-brand-logo {
+    height: 42px;
+    max-width: 56px;
+  }
   .ogz-brand-text strong {
-    font-size: 24px;
+    font-size: 28px;
+  }
+  .ogz-brand-text span {
+    font-size: 10px;
+    letter-spacing: 5px;
   }
   .ogz-brand-crown {
-    width: 30px;
-    height: 26px;
+    width: 32px;
+    height: 28px;
   }
   .home-modes-track {
     grid-template-columns: 1fr 1fr;
@@ -1545,20 +1619,21 @@ body.game-mode main {
     font-size: clamp(12px, min(1.15vw, 2.3svh), 16px);
     margin: clamp(8px, 1.7svh, 18px) 0 clamp(12px, 2.5svh, 28px);
   }
-  .home-cta {
-    height: clamp(36px, 6svh, 52px);
-    font-size: clamp(13px, 1.3vw, 16px);
+  .home-cta-face {
+    height: clamp(40px, 6svh, 50px);
+    font-size: clamp(13px, 1.3vw, 15.5px);
+    padding: 0 clamp(18px, 2.5vw, 28px);
   }
   .home-hero-art {
     height: 100%;
     min-height: 0;
-    max-height: 460px;
+    max-height: 560px;
   }
   .mascot-canvas {
     height: 100%;
-    max-height: 460px;
+    max-height: 560px;
     min-height: 0;
-    max-width: 440px;
+    max-width: 540px;
   }
   .mascot-aura {
     width: min(32vw, 44svh);
@@ -1609,7 +1684,7 @@ ${auctionStyles || ''}
 ${numberRaceStyles || ''}
 ${battleshipStyles || ''}
 ${gameViewportStyles || ''}
-</style></head><body><main><header class="topbar"><span id="breadcrumb" class="hidden">Ana sayfa</span><button class="settings-button" onclick="showHow()" aria-label="Nasıl Oynanır?"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Nasıl oynanır?</span></button><button class="headeruser" onclick="profileModal()" id="userbutton" aria-label="Profil"></button><button class="settings-button" onclick="settingsModal()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3z"/><circle cx="12" cy="12" r="3"/></svg><span>Ayarlar</span></button></header><div id="content"></div></main><div id="overlay"></div><div id="toast" class="toast hidden" role="status"></div><script>
+</style></head><body>${foxWatermarkSvg}<main><header class="topbar"><span id="breadcrumb" class="hidden">Ana sayfa</span><button class="settings-button" onclick="showHow()" aria-label="Nasıl Oynanır?"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Nasıl oynanır?</span></button><button class="headeruser" onclick="profileModal()" id="userbutton" aria-label="Profil"></button><button class="settings-button" onclick="settingsModal()"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3z"/><circle cx="12" cy="12" r="3"/></svg><span>Ayarlar</span></button></header><div id="content"></div></main><div id="overlay"></div><div id="toast" class="toast hidden" role="status"></div><script>
 ${finalStandingsClient}
 ${gameAudioClient}
 ${guessInputClient}
@@ -2086,12 +2161,12 @@ function init3DFox() {
     foxRenderer.dispose();
     foxRenderer = null;
   }
-  const width = canvas.clientWidth || 420,
-    height = canvas.clientHeight || 460;
+  const width = canvas.clientWidth || 500,
+    height = canvas.clientHeight || 520;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
-  camera.position.set(0, 1.4, 5.2);
-  camera.lookAt(0, 1.25, 0);
+  const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+  camera.position.set(0, 1.5, 6.2);
+  camera.lookAt(0, 1.42, 0);
   const renderer = new THREE.WebGLRenderer({
     canvas,
     alpha: true,
@@ -2106,7 +2181,9 @@ function init3DFox() {
       h = canvas.clientHeight;
     if (!w || !h) return;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    const aspect = w / h;
+    camera.aspect = aspect;
+    camera.fov = aspect < 0.9 ? 40 / (aspect / 0.9) : 40;
     camera.updateProjectionMatrix();
   });
   canvasResize.observe(canvas);
@@ -2192,20 +2269,20 @@ function init3DFox() {
     clock += 0.016;
     headGroup.rotation.y += (targetHeadRotY - headGroup.rotation.y) * 0.08;
     headGroup.rotation.x += (targetHeadRotX - headGroup.rotation.x) * 0.08;
-    crownGroup.position.y = 2.75 + Math.sin(clock * 2) * 0.08;
+    crownGroup.position.y = 2.75 + Math.sin(clock * 2) * 0.05;
     crownGroup.rotation.y += 0.012;
     tailGroup.rotation.y = Math.sin(clock * 1.5) * 0.22;
     tailGroup.rotation.z = Math.cos(clock * 1.5) * 0.08;
     earL.rotation.z = -0.42 + Math.sin(clock * 1.8) * 0.03;
     earR.rotation.z = 0.42 - Math.sin(clock * 1.8) * 0.03;
-    foxGroup.position.y = Math.sin(clock) * 0.04;
+    foxGroup.position.y = Math.sin(clock) * 0.03;
     const autoSweep = Math.sin(clock * 0.45) * 0.55;
     const targetBodyY = isDragging ? dragRotY : autoSweep;
     foxGroup.rotation.y += (targetBodyY - foxGroup.rotation.y) * 0.05;
     if (!isDragging) dragRotY += (autoSweep - dragRotY) * 0.04;
     if (isJumping) {
       jumpTime += 0.08;
-      foxGroup.position.y += Math.sin(jumpTime * Math.PI) * 0.35;
+      foxGroup.position.y += Math.sin(jumpTime * Math.PI) * 0.22;
       if (jumpTime >= 1) {
         isJumping = false;
         jumpTime = 0;
@@ -2215,6 +2292,7 @@ function init3DFox() {
   }
   animate();
 }
+
 
 function home() {
   resetMobileRoundRanking();
@@ -2251,10 +2329,7 @@ function home() {
     '</svg>',
     '<div class="home-brand-row">',
     '<div class="ogz-brand" aria-label="OGZ Game">',
-    '<svg class="ogz-brand-crown" viewBox="0 0 48 40" fill="none" aria-hidden="true">',
-    '<path d="M6 31L4 11L16 21L24 7L32 21L44 11L42 31H6Z" stroke="#e24046" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>',
-    '<path d="M8 36H40" stroke="#e24046" stroke-width="4" stroke-linecap="round"/>',
-    '</svg>',
+    '<img class="ogz-brand-logo" src="/logo.png" alt="OGZ Game" onerror="this.style.display=\'none\'">',
     '<div class="ogz-brand-text"><strong>OGZ</strong><span>GAME</span></div>',
     '</div>',
     '</div>',
@@ -2273,12 +2348,18 @@ function home() {
     '<p class="home-subtext">OGZ Game, arkadaşlarınla birlikte oynayabileceğin çok oyunculu, Türkçe tahmin ve parti oyunları platformudur.</p>',
     '<div class="home-cta-row">',
     '<button type="button" class="home-cta primary" onclick="requireProfile(joinModal)">',
+    '<span class="home-cta-base"></span>',
+    '<span class="home-cta-face">',
     '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5.5v13l11-6.5-11-6.5z"/></svg>',
     '<span>Hemen Oyna</span>',
+    '</span>',
     '</button>',
     '<button type="button" class="home-cta secondary" onclick="openModeRoom(\'car-price\')">',
+    '<span class="home-cta-base"></span>',
+    '<span class="home-cta-face">',
     '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>',
     '<span>Oda Kur</span>',
+    '</span>',
     '</button>',
     '</div>',
     '</div>',

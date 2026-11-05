@@ -128,6 +128,22 @@ async function start(config = {}) {
     fs.writeFileSync(path.join(root, 'auction-catalog.json'), JSON.stringify(catalog));
   const server = http.createServer(async (req, res) => {
     try {
+      if (req.url === '/logo-font-tester.html') {
+        const testerFile = path.resolve('public/logo-font-tester.html');
+        if (fs.existsSync(testerFile)) {
+          res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
+          res.end(fs.readFileSync(testerFile));
+          return;
+        }
+      }
+      if (req.url === '/logo-icon.png' || req.url === '/logo.png') {
+        const logoFile = path.resolve('assets/logo/logo.png');
+        if (fs.existsSync(logoFile)) {
+          res.writeHead(200, { 'content-type': 'image/png' });
+          res.end(fs.readFileSync(logoFile));
+          return;
+        }
+      }
       const chunks = [];
       for await (const c of req) {
         chunks.push(c);

@@ -101,7 +101,6 @@ export const finalStandingsStyles = String.raw`
   font-size: 42px;
   line-height: 1.2;
   margin-bottom: 10px;
-  filter: drop-shadow(0 3px 12px #f0ad5f50);
 }
 .podium-player strong {
   display: block;
