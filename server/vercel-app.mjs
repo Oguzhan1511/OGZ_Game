@@ -16,7 +16,7 @@ export async function handleVercelRequest(request,env){
  if(!env.OGZ_BACKEND_ORIGIN||!env.OGZ_BACKEND_TOKEN||!env.OGZ_DEPLOYMENT_KEY||!env.ADMIN_PASSWORD_HASH||!env.ADMIN_USERNAME||!env.ADMIN_SESSION_SECRET)return json({error:'Sunucu yapılandırması hazır değil.'},503);
  const url=new URL(request.url),path=url.pathname,isAdmin=validAdminSession(request,env);
  const bridgeHeaders={'OAI-Sites-Authorization':'Bearer '+env.OGZ_BACKEND_TOKEN,'x-ogz-deployment-key':env.OGZ_DEPLOYMENT_KEY};
- if(path==='/'||path==='/mascot.jpg'||path==='/logo.png'||path==='/home-background-v1.webp')return await worker.fetch(request,env);
+ if(path==='/'||/^\/oda\/[a-f0-9]{6}\/?$/i.test(path)||path==='/mascot.jpg'||path==='/logo.png'||path==='/home-background-v1.webp')return await worker.fetch(request,env);
  if(path==='/admin/login'){if(isAdmin)return Response.redirect(url.origin+'/admin',303);return new Response(loginHtml,{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store'}})}
  if(path==='/api/admin/login'){
   if(request.method!=='POST')return json({error:'Geçersiz yöntem'},405);if(request.headers.get('origin')!==url.origin)return json({error:'Geçersiz kaynak'},403);

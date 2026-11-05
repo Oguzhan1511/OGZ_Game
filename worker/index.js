@@ -131,7 +131,8 @@ export default {
       return new Response(html, {
         headers: {
           'content-type': 'text/html; charset=utf-8',
-          'x-content-type-options': 'nosniff'
+          'x-content-type-options': 'nosniff',
+          'cache-control': 'no-store'
         }
       });
     } catch (e) {
