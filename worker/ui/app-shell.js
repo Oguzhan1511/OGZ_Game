@@ -332,18 +332,28 @@ body:not(.home-mode) > main {
 }
 /* ==================== LOBBY HERO DASHBOARD ==================== */
 body.lobby-mode > main {
-  padding-top: 14px;
-  max-width: 1260px;
+  padding-top: 80px;
+  padding-bottom: 40px;
+  padding-left: clamp(16px, 3vw, 44px);
+  padding-right: clamp(16px, 3vw, 44px);
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
-body.lobby-mode > main > header.topbar {
+body.lobby-mode header.topbar {
+  display: flex !important;
+}
+body.lobby-mode header.topbar #breadcrumb,
+body.lobby-mode header.topbar button[onclick="showHow()"] {
   display: none !important;
 }
 .lobby-dashboard {
-  max-width: 1240px;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
 }
 .lobby-header-bar {
   display: flex;
@@ -531,9 +541,18 @@ body.lobby-mode > main > header.topbar {
 }
 .lobby-main-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.48fr) minmax(320px, 0.92fr);
-  gap: 18px;
+  grid-template-columns: minmax(0, 1.62fr) minmax(360px, 1fr);
+  gap: 20px;
   align-items: start;
+  width: 100%;
+}
+.lobby-leave-btn {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 8px;
+  line-height: 1.2;
+  cursor: pointer;
 }
 .lobby-panel {
   background: #141924;
@@ -3183,7 +3202,7 @@ function init3DFox() {
 
 function home() {
   resetMobileRoundRanking();
-  document.body.classList.remove('game-mode', 'product-game');
+  document.body.classList.remove('game-mode', 'product-game', 'lobby-mode');
   document.body.classList.remove('number-active', 'battleship-active');
   document.body.classList.add('home-mode');
   $('#breadcrumb').textContent = 'Ana sayfa';
@@ -4162,55 +4181,6 @@ function renderLobby() {
   $('#content').innerHTML =
     '<div class="lobby-dashboard">' +
 
-    '<!-- TOP BAR -->' +
-    '<header class="lobby-header-bar">' +
-    '<div class="lobby-header-left">' +
-    '<div class="lobby-brand-block">' +
-    '<div class="lobby-brand-icon-box">' +
-    '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4m-2-2v4m9-2h.01m3 0h.01"/></svg>' +
-    '</div>' +
-    '<div class="lobby-brand-titles">' +
-    '<span class="lobby-brand-name">OGZ GAME</span>' +
-    '<span class="lobby-status-tag">LOBİ AKTİF</span>' +
-    '</div>' +
-    '</div>' +
-    '<div class="lobby-nav-pills">' +
-    '<button type="button" class="lobby-nav-btn active">Lobi</button>' +
-    '<button type="button" class="lobby-nav-btn" onclick="openModeRoom(\'car-price\')">Oyunlar</button>' +
-    '<button type="button" class="lobby-nav-btn" onclick="showHow()">Sıralama</button>' +
-    '</div>' +
-    '</div>' +
-
-    '<div class="lobby-header-center">' +
-    '<span class="lobby-code-pill-text">ODA KODU: <strong>' + room.code + '</strong></span>' +
-    '<button type="button" class="lobby-header-icon-btn" title="Kodu Kopyala" onclick="copyCode()">' +
-    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
-    '</button>' +
-    '<button type="button" class="lobby-header-icon-btn" title="Bağlantıyı Kopyala" onclick="copyRoomLink()">' +
-    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>' +
-    '</button>' +
-    '<span class="lobby-ping-tag">18ms IST</span>' +
-    '</div>' +
-
-    '<div class="lobby-header-right">' +
-    '<div class="lobby-host-pill">' +
-    '<span>' + esc(myPlayer.name) + '</span>' +
-    (host ? '<span class="lobby-host-tag">HOST</span>' : '<span style="font-size:9px;color:var(--muted)">OYUNCU</span>') +
-    '</div>' +
-    '<button type="button" class="lobby-h-btn" onclick="showHow()">' +
-    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
-    '<span>Nasıl Oynanır?</span>' +
-    '</button>' +
-    '<button type="button" class="lobby-header-icon-btn" title="Ses Aç/Kapat" onclick="toggleGameSound()">' +
-    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>' +
-    '</button>' +
-    '<button type="button" class="lobby-leave-pill-btn" onclick="goHome()">' +
-    '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>' +
-    '<span>' + (host ? 'Odayı kapat' : 'Odadan ayrıl') + '</span>' +
-    '</button>' +
-    '</div>' +
-    '</header>' +
-
     '<!-- 2-COLUMN MAIN GRID -->' +
     '<form id="lobby-settings" class="lobby-settings" data-game="' + room.gameId + '" onsubmit="startLobbyGame(event)">' +
     '<input id="game-mode" type="hidden" value="' + activeMode + '">' +
@@ -4356,7 +4326,7 @@ function renderLobby() {
     '<div class="lobby-side-card">' +
     '<div class="lobby-side-header">' +
     '<span class="lobby-side-title">ODA ERİŞİM KODU</span>' +
-    '<span class="lobby-secret-tag">GİZLİ ODA</span>' +
+    '<button type="button" class="btn secondary lobby-leave-btn" onclick="goHome()">' + (host ? 'Odayı kapat' : 'Odadan ayrıl') + '</button>' +
     '</div>' +
 
     '<span class="lobby-code-sub">KATILIM KODU</span>' +
@@ -4504,7 +4474,7 @@ function renderRoomContent() {
   }
   resetMobileRoundRanking();
   document.body.classList.remove('game-mode', 'product-game');
-  document.body.classList.remove('home-mode');
+  document.body.classList.remove('home-mode', 'lobby-mode');
   const host = room.isHost;
   $('#breadcrumb').textContent = room.state === 'lobby' ? 'Oyun lobisi' : 'Fiyat tahmini';
   let body = '';
@@ -4668,7 +4638,7 @@ function renderRoomContent() {
 function renderGame() {
   const guessWasFocused = document.activeElement?.id === 'guess',
     guessCaret = $('#guess')?.selectionStart;
-  document.body.classList.remove('home-mode');
+  document.body.classList.remove('home-mode', 'lobby-mode');
   document.body.classList.add('game-mode');
   document.body.classList.toggle('product-game', room.mode === 'product-price');
   const c = room.car,
