@@ -1190,8 +1190,11 @@ body.lobby-mode > main {
   box-sizing: border-box;
   overflow: hidden;
 }
+body.lobby-mode #content,
 .lobby-dashboard,
 .lobby-settings { height: 100%; width: 100%; min-height: 0; }
+.lobby-left-column > * { flex: 0 0 auto; }
+.lobby-left-column > .lobby-panel:first-child { flex: 1 1 auto; }
 .lobby-settings { display: block; }
 body.lobby-mode main.lobby-main-grid {
   height: 100%;
@@ -4201,30 +4204,6 @@ function renderLobby() {
     '</section>' +
     '</section>' +
 
-    '<!-- Toggles Row -->' +
-    '<section class="lobby-toggles-grid">' +
-    '<label class="lobby-toggle-card">' +
-    '<hgroup class="lobby-toggle-text">' +
-    '<span class="lobby-toggle-title">Hasar & Tramer Bilgisi</span>' +
-    '<span class="lobby-toggle-desc">İlandaki boya ve değişen parçaları göster</span>' +
-    '</hgroup>' +
-    '<span class="lobby-switch">' +
-    '<input type="checkbox" checked>' +
-    '<span class="lobby-switch-slider"></span>' +
-    '</span>' +
-    '</label>' +
-
-    '<label class="lobby-toggle-card">' +
-    '<hgroup class="lobby-toggle-text">' +
-    '<span class="lobby-toggle-title">Seri Çarpan Bonusu</span>' +
-    '<span class="lobby-toggle-desc">Arka arkaya %5 sapma altı bilenlere x1.5 puan</span>' +
-    '</hgroup>' +
-    '<span class="lobby-switch">' +
-    '<input type="checkbox" checked>' +
-    '<span class="lobby-switch-slider"></span>' +
-    '</span>' +
-    '</label>' +
-    '</section>' +
     '</fieldset>' +
     '</section>' +
 
