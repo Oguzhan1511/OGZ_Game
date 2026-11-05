@@ -555,13 +555,13 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
   cursor: pointer;
 }
 .lobby-panel {
-  background: #141924;
-  border: 1px solid #232b3a;
-  border-radius: 14px;
-  padding: 18px 20px;
+  background: #371422;
+  border: 1px solid #572036;
+  border-radius: 0;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
 }
 .lobby-panel-head {
   display: flex;
@@ -572,11 +572,12 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.6px;
   color: #cbd5e1;
   text-transform: uppercase;
+  margin: 0;
 }
 .lobby-title-square {
   width: 8px;
@@ -584,91 +585,19 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
   background: var(--a);
   border-radius: 2px;
 }
-.lobby-panel-badge-green {
-  color: #22c55e;
-  font-size: 11px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-.lobby-panel-badge-green::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #22c55e;
-}
 .lobby-panel-author {
   font-size: 11px;
   color: #64748b;
   font-weight: 500;
 }
-.lobby-mode-tabs {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
-}
-.lobby-mode-tab {
-  background: #19202e;
-  border: 1px solid #252e40;
-  border-radius: 10px;
-  padding: 10px 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  text-align: center;
-  cursor: pointer;
-  position: relative;
-  transition: all 0.15s ease;
-}
-.lobby-mode-tab:hover {
-  background: #20293a;
-  border-color: #3b4860;
-}
-.lobby-mode-tab.active {
-  background: #231b23;
-  border-color: var(--a);
-  box-shadow: 0 0 0 1px var(--a);
-}
-.lobby-mode-tab.active::after {
-  content: "";
-  position: absolute;
-  top: 7px;
-  right: 7px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--a);
-}
-.lobby-mode-tab svg {
-  width: 20px;
-  height: 20px;
-  color: var(--muted);
-}
-.lobby-mode-tab.active svg {
-  color: var(--a);
-}
-.lobby-mode-tab-title {
-  font-size: 11px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1.15;
-}
-.lobby-mode-tab-sub {
-  font-size: 9px;
-  font-weight: 600;
-  color: #64748b;
-}
 .lobby-selected-mode-card {
-  background: #0f131c;
-  border: 1px solid #232b3a;
-  border-radius: 12px;
-  padding: 16px 18px;
+  background: #250d17;
+  border: 1px solid #572036;
+  border-radius: 0;
+  padding: 16px 20px;
   display: grid;
-  grid-template-columns: 1fr 140px;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: 20px;
   align-items: center;
 }
 .lobby-selected-left {
@@ -676,74 +605,36 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
   flex-direction: column;
   gap: 8px;
 }
-.lobby-tags-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.lobby-tag-pill {
-  background: #e2404622;
-  border: 1px solid #e2404655;
-  color: var(--a);
-  font-size: 9px;
-  font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-.lobby-id-pill {
-  font-size: 10px;
-  font-family: monospace;
-  color: #64748b;
-}
 .lobby-mode-big-title {
   font-family: var(--hero-font, "Fira Sans"), sans-serif;
-  font-size: 21px;
+  font-size: 22px;
   font-weight: 900;
   color: #fff;
   letter-spacing: -0.3px;
   text-transform: uppercase;
+  margin: 0;
 }
 .lobby-mode-desc-text {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--muted);
-}
-.lobby-pills-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 4px;
-}
-.lobby-info-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #161c28;
-  border: 1px solid #283346;
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 10px;
-  font-weight: 700;
-  color: #cbd5e1;
+  font-size: 13px;
+  line-height: 1.55;
+  color: #fce7f3;
+  margin: 0;
 }
 .lobby-art-box {
-  width: 140px;
-  height: 104px;
-  background: #141924;
-  border: 1px solid #252e40;
-  border-radius: 10px;
+  width: 180px;
+  height: 115px;
+  background: #18090f;
+  border: 1px solid #572036;
+  border-radius: 0;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  overflow: hidden;
+  margin: 0;
 }
-.lobby-art-caption {
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 0.8px;
-  color: #64748b;
-  text-transform: uppercase;
+.lobby-art-box svg {
+  width: 100%;
+  height: 100%;
 }
 .lobby-param-item {
   display: flex;
@@ -965,15 +856,6 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-.lobby-side-card {
-  background: #141924;
-  border: 1px solid #232b3a;
-  border-radius: 14px;
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
 }
 .lobby-side-header {
   display: flex;
@@ -1214,15 +1096,6 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
 .lobby-log-item strong {
   color: #cbd5e1;
 }
-.lobby-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 4px 0;
-  font-size: 11px;
-  color: #475569;
-  border-top: 1px solid #18202d;
-}
 @media (max-width: 900px) {
   .lobby-main-grid {
     grid-template-columns: 1fr;
@@ -1238,12 +1111,68 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
   .lobby-selected-mode-card {
     grid-template-columns: 1fr;
   }
-  .lobby-art-box {
-    display: none;
-  }
   .lobby-toggles-grid {
     grid-template-columns: 1fr;
   }
+}
+/* ===== Unified lobby theme: one panel style, no card-in-card ===== */
+.lobby-dashboard { gap: 0; }
+.lobby-main-grid {
+  grid-template-columns: minmax(0, 1.7fr) minmax(380px, 1fr);
+  gap: clamp(16px, 2vw, 32px);
+}
+.lobby-left-column,
+.lobby-sidebar { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 32px); min-width: 0; }
+.lobby-panel {
+  background: #371422;
+  border: 1px solid #572036;
+  border-radius: 0;
+  padding: clamp(18px, 2vw, 30px);
+  gap: 20px;
+  color: #fff;
+}
+.lobby-panel-title, .lobby-side-title { color: #f04f55; }
+.lobby-title-square { background: #f04f55; border-radius: 0; }
+.lobby-panel-author, .lobby-param-label, .lobby-field-desc { color: #fce7f3; }
+.lobby-selected-mode {
+  display: grid;
+  grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: center;
+  padding-top: 20px;
+  border-top: 1px solid #572036;
+}
+.lobby-selected-mode .lobby-art-box {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 220 / 130;
+  background: none;
+  border: 0;
+}
+.lobby-mode-big-title { font-size: clamp(24px, 2.4vw, 34px); }
+.lobby-mode-desc-text { font-size: clamp(14px, 1.2vw, 17px); line-height: 1.65; }
+.lobby-toggles-grid { gap: 0; border-top: 1px solid #572036; }
+.lobby-toggle-card,
+.lobby-player-slot,
+.lobby-url-row,
+.lobby-log-stream {
+  background: none;
+  border: 0;
+  border-radius: 0;
+}
+.lobby-toggle-card { padding: 14px 0; cursor: pointer; }
+.lobby-toggle-title { color: #fff; }
+.lobby-toggle-desc { color: #fce7f3; }
+.lobby-slots-list { gap: 0; list-style: none; margin: 0; padding: 0; }
+.lobby-player-slot { padding: 12px 0; border-bottom: 1px solid #572036; }
+.lobby-url-row { padding: 0; }
+.lobby-url-text, .lobby-empty-title, .lobby-empty-sub, .lobby-voice-row, .lobby-log-stream, .lobby-log-time, .lobby-ready-sub, .lobby-code-sub { color: #fce7f3; }
+.lobby-voice-row { border-top: 1px solid #572036; }
+.lobby-log-stream { padding: 0; max-height: 180px; }
+.lobby-slot-badge { color: #ffd9a0; }
+.lobby-bottom-bar { padding: 4px 0 0; border-top: 1px solid #572036; padding-top: 20px; }
+@media (max-width: 900px) {
+  .lobby-selected-mode { grid-template-columns: 1fr; }
 }
 .box {
   background: var(--panel);
@@ -3919,55 +3848,40 @@ const LOBBY_MODES = {
     name: 'Araç Fiyatı',
     title: 'Araç Fiyatı Tahmini',
     sub: '1-8 Kişi',
-    desc: 'Ekrana gelen gerçek pazar ilanlarındaki model, yıl, kilometre ve hasar donanımlarını tartıp piyasa fiyatına en yakın tahmini yap. En yakın fiyata vuran puanı kapar!',
-    pills: ['👥 1 - 8 OYUNCU', '⏱ TUR BAŞINA HIZLI TAHMİN', '📊 FİYAT SAPMA PUANLAMASI'],
-    caption: 'OTO PAZAR KATALOĞU',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.9 2 11.2V16c0 .6.4 1 1 1h2m10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Zm-10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z"/></svg>',
-    art: '<svg width="60" height="38" viewBox="0 0 24 24" fill="none" stroke="#e24046" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.9 2 11.2V16c0 .6.4 1 1 1h2m10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Zm-10 0a2 2 0 1 0 4 0 2 2 0 1 0-4 0Z"/></svg>'
+    desc: 'Gerçek ikinci el araç ilanlarındaki marka, model, yıl, kilometre ve hasar durumunu inceleyip piyasa satış fiyatını tahmin edin. Gerçek fiyata en yakın tahmini yapan oyuncu en yüksek puanı kazanır.',
+    art: '<svg class="mode-choice-art" viewBox="0 0 220 130" aria-hidden="true"><ellipse cx="109" cy="111" rx="96" ry="9" fill="#090c14" opacity=".6"/><path d="M14 96h193" stroke="#e24046" stroke-width="2" stroke-dasharray="12 12" opacity=".35"/><path d="M27 77l16-9 26-32c5-7 11-9 20-9h55c9 0 14 4 19 10l24 30 14 8c5 4 7 8 7 14v12H18V89c0-6 3-10 9-12Z" fill="#e24046"/><path d="m75 36-24 31h116l-22-31Z" fill="#181e2c"/><path d="M110 36v31" stroke="#e24046" stroke-width="5"/><path d="M27 79h36l-6 12H25Zm170 0h-28l5 12h24Z" fill="#fff5f5"/><path d="M77 84h67l-7 15H84Z" fill="#141824"/><path d="M87 90h47" stroke="#f0ad5f" stroke-width="2"/><rect x="29" y="99" width="26" height="15" rx="6" fill="#0d1018"/><rect x="170" y="99" width="26" height="15" rx="6" fill="#0d1018"/><path d="m170 25 7-10 6 10-6 10Z" fill="#f0ad5f"/><circle cx="40" cy="34" r="3" fill="#f0ad5f" opacity=".7"/></svg>'
   },
   'product-price': {
     id: 'PROD-EST-02',
     name: 'Ürün Fiyatı',
     title: 'Ürün Fiyatı Tahmini',
     sub: '1-8 Kişi',
-    desc: 'Giyim, teknoloji, süpermarket ve popüler ürünlerin fiyatlarını tahmin et. En yakın tahminle turları topla!',
-    pills: ['👥 1 - 8 OYUNCU', '⏱ ÇOKLU KATEGORİ', '📊 FİYAT TAHMİNİ'],
-    caption: 'GÜNCEL ÜRÜN HAVUZU',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>',
-    art: '<svg width="56" height="38" viewBox="0 0 24 24" fill="none" stroke="#f0ad5f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>'
+    desc: 'Elektronik, süpermarket ve popüler pazar ürünlerinin özelliklerini inceleyip piyasa fiyatını tahmin edin. Gerçek fiyata en çok yaklaşan yarışmacı turları ve puanları toplar.',
+    art: '<svg class="mode-choice-art" viewBox="0 0 220 130" aria-hidden="true"><ellipse cx="111" cy="112" rx="92" ry="9" fill="#090c14" opacity=".5"/><path d="M30 52h83l8 58H24Z" fill="#e24046"/><path d="M48 55V38c0-25 42-25 42 0v17" fill="none" stroke="#f8fafc" stroke-width="7" stroke-linecap="round"/><path d="m46 80 13 12 27-27" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="133" y="28" width="58" height="86" rx="10" transform="rotate(9 162 70)" fill="#181e2c" stroke="#f0ad5f" stroke-width="3"/><path d="m143 39 34 6-9 54-34-6Z" fill="#252e42"/><path d="m152 30 18 3" stroke="#f0ad5f" stroke-width="4" stroke-linecap="round"/><path d="M99 90V73a24 24 0 0 1 48 0v17" stroke="#f0ad5f" stroke-width="9" fill="none"/><rect x="91" y="78" width="15" height="25" rx="7" fill="#fde68a"/><rect x="140" y="78" width="15" height="25" rx="7" fill="#fde68a"/><path d="m198 23 6-9 6 9-6 9Z" fill="#f0ad5f"/></svg>'
   },
   'auction': {
     id: 'AUCTION-BID-03',
     name: 'Açık Artırma',
     title: 'Açık Artırma Düellosu',
     sub: '2-8 Kişi',
-    desc: '20 TL bütçe ile 10 tur boyunca stratejik açık artırma. Rakibini alt et, en değerli tabağı sen kur!',
-    pills: ['👥 2 OYUNCU (1v1)', '💰 20 TL BÜTÇE', '🎯 EN İYİ TABAK'],
-    caption: 'MÜZAYEDE SALONU',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m14 13-7.5 7.5c-.8.8-2 .8-2.8 0s-.8-2 0-2.8L11 10"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>',
-    art: '<svg width="54" height="38" viewBox="0 0 24 24" fill="none" stroke="#f0ad5f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m14 13-7.5 7.5c-.8.8-2 .8-2.8 0s-.8-2 0-2.8L11 10"/><path d="m16 16 6-6"/><path d="m8 8 6-6"/><path d="m9 7 8 8"/><path d="m21 11-8-8"/></svg>'
+    desc: '20 TL bütçe ile 10 tur boyunca gizli değere sahip özel eşyalar için teklif verin veya çekilin. Bütçenizi en iyi yönetip en karlı koleksiyonu kuran oyuncu oyunu kazanır.',
+    art: '<svg class="mode-choice-art" viewBox="0 0 220 130" aria-hidden="true"><ellipse cx="110" cy="112" rx="83" ry="8" fill="#0d1018"/><path d="m85 38 55 50" stroke="#f0ad5f" stroke-width="16" stroke-linecap="round"/><g transform="rotate(-42 92 43)"><rect x="58" y="18" width="68" height="43" rx="8" fill="#e24046"/><path d="M70 20v39m44-39v39" stroke="#f0ad5f" stroke-width="4"/></g><path d="M110 102h65l7 10h-79Z" fill="#181e2c" stroke="#f0ad5f" stroke-width="2"/><path d="m160 24 6-9 6 9-6 9Z" fill="#f0ad5f"/></svg>'
   },
   'number-race': {
     id: 'NUM-RACE-04',
     name: 'Sayı Yarışı',
     title: 'Sayı Yarışı · 2 kişi',
     sub: '2-8 Kişi',
-    desc: 'Sayıyı bul, rakibin doldurmadan tablonu tamamla. Hızlı ve keskin taktiksel sayı mücadelesi!',
-    pills: ['👥 2 OYUNCU (1v1)', '⏱ 20 SN / TUR', '🧩 TABLO TAMAMLAMA'],
-    caption: 'SAYI MATRİSİ',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>',
-    art: '<svg width="54" height="38" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>'
+    desc: 'Rastgele belirlenen hedef sayıları kendi tablonuzda rakipten önce bularak işaretleyin ve sıraları tamamlayın. Hızlı işlem ve doğru taktik yapan taraf zafere ulaşır.',
+    art: '<svg class="mode-choice-art" viewBox="0 0 220 130" aria-hidden="true"><rect x="55" y="8" width="110" height="110" rx="16" fill="#153747" stroke="#56d9f4" stroke-width="3"/><path d="M92 10v106m36-106v106M57 45h106M57 81h106" stroke="#56d9f4" stroke-width="2"/><text x="110" y="74" text-anchor="middle" fill="#f4cf72" font-size="28" font-weight="bold">7</text></svg>'
   },
   'battleship': {
     id: 'BATTLE-SHIP-05',
     name: 'Amiral Battı',
-    title: 'Amiral Battı',
+    title: 'Amiral Battı · 2 kişi',
     sub: '1v1 TAKTİK',
-    desc: 'Filonu gizlice yerleştir, düşman sularını tara! İsabet edersen atış hakkın devam eder.',
-    pills: ['👥 2 OYUNCU (1v1)', '🚢 5 GEMİLİK FİLO', '🎯 10x10 SAVAŞ ALANI'],
-    caption: 'DONANMA KOORDİNAT',
-    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1"/><path d="M4 18 3 12h18l-1 6"/><path d="M12 12V4l4 2-4 2"/></svg>',
-    art: '<svg width="54" height="38" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1 2.4 2.4 0 0 1 2-1 2.4 2.4 0 0 1 2 1 2.4 2.4 0 0 0 2 1 2.4 2.4 0 0 0 2-1"/><path d="M4 18 3 12h18l-1 6"/><path d="M12 12V4l4 2-4 2"/></svg>'
+    desc: '5 parçalık donanmanızı 10x10 savaş alanına gizlice yerleştirin ve sırayla rakibin koordinatlarına atış yapın. Rakibin tüm filosunu ilk batıran savaşı kazanır.',
+    art: '<svg class="mode-choice-art" viewBox="0 0 220 130" aria-hidden="true"><path d="M20 85h180l-28 26H45Z" fill="#216b91" stroke="#5edaf0" stroke-width="3"/><path d="M60 85V54h70v31m-43-31V30h24v24m26 13h20v18" fill="#1a4867" stroke="#5edaf0" stroke-width="2"/><path d="M100 30V10m0 3 30 12h-30M20 119q15-8 30 0t30 0t30 0t30 0t30 0t30 0" stroke="#6cdbef" stroke-width="2"/></svg>'
   }
 };
 
@@ -4013,35 +3927,35 @@ function lobbySlotsHtml() {
       const isHost = p.id === room.host || (room.isHost && isMe);
       const initial = (p.name || '?').charAt(0).toUpperCase();
       html +=
-        '<div class="lobby-player-slot filled">' +
-        '<div class="lobby-slot-info">' +
-        '<div class="lobby-slot-avatar">' +
+        '<li class="lobby-player-slot filled">' +
+        '<section class="lobby-slot-info">' +
+        '<figure class="lobby-slot-avatar">' +
         (p.avatar ? '<img src="' + avatar(p.avatar) + '" alt="">' : initial) +
-        '</div>' +
-        '<div class="lobby-slot-name-box">' +
+        '</figure>' +
+        '<hgroup class="lobby-slot-name-box">' +
         '<span class="lobby-slot-username">' +
         esc(p.name) +
         (isMe ? ' (Sen)' : '') +
         '</span>' +
-        (isHost ? '<span class="lobby-slot-badge">👑 ODA SAHİBİ</span>' : '<span style="font-size:9px;color:var(--muted)">OYUNCU</span>') +
-        '</div>' +
-        '</div>' +
+        (isHost ? '<span class="lobby-slot-badge">👑 ODA SAHİBİ</span>' : '<span style="font-size:9px;color:rgba(255,255,255,0.7)">OYUNCU</span>') +
+        '</hgroup>' +
+        '</section>' +
         '<span class="lobby-ready-pill">HAZIR</span>' +
-        '</div>';
+        '</li>';
     } else {
       html +=
-        '<div class="lobby-player-slot">' +
-        '<div class="lobby-slot-info">' +
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
-        '<div class="lobby-slot-name-box">' +
+        '<li class="lobby-player-slot">' +
+        '<section class="lobby-slot-info">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>' +
+        '<hgroup class="lobby-slot-name-box">' +
         '<span class="lobby-empty-title">Oyuncu Bekleniyor...</span>' +
         '<span class="lobby-empty-sub">SLOT ' +
         (i + 1) +
         ' • BOŞ</span>' +
-        '</div>' +
-        '</div>' +
+        '</hgroup>' +
+        '</section>' +
         '<button type="button" class="lobby-slot-davet-btn" onclick="copyRoomLink()">+ DAVET</button>' +
-        '</div>';
+        '</li>';
     }
   }
   return html;
@@ -4052,8 +3966,8 @@ function selectLobbyMode(mode) {
   const input = $('#game-mode');
   if (input) input.value = mode;
   selectGameMode(mode);
-  for (const tab of document.querySelectorAll('.lobby-mode-tab')) {
-    tab.classList.toggle('active', tab.dataset.mode === mode);
+  for (const choice of document.querySelectorAll('input[name="game-mode-choice"]')) {
+    choice.checked = choice.value === mode;
   }
   updateLobbyModeDetails(mode);
   updateLobbySummary();
@@ -4064,15 +3978,11 @@ function updateLobbyModeDetails(mode) {
   const info = LOBBY_MODES[mode] || LOBBY_MODES['car-price'];
   const titleEl = $('#lobby-selected-title');
   if (titleEl) titleEl.textContent = info.title;
-  const idEl = $('#lobby-selected-id');
-  if (idEl) idEl.textContent = 'ID: ' + info.id;
   const descEl = $('#lobby-selected-desc');
   if (descEl) descEl.textContent = info.desc;
-  const pillsEl = $('#lobby-selected-pills');
-  if (pillsEl) pillsEl.innerHTML = info.pills.map(p => '<span class="lobby-info-pill">' + p + '</span>').join('');
   const artEl = $('#lobby-art-container');
   if (artEl) {
-    artEl.innerHTML = info.art + '<span class="lobby-art-caption">' + info.caption + '</span>';
+    artEl.innerHTML = info.art;
   }
 }
 
@@ -4150,18 +4060,6 @@ function renderLobby() {
   const currentRounds = room.rounds || 10;
   const currentSec = room.guessSeconds || 30;
 
-  const modeTabsHtml = ['car-price', 'product-price', 'auction', 'number-race', 'battleship'].map(m => {
-    const item = LOBBY_MODES[m];
-    const isActive = m === activeMode;
-    return (
-      '<div class="lobby-mode-tab ' + (isActive ? 'active' : '') + '" data-mode="' + m + '" onclick="selectLobbyMode(\'' + m + '\')">' +
-      item.icon +
-      '<span class="lobby-mode-tab-title">' + item.name + '</span>' +
-      '<span class="lobby-mode-tab-sub">' + item.sub + '</span>' +
-      '</div>'
-    );
-  }).join('');
-
   const roundsHtml = [5, 10, 15, 20].map(n => {
     const isActive = n === currentRounds;
     return (
@@ -4183,131 +4081,116 @@ function renderLobby() {
 
     '<!-- 2-COLUMN MAIN GRID -->' +
     '<form id="lobby-settings" class="lobby-settings" data-game="' + room.gameId + '" onsubmit="startLobbyGame(event)">' +
-    '<input id="game-mode" type="hidden" value="' + activeMode + '">' +
     hiddenSelectRounds +
 
-    '<div class="lobby-main-grid">' +
+    '<main class="lobby-main-grid">' +
 
     '<!-- LEFT COLUMN -->' +
-    '<div style="display:flex; flex-direction:column; gap:16px;">' +
+    '<section class="lobby-left-column">' +
 
     '<!-- Panel 1: Oyun Modu Seçimi -->' +
     '<section class="lobby-panel">' +
-    '<div class="lobby-panel-head">' +
-    '<div class="lobby-panel-title">' +
+    '<header class="lobby-panel-head">' +
+    '<h3 class="lobby-panel-title">' +
     '<span class="lobby-title-square"></span>' +
     '<span>Oyun Modu Seçimi</span>' +
-    '</div>' +
-    '<span class="lobby-panel-badge-green">5 MOD HAZIR</span>' +
-    '</div>' +
+    '</h3>' +
+    '</header>' +
 
-    '<!-- 5 Tabs -->' +
-    '<div class="lobby-mode-tabs">' +
-    modeTabsHtml +
-    '</div>' +
+    '<!-- 5 Mode Cards -->' +
+    modeCardChooser(activeMode) +
 
     '<!-- Selected Mode Details Card -->' +
-    '<div class="lobby-selected-mode-card">' +
-    '<div class="lobby-selected-left">' +
-    '<div class="lobby-tags-row">' +
-    '<span class="lobby-tag-pill">SEÇİLİ MOD</span>' +
-    '<span id="lobby-selected-id" class="lobby-id-pill">ID: ' + modeInfo.id + '</span>' +
-    '</div>' +
+    '<section class="lobby-selected-mode">' +
+    '<figure id="lobby-art-container" class="lobby-art-box">' +
+    modeInfo.art +
+    '</figure>' +
+    '<hgroup class="lobby-selected-left">' +
     '<h2 id="lobby-selected-title" class="lobby-mode-big-title">' + modeInfo.title + '</h2>' +
     '<p id="lobby-selected-desc" class="lobby-mode-desc-text">' + modeInfo.desc + '</p>' +
-    '<div id="lobby-selected-pills" class="lobby-pills-row">' +
-    modeInfo.pills.map(p => '<span class="lobby-info-pill">' + p + '</span>').join('') +
-    '</div>' +
-    '</div>' +
-
-    '<div id="lobby-art-container" class="lobby-art-box">' +
-    modeInfo.art +
-    '<span class="lobby-art-caption">' + modeInfo.caption + '</span>' +
-    '</div>' +
-    '</div>' +
+    '</hgroup>' +
+    '</section>' +
 
     '<!-- Mode Extra Pickers -->' +
-    '<div id="lobby-mode-extra-options" style="margin-top:4px;">' +
+    '<section id="lobby-mode-extra-options" style="margin-top:4px;">' +
     productCategoryChooser(room.mode) +
     auctionChooser() +
     numberRaceOptions() +
     battleshipOptions() +
-    '<p id="game-mode-description" class="notice"></p>' +
-    '</div>' +
+    '</section>' +
     '</section>' +
 
     '<!-- Panel 2: Maç Parametreleri -->' +
     '<section class="lobby-panel">' +
-    '<div class="lobby-panel-head">' +
-    '<div class="lobby-panel-title">' +
+    '<header class="lobby-panel-head">' +
+    '<h3 class="lobby-panel-title">' +
     '<span class="lobby-title-square"></span>' +
     '<span>Maç Parametreleri</span>' +
-    '</div>' +
+    '</h3>' +
     '<span class="lobby-panel-author">' + (host ? 'Yalnızca Oda Kurucusu Düzenleyebilir' : 'Oda Kurucusu Ayarlıyor') + '</span>' +
-    '</div>' +
+    '</header>' +
 
-    '<div id="guess-mode-settings" style="display:flex; flex-direction:column; gap:16px;">' +
-    '<div class="lobby-param-item">' +
-    '<div class="lobby-param-header">' +
+    '<fieldset id="guess-mode-settings" style="display:flex; flex-direction:column; gap:16px; border:none; padding:0; margin:0;">' +
+    '<section class="lobby-param-item">' +
+    '<header class="lobby-param-header">' +
     '<span class="lobby-param-label">Tur Sayısı</span>' +
-    '<span id="lobby-rounds-display" class="lobby-param-value" style="color:var(--gold);">' + currentRounds + ' Tur</span>' +
-    '</div>' +
-    '<div class="lobby-rounds-row">' +
+    '<span id="lobby-rounds-display" class="lobby-param-value">' + currentRounds + ' Tur</span>' +
+    '</header>' +
+    '<nav class="lobby-rounds-row">' +
     roundsHtml +
-    '</div>' +
-    '<span class="lobby-field-desc">Her turda yeni bir araç ve teknik karne sunulur.</span>' +
-    '</div>' +
+    '</nav>' +
+    '</section>' +
 
-    '<div class="lobby-param-item">' +
-    '<div class="lobby-param-header">' +
+    '<section class="lobby-param-item">' +
+    '<header class="lobby-param-header">' +
     '<span class="lobby-param-label">Tahmin Süresi</span>' +
-    '<span id="lobby-duration-display" class="lobby-param-value" style="color:var(--green);">' + currentSec + ' Saniye</span>' +
-    '</div>' +
-    '<div class="lobby-slider-container">' +
+    '<span id="lobby-duration-display" class="lobby-param-value">' + currentSec + ' Saniye</span>' +
+    '</header>' +
+    '<section class="lobby-slider-container">' +
     '<input id="guess-slider" class="lobby-range-slider" type="range" min="10" max="120" value="' + currentSec + '" aria-label="Tahmin süresi" oninput="syncDuration(this.value)">' +
     '<input id="guess-seconds" class="input" type="number" min="10" max="120" value="' + currentSec + '" style="display:none" oninput="syncDuration(this.value,true)">' +
-    '<div class="lobby-slider-milestones">' +
+    '<nav class="lobby-slider-milestones">' +
     '<span id="mile-15" class="' + (currentSec <= 20 ? 'active' : '') + '">15S HIZLI</span>' +
     '<span id="mile-30" class="' + (currentSec > 20 && currentSec <= 35 ? 'active' : '') + '">30S STANDART</span>' +
     '<span id="mile-45" class="' + (currentSec > 35 && currentSec <= 50 ? 'active' : '') + '">45S DETAYLI</span>' +
     '<span id="mile-60" class="' + (currentSec > 50 ? 'active' : '') + '">60S RAHAT</span>' +
-    '</div>' +
-    '</div>' +
-    '</div>' +
+    '</nav>' +
+    '</section>' +
+    '</section>' +
 
     '<!-- Toggles Row -->' +
-    '<div class="lobby-toggles-grid">' +
-    '<div class="lobby-toggle-card">' +
-    '<div class="lobby-toggle-text">' +
+    '<section class="lobby-toggles-grid">' +
+    '<label class="lobby-toggle-card">' +
+    '<hgroup class="lobby-toggle-text">' +
     '<span class="lobby-toggle-title">Hasar & Tramer Bilgisi</span>' +
     '<span class="lobby-toggle-desc">İlandaki boya ve değişen parçaları göster</span>' +
-    '</div>' +
-    '<label class="lobby-switch">' +
+    '</hgroup>' +
+    '<span class="lobby-switch">' +
     '<input type="checkbox" checked>' +
     '<span class="lobby-switch-slider"></span>' +
+    '</span>' +
     '</label>' +
-    '</div>' +
 
-    '<div class="lobby-toggle-card">' +
-    '<div class="lobby-toggle-text">' +
+    '<label class="lobby-toggle-card">' +
+    '<hgroup class="lobby-toggle-text">' +
     '<span class="lobby-toggle-title">Seri Çarpan Bonusu</span>' +
     '<span class="lobby-toggle-desc">Arka arkaya %5 sapma altı bilenlere x1.5 puan</span>' +
-    '</div>' +
-    '<label class="lobby-switch">' +
+    '</hgroup>' +
+    '<span class="lobby-switch">' +
     '<input type="checkbox" checked>' +
     '<span class="lobby-switch-slider"></span>' +
+    '</span>' +
     '</label>' +
-    '</div>' +
-    '</div>' +
-    '</div>' +
+    '</section>' +
+    '</fieldset>' +
     '</section>' +
 
     '<!-- Bottom Action Bar -->' +
-    '<div class="lobby-bottom-bar">' +
-    '<div class="lobby-ready-info">' +
+    '<footer class="lobby-bottom-bar">' +
+    '<hgroup class="lobby-ready-info">' +
     '<span id="lobby-ready-count" class="lobby-ready-title">' + room.players.length + '/8 Oyuncu Hazır</span>' +
     '<span id="lobby-ready-details" class="lobby-ready-sub">Seçili: ' + modeInfo.name + ' • ' + currentRounds + ' Tur • ' + currentSec + 'sn</span>' +
-    '</div>' +
+    '</hgroup>' +
 
     '<button id="lobby-start" class="lobby-tactile-start" type="submit" ' + (!host ? 'disabled' : '') + '>' +
     '<span class="lobby-tactile-start-base"></span>' +
@@ -4315,78 +4198,72 @@ function renderLobby() {
     '<span>' + (host ? 'OYUNU BAŞLAT ▶' : 'Kurucu Bekleniyor...') + '</span>' +
     '</span>' +
     '</button>' +
-    '</div>' +
+    '</footer>' +
 
-    '</div>' +
+    '</section>' +
 
     '<!-- RIGHT COLUMN (SIDEBAR) -->' +
-    '<div class="lobby-sidebar">' +
+    '<aside class="lobby-sidebar">' +
 
     '<!-- Card 1: Oda Erişim Kodu -->' +
-    '<div class="lobby-side-card">' +
-    '<div class="lobby-side-header">' +
-    '<span class="lobby-side-title">ODA ERİŞİM KODU</span>' +
+    '<section class="lobby-panel">' +
+    '<header class="lobby-side-header">' +
+    '<h4 class="lobby-side-title">ODA ERİŞİM KODU</h4>' +
     '<button type="button" class="btn secondary lobby-leave-btn" onclick="goHome()">' + (host ? 'Odayı kapat' : 'Odadan ayrıl') + '</button>' +
-    '</div>' +
+    '</header>' +
 
     '<span class="lobby-code-sub">KATILIM KODU</span>' +
-    '<div class="lobby-code-row">' +
+    '<section class="lobby-code-row">' +
     '<span class="lobby-code-giant code num">' + room.code + '</span>' +
     '<button type="button" class="lobby-copy-btn" onclick="copyCode()">' +
     '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
     '<span>Kopyala</span>' +
     '</button>' +
-    '</div>' +
+    '</section>' +
 
-    '<div class="lobby-url-row">' +
+    '<section class="lobby-url-row">' +
     '<span class="lobby-url-text">' + shareUrl + '</span>' +
     '<button type="button" class="lobby-url-btn" onclick="copyRoomLink()">Bağlantı</button>' +
-    '</div>' +
-    '</div>' +
+    '</section>' +
+    '</section>' +
 
     '<!-- Card 2: Oyuncular -->' +
-    '<div class="lobby-side-card">' +
-    '<div class="lobby-side-header">' +
-    '<span class="lobby-side-title" style="color:var(--text); display:flex; align-items:center; gap:6px;">' +
-    '<span style="width:6px; height:6px; border-radius:50%; background:var(--green);"></span>' +
+    '<section class="lobby-panel">' +
+    '<header class="lobby-side-header">' +
+    '<h4 class="lobby-side-title">' +
+    '<span class="lobby-live-dot"></span>' +
     'LOBİDEKİ OYUNCULAR (<span id="lobby-player-count">' + room.players.length + '</span> / 8)' +
-    '</span>' +
-    '<button type="button" class="lobby-invite-link" onclick="copyRoomLink()" style="background:none;border:none;">+ DAVET ET</button>' +
-    '</div>' +
+    '</h4>' +
+    '<button type="button" class="lobby-invite-link" onclick="copyRoomLink()">+ DAVET ET</button>' +
+    '</header>' +
 
-    '<div id="lobby-players" class="lobby-slots-list">' +
+    '<ul id="lobby-players" class="lobby-slots-list">' +
     lobbySlotsHtml() +
-    '</div>' +
+    '</ul>' +
 
-    '<div class="lobby-voice-row">' +
+    '<footer class="lobby-voice-row">' +
     '<span>🎙 Lobi Ses Kanalı: Açık</span>' +
     '<button type="button" class="lobby-audio-test-btn" onclick="testLobbyAudio()">SESİ TEST ET</button>' +
-    '</div>' +
-    '</div>' +
+    '</footer>' +
+    '</section>' +
 
     '<!-- Card 3: Olay Günlüğü -->' +
-    '<div class="lobby-side-card">' +
-    '<div class="lobby-side-header">' +
-    '<span class="lobby-side-title">LOBİ OLAY GÜNLÜĞÜ</span>' +
-    '<span class="lobby-secret-tag" style="color:var(--green); border-color:#22c55e44; background:#22c55e1a;">LIVE_WS: OK</span>' +
-    '</div>' +
+    '<section class="lobby-panel">' +
+    '<header class="lobby-side-header">' +
+    '<h4 class="lobby-side-title">LOBİ OLAY GÜNLÜĞÜ</h4>' +
+    '<span class="lobby-secret-tag">LIVE_WS: OK</span>' +
+    '</header>' +
 
-    '<div id="lobby-log-stream" class="lobby-log-stream">' +
+    '<section id="lobby-log-stream" class="lobby-log-stream">' +
     renderLobbyLogsHtml() +
-    '</div>' +
-    '</div>' +
+    '</section>' +
+    '</section>' +
 
     lobbyResults() +
 
-    '</div>' +
-    '</div>' +
+    '</aside>' +
+    '</main>' +
     '</form>' +
-
-    '<!-- FOOTER -->' +
-    '<footer class="lobby-footer">' +
-    '<div><strong>OGZ GAME</strong> • © 2025 OGZ Games Studio. Tüm hakları saklıdır. <span style="background:#19202e; border:1px solid #283346; padding:2px 6px; border-radius:4px; margin-left:6px;">v2.4.0</span></div>' +
-    '<div>• Bölge: TR-Central (Istanbul) | Gizlilik & Kurallar</div>' +
-    '</footer>' +
 
     '</div>';
 
