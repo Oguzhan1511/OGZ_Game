@@ -1118,29 +1118,30 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
 /* ===== Unified lobby theme: one panel style, no card-in-card ===== */
 .lobby-dashboard { gap: 0; }
 .lobby-main-grid {
-  grid-template-columns: minmax(0, 1.7fr) minmax(380px, 1fr);
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  width: 100%;
   gap: clamp(16px, 2vw, 32px);
 }
 .lobby-left-column,
 .lobby-sidebar { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 32px); min-width: 0; }
 .lobby-panel {
-  background: #371422;
-  border: 1px solid #572036;
+  background: var(--panel);
+  border: 1px solid var(--line-light);
   border-radius: 0;
   padding: clamp(18px, 2vw, 30px);
   gap: 20px;
   color: #fff;
 }
-.lobby-panel-title, .lobby-side-title { color: #f04f55; }
-.lobby-title-square { background: #f04f55; border-radius: 0; }
-.lobby-panel-author, .lobby-param-label, .lobby-field-desc { color: #fce7f3; }
+.lobby-panel-title, .lobby-side-title { color: var(--a); }
+.lobby-title-square { background: var(--a); border-radius: 0; }
+.lobby-panel-author, .lobby-param-label, .lobby-field-desc { color: var(--muted); }
 .lobby-selected-mode {
   display: grid;
   grid-template-columns: minmax(200px, 300px) minmax(0, 1fr);
   gap: 28px;
   align-items: center;
   padding-top: 20px;
-  border-top: 1px solid #572036;
+  border-top: 1px solid var(--line-light);
 }
 .lobby-selected-mode .lobby-art-box {
   width: 100%;
@@ -1151,7 +1152,7 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
 }
 .lobby-mode-big-title { font-size: clamp(24px, 2.4vw, 34px); }
 .lobby-mode-desc-text { font-size: clamp(14px, 1.2vw, 17px); line-height: 1.65; }
-.lobby-toggles-grid { gap: 0; border-top: 1px solid #572036; }
+.lobby-toggles-grid { gap: 0; border-top: 1px solid var(--line-light); }
 .lobby-toggle-card,
 .lobby-player-slot,
 .lobby-url-row,
@@ -1162,15 +1163,15 @@ body.lobby-mode header.topbar button[onclick="showHow()"] {
 }
 .lobby-toggle-card { padding: 14px 0; cursor: pointer; }
 .lobby-toggle-title { color: #fff; }
-.lobby-toggle-desc { color: #fce7f3; }
+.lobby-toggle-desc { color: var(--muted); }
 .lobby-slots-list { gap: 0; list-style: none; margin: 0; padding: 0; }
-.lobby-player-slot { padding: 12px 0; border-bottom: 1px solid #572036; }
+.lobby-player-slot { padding: 12px 0; border-bottom: 1px solid var(--line-light); }
 .lobby-url-row { padding: 0; }
-.lobby-url-text, .lobby-empty-title, .lobby-empty-sub, .lobby-voice-row, .lobby-log-stream, .lobby-log-time, .lobby-ready-sub, .lobby-code-sub { color: #fce7f3; }
-.lobby-voice-row { border-top: 1px solid #572036; }
+.lobby-url-text, .lobby-empty-title, .lobby-empty-sub, .lobby-voice-row, .lobby-log-stream, .lobby-log-time, .lobby-ready-sub, .lobby-code-sub { color: var(--muted); }
+.lobby-voice-row { border-top: 1px solid var(--line-light); }
 .lobby-log-stream { padding: 0; max-height: 180px; }
-.lobby-slot-badge { color: #ffd9a0; }
-.lobby-bottom-bar { padding: 4px 0 0; border-top: 1px solid #572036; padding-top: 20px; }
+.lobby-slot-badge { color: var(--gold); }
+.lobby-bottom-bar { padding: 4px 0 0; border-top: 1px solid var(--line-light); padding-top: 20px; }
 @media (max-width: 900px) {
   .lobby-selected-mode { grid-template-columns: 1fr; }
 }
@@ -4082,6 +4083,7 @@ function renderLobby() {
     '<!-- 2-COLUMN MAIN GRID -->' +
     '<form id="lobby-settings" class="lobby-settings" data-game="' + room.gameId + '" onsubmit="startLobbyGame(event)">' +
     hiddenSelectRounds +
+    '<input type="hidden" id="game-mode" value="' + activeMode + '">' +
 
     '<main class="lobby-main-grid">' +
 
@@ -4245,18 +4247,6 @@ function renderLobby() {
     '<span>🎙 Lobi Ses Kanalı: Açık</span>' +
     '<button type="button" class="lobby-audio-test-btn" onclick="testLobbyAudio()">SESİ TEST ET</button>' +
     '</footer>' +
-    '</section>' +
-
-    '<!-- Card 3: Olay Günlüğü -->' +
-    '<section class="lobby-panel">' +
-    '<header class="lobby-side-header">' +
-    '<h4 class="lobby-side-title">LOBİ OLAY GÜNLÜĞÜ</h4>' +
-    '<span class="lobby-secret-tag">LIVE_WS: OK</span>' +
-    '</header>' +
-
-    '<section id="lobby-log-stream" class="lobby-log-stream">' +
-    renderLobbyLogsHtml() +
-    '</section>' +
     '</section>' +
 
     lobbyResults() +
