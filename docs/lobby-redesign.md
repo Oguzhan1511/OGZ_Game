@@ -94,3 +94,9 @@ Başlık görselleri yeni `hero-` URL'leriyle sunulur; kart görsellerinin cache
 ### Ürün görseli kadrajı ve daha büyük başlıklar
 
 Ürün modunda hero görseline ayrı ölçek/konum verildi; çanta sapları, telefon ve kulaklık artık kesilmeden birlikte görünür. Ana başlık 1366 px genişlikte yaklaşık 27 px'ten 32 px'e, geniş ekran üst sınırı 34 px'ten 42 px'e büyütüldü. Panel ve kategori başlıkları da hafif büyütüldü. Bungee/Manrope korunur. 1366×768 ürün lobisinde belge 1366×768 ve üç panelde taşma 0 px; lobi testleri ve statik build başarılı. Önizleme: `docs/previews/product-hero-fit.png`.
+
+### Kaydırmalı 0–80 saniye ayarı
+
+Tahmin süresi hızlı seçim butonlarının yerine 0–80 arası, birer saniyelik kaydırıcı ve elle sayı girişi geri eklendi. İki kontrol birlikte güncellenir; kurucu ayarı mevcut otomatik kayıt akışına gönderir, misafir salt okunur görür. 0 = süresiz; herkes tahminini gönderince tur açıklanır. Sunucu validasyonu 0–80 olarak güncellendi; süresiz turlarda `deadline: null` kullanılır ve sonraki tur/yeniden başlatmada da korunur. İstemci süresiz turda tahmin alanını kapatmaz ve geri sayım sesi çalmaz. Backend şeması ve oda yetkileri değişmedi.
+
+`npm test` paketi başarılı; yeni sınır/süresiz tur testleri negatif/81/fraction değerlerinin reddini, sıfırın varsayılan 30 saniyeye dönüşmemesini, saat ilerletildiğinde tur kapanmamasını, tüm oyuncuların tahminiyle açılmasını, sonraki turları ve restart'ı kapsar. Tarayıcıda sürükleyerek 40, klavyeyle 0/80, elle 37 saniye seçimi ve yenileyince 37'nin korunması doğrulandı. 1366×768'de belge ve ana panellerde taşma yok. Önizleme: `docs/previews/lobby-duration-slider.png`. Yalnızca oguzhan branch'i; canlı yayın yapılmadı.

@@ -47,8 +47,8 @@ for (const profile of [
 }
 for (const invalid of [
   { mode: 'other' },
-  { guessSeconds: 0 },
-  { guessSeconds: 9 },
+  { guessSeconds: -1 },
+  { guessSeconds: 81 },
   { guessSeconds: 121 },
   { guessSeconds: 12.5 },
   { rounds: 12 },
@@ -131,11 +131,30 @@ const reads = await Promise.all([
 assert.ok(reads.every(x => x.data.state === 'reveal'));
 assert.equal(JSON.parse(rows.get(concurrent).data).results.length, 1);
 Date.now = actualNow;
-for (const guessSeconds of [10, 11, 31, 119, 120])
+for (const guessSeconds of [0, 1, 10, 11, 31, 79, 80])
   assert.equal(
     (await call('create', a, { ...config, guessSeconds })).data.guessSeconds,
     guessSeconds
   );
+// Zero is an untimed price round: no implicit 30s fallback, no clock expiration.
+const untimedHost=crypto.randomUUID(),untimedGuest=crypto.randomUUID();
+let untimed=await call('create',untimedHost,{...config,guessSeconds:0});
+const untimedCode=untimed.data.code;
+await call('join',untimedGuest,{code:untimedCode,profile:guest});
+assert.equal((await call('change-mode',untimedGuest,{...config,code:untimedCode,gameId:untimed.data.gameId,guessSeconds:0})).status,403);
+untimed=await call('change-mode',untimedHost,{...config,code:untimedCode,gameId:untimed.data.gameId,guessSeconds:0});
+assert.equal(untimed.status,200);assert.equal(untimed.data.guessSeconds,0);
+untimed=await call('start',untimedHost,{code:untimedCode});assert.equal(untimed.data.deadline,null);
+Date.now=()=>actualNow()+3600000;
+try{assert.equal((await call('get',untimedGuest,{code:untimedCode})).data.state,'playing')}finally{Date.now=actualNow}
+for(let round=0;round<10;round++){
+ assert.equal((await call('guess',untimedHost,{code:untimedCode,guess:100})).data.state,'playing');
+ assert.equal((await call('guess',untimedGuest,{code:untimedCode,guess:200})).data.state,'reveal');
+ untimed=await call('next',untimedHost,{code:untimedCode});
+ if(round<9)assert.equal(untimed.data.deadline,null);
+}
+untimed=await call('restart',untimedHost,{code:untimedCode});assert.equal(untimed.data.guessSeconds,0);assert.equal(untimed.data.deadline,null);
+console.log('PASS: 0–80 second boundaries, host-only untimed settings, no deadline expiration, all-player reveal, subsequent rounds and untimed restart.');
 const html = await (await worker.fetch(new Request('http://localhost/'), {})).text();
 new Function(html.match(/<script>([\s\S]*?)<\/script>/)[1]);
 assert.ok(html.includes('Tur başına tahmin süresi'));

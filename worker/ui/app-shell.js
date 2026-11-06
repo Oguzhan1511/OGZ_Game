@@ -2629,11 +2629,11 @@ function saveProfile(e) {
 }
 function syncDuration(value, fromNumber = false) {
   const n = Number(value);
-  if (Number.isInteger(n) && n >= 10 && n <= 120) {
+  if (Number.isInteger(n) && n >= 0 && n <= 80) {
     guessSeconds = n;
     if ($('#guess-slider')) $('#guess-slider').value = n;
     if (!fromNumber && $('#guess-seconds')) $('#guess-seconds').value = n;
-    if ($('#guess-slider')) $('#guess-slider').style.setProperty('--fill', ((n - 10) / 110) * 100 + '%');
+    if ($('#guess-slider')) $('#guess-slider').style.setProperty('--fill', (n / 80) * 100 + '%');
     const disp = $('#lobby-duration-display');
     if (disp) disp.textContent = n + ' Saniye';
     if (typeof updateLobbyMilestones === 'function') updateLobbyMilestones(n);
@@ -2647,7 +2647,7 @@ function createModal(initialMode = 'car-price', changeMode = false) {
   }
   const mode = typeof initialMode === 'string' ? initialMode : 'car-price';
   rounds = changeMode ? room.rounds || 10 : settings.rounds;
-  guessSeconds = changeMode ? room.guessSeconds || 30 : 30;
+  guessSeconds = changeMode ? room.guessSeconds ?? 30 : 30;
   modal(
     '<span class="tag">' +
       (changeMode ? 'AYNI ODADA YENİ OYUN' : 'YENİ ODA') +
@@ -2686,7 +2686,7 @@ function createModal(initialMode = 'car-price', changeMode = false) {
             ' tur</option>'
         )
         .join('') +
-      '</select><label for="guess-seconds">Tur başına tahmin süresi</label><div class="duration-control"><input id="guess-slider" class="duration-slider" type="range" min="10" max="120" step="1" value="30" aria-label="Tahmin süresini kaydırarak ayarla" oninput="syncDuration(this.value)"><div class="duration-value"><input class="input" id="guess-seconds" type="number" min="10" max="120" step="1" value="30" required oninput="syncDuration(this.value,true)"><span>saniye</span></div></div><div class="duration-limits"><span>10 saniye</span><span>120 saniye</span></div><p class="notice">1–8 oyuncu · Süre dolunca tahmin yapmayanlar 0 puan alır.<br>' +
+      '</select><label for="guess-seconds">Tur başına tahmin süresi</label><div class="duration-control"><input id="guess-slider" class="duration-slider" type="range" min="0" max="80" step="1" value="30" aria-label="Tahmin süresini kaydırarak ayarla" oninput="syncDuration(this.value)"><div class="duration-value"><input class="input" id="guess-seconds" type="number" min="0" max="80" step="1" value="30" required oninput="syncDuration(this.value,true)"><span>saniye</span></div></div><div class="duration-limits"><span>0 · Süresiz</span><span>80 saniye</span></div><p class="notice">1–8 oyuncu · Süre dolunca tahmin yapmayanlar 0 puan alır.<br>' +
       (changeMode
         ? 'Mevcut oda kodunla devam edersin.'
         : 'Odan için özel kod oluşturulur. Odayı kapattığında kod geçersiz olur.') +
@@ -2930,6 +2930,7 @@ function tickTimer() {
   const update = () => {
     const el = $('#round-timer');
     if (!el || !room || room.state !== 'playing') return;
+    if (room.guessSeconds === 0) { el.textContent = 'Süresiz'; el.classList.remove('urgent'); return; }
     const left = Math.max(0, Math.ceil((room.deadline - Date.now() - clockOffset) / 1000));
     gameAudio.countdown(room, left);
     el.textContent = left + ' sn';
@@ -3056,7 +3057,7 @@ function renderRoomContent() {
       '</div><button class="btn secondary" onclick="copyCode()">▣ &nbsp; Kodu kopyala</button><p class="notice">' +
       room.rounds +
       ' tur · ' +
-      (room.guessSeconds || 30) +
+      (room.guessSeconds ?? 30) +
       ' sn / tur · ' +
       room.players.length +
       '/8 oyuncu · ' +
@@ -3181,7 +3182,7 @@ function renderRoomContent() {
     ' · ' +
     room.rounds +
     ' tur · ' +
-    (room.guessSeconds || 30) +
+    (room.guessSeconds ?? 30) +
     ' sn / tur</p></div><div class="room-tools">' +
     (room.state === 'playing'
       ? '<span id="round-timer" class="round-timer" role="timer" aria-label="Kalan tahmin süresi"></span>'
