@@ -90,3 +90,7 @@ URL: http://localhost:4317/
 Beş modun hero görseli kullanıcının gönderdiği panoramik görsellerle değiştirildi (`assets/lobby/hero-*.webp`). Kartların mevcut görselleri korunur. Başlıklar Bungee, diğer lobi metinleri Manrope kullanır. Üst alanın kenarlık, radius ve panel zemini kaldırıldı; görsel kenarları zemine yumuşak geçer. Mod değişiminde yüklenen yeni görsel 440 ms giriş, önceki görsel 400 ms çıkış animasyonu kullanır. Hızlı mod değişimlerinde eski yükleme sonucu son seçimi geçersiz kılamaz. Hareket azaltma tercihi desteklenir.
 
 Başlık görselleri yeni `hero-` URL'leriyle sunulur; kart görsellerinin cache'i etkilenmez. WebP karşılıkları ve statik build çıktısı doğrulandı. On görsel toplam 373.738 bayt. Bu revizyon görsel üretimi kullanmaz; gönderilen beş PNG yalnızca WebP formatı/boyut optimizasyonundan geçirilmiştir.
+
+### Ürün görseli kadrajı ve daha büyük başlıklar
+
+Ürün modunda hero görseline ayrı ölçek/konum verildi; çanta sapları, telefon ve kulaklık artık kesilmeden birlikte görünür. Ana başlık 1366 px genişlikte yaklaşık 27 px'ten 32 px'e, geniş ekran üst sınırı 34 px'ten 42 px'e büyütüldü. Panel ve kategori başlıkları da hafif büyütüldü. Bungee/Manrope korunur. 1366×768 ürün lobisinde belge 1366×768 ve üç panelde taşma 0 px; lobi testleri ve statik build başarılı. Önizleme: `docs/previews/product-hero-fit.png`.
