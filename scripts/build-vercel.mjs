@@ -23,7 +23,7 @@ console.log('Vercel build complete: static index.html, mascot.jpg, logo.png gene
 
 // Serve the same optimized lobby art on static Vercel builds and the local Worker.
 fs.mkdirSync('public/lobby-art', { recursive: true });
-for (const mode of ['car-price','product-price','auction','number-race','battleship']) {
+for (const mode of ['car-price','product-price','auction','number-race','battleship','hero-car-price','hero-product-price','hero-auction','hero-battleship','hero-number-race']) {
  const res = await worker.fetch(new Request('http://localhost/lobby-art/'+mode+'.webp'), {});
  if (!res.ok) throw new Error('Missing lobby art: '+mode);
  fs.writeFileSync('public/lobby-art/'+mode+'.webp', Buffer.from(await res.arrayBuffer()));

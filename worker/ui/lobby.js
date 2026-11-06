@@ -29,6 +29,23 @@ body.lobby-mode #content{height:100%;min-height:0}
 @media(max-width:1100px){.lounge-nav-links button{padding:10px 8px}.lounge-nav{gap:10px}.lounge-hero-copy{max-width:70%}.lounge-params{gap:12px}.lobby-settings .mode-choice-title{position:static;font-size:10px}.lobby-settings .mode-card-options{gap:6px}.lobby-settings .mode-choice{padding:10px 6px}.lounge-chip{font-size:9px;padding:7px 8px}}
 @media(max-width:900px){body.lobby-mode>main{height:auto;min-height:100dvh;padding:0 14px 150px}.lobby-dashboard{height:auto;grid-template-rows:56px 112px auto;gap:12px}.lounge-nav-links{display:none}.lounge-user button span{display:none}.lounge-brand{font-size:18px}.lounge-user{gap:4px}.lounge-hero{padding:14px 16px}.lounge-hero h1{font-size:24px}.lounge-hero p{font-size:10px}.lounge-hero-copy{max-width:72%}.lounge-hero-art{right:-2%;width:32%}.lobby-settings{height:auto;grid-template-columns:1fr;gap:12px}.lounge-left{gap:12px}.lounge-modes-panel{flex:auto}.lounge-mode-description{margin-top:16px}.lounge-panel{padding:16px}.lounge-category-note{line-height:1.6}.lounge-party{min-height:350px}.lounge-slots{gap:5px;grid-template-rows:repeat(8,35px)}.lounge-slot img{width:24px;height:24px}.lounge-params{grid-template-columns:1fr;gap:16px}.lounge-host-note{margin-top:10px}.lounge-start-panel{position:fixed;bottom:8px;left:14px;right:14px;z-index:25;background:#151923f7;box-shadow:0 -12px 30px #090c14b3}.lounge-start-panel button{padding:16px}.lounge-hero-art img{opacity:.48}.lobby-settings .mode-card-options{gap:5px}.lobby-settings .mode-choice{padding:9px 4px}.lobby-settings .mode-choice-title{position:static;font-size:9px;min-height:38px}.lobby-settings .mode-choice-art{object-fit:cover;border-radius:5px;height:45px}.lounge-hero-art img{position:absolute;inset:0;display:block;min-height:0;max-height:100%;width:100%;height:100%;object-fit:cover;object-position:center 53%;mask-image:linear-gradient(to right,transparent,#000 22%);opacity:.92}.lounge-hero-art{width:45%;right:0;filter:none}.lounge-hero-art svg{height:110%}.lounge-category-results{grid-template-columns:1fr}.lounge-slot-name{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.lobby-dashboard *{transition:none!important;animation:none!important}}
+/* Borderless hero and the requested lobby typefaces. */
+body.lobby-mode{font-family:'Manrope',sans-serif}
+.lobby-dashboard,.lobby-dashboard :is(button,input,select,label,p,small,span,strong,b){font-family:'Manrope',sans-serif}
+.lobby-dashboard :is(h1,h2,h3),.lobby-dashboard .lounge-brand{font-family:'Bungee',sans-serif;font-weight:400;letter-spacing:0}
+.lobby-dashboard{grid-template-rows:60px clamp(140px,20dvh,220px) minmax(0,1fr)}
+.lounge-hero,.lounge-hero[data-mode]{border:0;border-radius:0;background:none;box-shadow:none;padding:12px 8px;overflow:visible}
+.lounge-hero:after,.lounge-hero-art:before{display:none}
+.lounge-hero-copy{max-width:63%}.lounge-hero h1{font-size:clamp(23px,2vw,34px);line-height:1.35;letter-spacing:0;margin:7px 0 9px}
+.lounge-hero-art{inset:0;width:100%;height:100%;display:block;pointer-events:none;overflow:hidden;z-index:-1;mask-image:linear-gradient(to bottom,transparent,#000 10%,#000 90%,transparent)}
+.lounge-hero-art img{left:auto;right:0;width:76%;height:100%;max-height:100%;object-fit:cover;object-position:center 55%;mask-image:linear-gradient(to right,transparent,#000 28%);opacity:1;transform-origin:85% 50%}
+.lounge-brand span{font-family:'Bungee',sans-serif}.lounge-hero-art img.arriving{animation:lounge-hero-enter .44s cubic-bezier(.22,1,.36,1) both}
+.lounge-hero-art img.leaving{animation:lounge-hero-leave .4s ease-out both}
+@keyframes lounge-hero-enter{from{opacity:0;transform:translateX(22px) scale(1.025)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes lounge-hero-leave{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(-12px)}}
+@media(max-width:900px){.lobby-dashboard{grid-template-rows:56px 146px auto}.lounge-hero{padding:8px 0}.lounge-hero-copy{max-width:76%}.lounge-hero h1{font-size:20px;line-height:1.4}.lounge-hero p{max-width:92%;font-size:10px}.lounge-hero-art{inset:0;right:0;width:100%;opacity:.62}.lounge-hero-art img{width:100%;object-fit:cover;object-position:70% center;mask-image:linear-gradient(to right,transparent 25%,#000 80%)}}
+@media(prefers-reduced-motion:reduce){.lounge-hero-art img.arriving,.lounge-hero-art img.leaving{animation:none}.lounge-hero-art img.leaving{display:none}}
+
 `;
 
 export const lobbyClient = String.raw`
@@ -59,7 +76,16 @@ const LOBBY_MODES = {
     "desc": "Filonu gizle, düşman sularını tara. İsabetli atışta sıra sende kalır; tüm gemileri batır, zaferi al."
   }
 };
-function lobbyHeroArt(mode){return '<img src="/lobby-art/'+mode+'.webp" alt="" decoding="async" fetchpriority="high">'}
+function lobbyHeroSource(mode){return '/lobby-art/'+('hero-'+mode)+'.webp?v=2'}
+function lobbyHeroArt(mode){return '<img src="'+lobbyHeroSource(mode)+'" alt="" decoding="async" fetchpriority="high">'}
+function updateLobbyHeroArt(mode){
+ const stage=$('#lobby-art-container');if(!stage)return;
+ const src=lobbyHeroSource(mode);stage.dataset.mode=mode;
+ if(stage.querySelector('img:last-child')?.getAttribute('src')===src)return;
+ const incoming=new Image();incoming.alt='';incoming.decoding='async';
+ const show=()=>{if(stage.dataset.mode!==mode)return;const motion=settings.motion&&!matchMedia('(prefers-reduced-motion: reduce)').matches;for(const old of stage.querySelectorAll('img')){if(motion){old.classList.add('leaving');setTimeout(()=>old.remove(),450)}else old.remove()}incoming.className=motion?'arriving':'';stage.append(incoming)};
+ incoming.onload=show;incoming.src=src;if(incoming.complete&&incoming.naturalWidth){incoming.onload=null;show()}
+}
 function decorateLobbyCards(){for(const input of document.querySelectorAll('[name=game-mode-choice]')){const art=input.closest('label')?.querySelector('svg');if(art)art.outerHTML='<img class="mode-choice-art" src="/lobby-art/'+input.value+'.webp" alt="" decoding="async">'}}
 const lobbyPreviousResults=new Map();
 let lobbySaveTimer=null,lobbySaveTask=null,lobbyRevision=0,lobbySavedRevision=0,lobbyCategoryDraft=null,lobbyCategoryKind=null;
@@ -75,7 +101,7 @@ function lobbySaveStatus(text,state='pending'){const el=$('#lobby-save-state');i
 function queueLobbySave(){if(!room?.isHost||room.state!=='lobby'||!$('#lobby-settings'))return;lobbyRevision++;clearTimeout(lobbySaveTimer);lobbySaveStatus('Ayarlar kaydediliyor…');lobbySaveTimer=setTimeout(()=>persistLobbySettings().catch(()=>{}),350)}
 async function persistLobbySettings(){clearTimeout(lobbySaveTimer);if(lobbySaveTask){await lobbySaveTask;if(lobbySavedRevision<lobbyRevision)return persistLobbySettings();return}if(!room?.isHost||room.state!=='lobby')return;const revision=lobbyRevision,options=lobbyOptions(),code=room.code;if(JSON.stringify(options)===JSON.stringify(lobbyServerOptions())){lobbySavedRevision=revision;lobbySaveStatus('Ayarlar eşitlendi','saved');return}lobbySaveTask=(async()=>{try{const next=await call('change-mode',options);if(room?.code!==code||room.state!=='lobby')return;room=next;const form=$('#lobby-settings');if(form)form.dataset.game=next.gameId;lobbySavedRevision=revision;lobbySaveStatus(lobbyRevision===revision?'Ayarlar eşitlendi':'Ayarlar kaydediliyor…',lobbyRevision===revision?'saved':'pending')}catch(e){lobbySaveStatus('Ayarlar kaydedilemedi','error');toast(e.message);throw e}finally{lobbySaveTask=null;const b=$('#lobby-start');if(b)b.disabled=!room?.isHost||busy}})();await lobbySaveTask;if(lobbySavedRevision<lobbyRevision)return persistLobbySettings()}
 function selectLobbyMode(mode){if(!room?.isHost)return;$('#game-mode').value=mode;for(const input of document.querySelectorAll('[name=game-mode-choice]'))input.checked=input.value===mode;updateLobbyModeDetails(mode);$('#lobby-categories').innerHTML=lobbyCategoryHtml(mode);updateLobbyParameters(mode);updateLobbyPlayersOnly();updateLobbySummary();queueLobbySave();if(mode==='auction')loadLobbyAuctionCategories()}
-function updateLobbyModeDetails(mode){const info=LOBBY_MODES[mode]||LOBBY_MODES['car-price'];$('#lobby-selected-title').textContent=info.title;$('#lobby-selected-desc').textContent=info.desc;$('#lobby-art-container').innerHTML=lobbyHeroArt(mode);$('#lobby-hero').dataset.mode=mode;$('#lobby-hero-type').textContent=['auction','number-race','battleship'].includes(mode)?'2 OYUNCU · DÜELLO':'1–8 OYUNCU · FİYAT TAHMİNİ';$('#lobby-rule-description').textContent=info.desc}
+function updateLobbyModeDetails(mode){const info=LOBBY_MODES[mode]||LOBBY_MODES['car-price'];$('#lobby-selected-title').textContent=info.title;$('#lobby-selected-desc').textContent=info.desc;updateLobbyHeroArt(mode);$('#lobby-hero').dataset.mode=mode;$('#lobby-hero-type').textContent=['auction','number-race','battleship'].includes(mode)?'2 OYUNCU · DÜELLO':'1–8 OYUNCU · FİYAT TAHMİNİ';$('#lobby-rule-description').textContent=info.desc}
 function updateLobbyParameters(mode){const special=['auction','number-race','battleship'].includes(mode);$('#guess-mode-settings').hidden=special;$('#lobby-special-rule').hidden=!special;$('#lobby-special-rule').innerHTML=mode==='auction'?'<b>20 TL</b><span>Sıralı teklifler · Süre yok<br>Herkes 5 ürün seçtiğinde oyun tamamlanır.</span>':mode==='number-race'?'<b>20 saniye</b><span>Her turda roller değişir.<br>Kendi tablosunu ilk dolduran kazanır.</span>':'<b>5 gemi</b><span>10 × 10 deniz · İki oyuncu<br>İsabetli atışta bir hak daha.</span>'}
 function selectLobbyRounds(n){if(!room?.isHost)return;$('#room-rounds').value=n;document.querySelectorAll('[data-lobby-rounds]').forEach(b=>{b.classList.toggle('active',Number(b.dataset.lobbyRounds)===n);b.setAttribute('aria-pressed',String(Number(b.dataset.lobbyRounds)===n))});updateLobbySummary();queueLobbySave()}
 function selectLobbySeconds(n){if(!room?.isHost)return;$('#guess-seconds').value=n;document.querySelectorAll('[data-lobby-seconds]').forEach(b=>{b.classList.toggle('active',Number(b.dataset.lobbySeconds)===n);b.setAttribute('aria-pressed',String(Number(b.dataset.lobbySeconds)===n))});updateLobbySummary();queueLobbySave()}

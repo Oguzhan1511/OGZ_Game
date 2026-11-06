@@ -84,3 +84,9 @@ node --watch --watch-path=.local/github-upload/worker .local/github-upload/scrip
 ```
 
 URL: http://localhost:4317/
+
+## Kullanıcının üst alan revizyonu
+
+Beş modun hero görseli kullanıcının gönderdiği panoramik görsellerle değiştirildi (`assets/lobby/hero-*.webp`). Kartların mevcut görselleri korunur. Başlıklar Bungee, diğer lobi metinleri Manrope kullanır. Üst alanın kenarlık, radius ve panel zemini kaldırıldı; görsel kenarları zemine yumuşak geçer. Mod değişiminde yüklenen yeni görsel 440 ms giriş, önceki görsel 400 ms çıkış animasyonu kullanır. Hızlı mod değişimlerinde eski yükleme sonucu son seçimi geçersiz kılamaz. Hareket azaltma tercihi desteklenir.
+
+Başlık görselleri yeni `hero-` URL'leriyle sunulur; kart görsellerinin cache'i etkilenmez. WebP karşılıkları ve statik build çıktısı doğrulandı. On görsel toplam 373.738 bayt. Bu revizyon görsel üretimi kullanmaz; gönderilen beş PNG yalnızca WebP formatı/boyut optimizasyonundan geçirilmiştir.

@@ -135,8 +135,8 @@ export default {
         return await serveMedia(request, env, u.pathname, mediaManifest);
       if (u.pathname.startsWith('/api/media/'))
         return await uploadMedia(request, env, u.pathname, mediaManifest);
-      const lobbyAsset = /^\/lobby-art\/(car-price|product-price|auction|number-race|battleship)\.webp$/.exec(u.pathname);
-      if (lobbyAsset) return new Response(Uint8Array.from(atob(lobbyArt[lobbyAsset[1]]), c => c.charCodeAt(0)), { headers: { 'content-type': 'image/webp', 'cache-control': 'public, max-age=86400' } });
+      const lobbyAsset = /^\/lobby-art\/((?:hero-)?(?:car-price|product-price|auction|number-race|battleship))\.webp$/.exec(u.pathname);
+      if (lobbyAsset && lobbyArt[lobbyAsset[1]]) return new Response(Uint8Array.from(atob(lobbyArt[lobbyAsset[1]]), c => c.charCodeAt(0)), { headers: { 'content-type': 'image/webp', 'cache-control': 'public, max-age=86400' } });
       if (u.pathname === '/home-background-v1.webp') {
         return new Response(
           request.method === 'HEAD'
