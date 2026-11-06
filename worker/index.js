@@ -1,3 +1,4 @@
+import { lobbyArt } from './ui/lobby-art.js';
 import { battleshipStyles, getBattleshipClient } from './modes/battleship/battleship-ui.js';
 import { numberRaceStyles, numberRaceClient } from './modes/number/number-ui.js';
 import { auctionSeed } from './modes/auction/auction-seed.js';
@@ -134,6 +135,8 @@ export default {
         return await serveMedia(request, env, u.pathname, mediaManifest);
       if (u.pathname.startsWith('/api/media/'))
         return await uploadMedia(request, env, u.pathname, mediaManifest);
+      const lobbyAsset = /^\/lobby-art\/(car-price|product-price|auction|number-race|battleship)\.webp$/.exec(u.pathname);
+      if (lobbyAsset) return new Response(Uint8Array.from(atob(lobbyArt[lobbyAsset[1]]), c => c.charCodeAt(0)), { headers: { 'content-type': 'image/webp', 'cache-control': 'public, max-age=86400' } });
       if (u.pathname === '/home-background-v1.webp') {
         return new Response(
           request.method === 'HEAD'

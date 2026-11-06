@@ -157,7 +157,7 @@ export const modeCardStyles = String.raw`
 `;
 export const modeCardClient = String.raw`
 function onModeCardChange(mode) {
-  if (typeof selectLobbyMode === 'function') {
+  if (document.querySelector('#lobby-settings') && typeof selectLobbyMode === 'function') {
     selectLobbyMode(mode);
   } else {
     selectGameMode(mode);

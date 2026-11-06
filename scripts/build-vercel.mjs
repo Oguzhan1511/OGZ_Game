@@ -20,3 +20,11 @@ fs.writeFileSync('public/home-background-v1.webp', Buffer.from(await background.
 
 fs.writeFileSync('public/.gitkeep', '');
 console.log('Vercel build complete: static index.html, mascot.jpg, logo.png generated.');
+
+// Serve the same optimized lobby art on static Vercel builds and the local Worker.
+fs.mkdirSync('public/lobby-art', { recursive: true });
+for (const mode of ['car-price','product-price','auction','number-race','battleship']) {
+ const res = await worker.fetch(new Request('http://localhost/lobby-art/'+mode+'.webp'), {});
+ if (!res.ok) throw new Error('Missing lobby art: '+mode);
+ fs.writeFileSync('public/lobby-art/'+mode+'.webp', Buffer.from(await res.arrayBuffer()));
+}

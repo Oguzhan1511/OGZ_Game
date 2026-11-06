@@ -165,6 +165,7 @@ function updateProductMixed() {
   ].every(input => input.checked);
 }
 function selectedProductCategories() {
+  if (document.querySelector("#lobby-settings #product-mixed")?.checked) return Object.keys(productCategories);
   return [...document.querySelectorAll('[name=product-category]:checked')].map(
     input => input.value
   );
