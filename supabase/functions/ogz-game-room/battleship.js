@@ -8,7 +8,12 @@ export const battleShipTypes = [
 ];
 export function battleshipState() {
   return {
-    battle: { phase: 'placement', turnPlayerId: null, turnId: crypto.randomUUID(), lastShot: null },
+    battle: {
+      phase: 'placement',
+      turnPlayerId: null,
+      turnId: crypto.randomUUID(),
+      lastShot: null,
+    },
     startedAt: null,
     round: 0,
   };
@@ -45,7 +50,12 @@ export function validateBattleFleet(fleet) {
       ship.col + (ship.vertical ? 1 : type.length) > 10
     )
       return null;
-    const normalized = { id: ship.id, row: ship.row, col: ship.col, vertical: ship.vertical };
+    const normalized = {
+      id: ship.id,
+      row: ship.row,
+      col: ship.col,
+      vertical: ship.vertical,
+    };
     for (const cell of battleCells(normalized)) {
       if (occupied.has(cell)) return null;
       occupied.add(cell);
@@ -68,6 +78,14 @@ function battlePublicShots(shooter, target) {
     sunk: sunkCells.has(index),
   }));
 }
+function battleFleetStatus(player, attacker) {
+  const shots = new Set(attacker?.shots || []);
+  return battleShipTypes.map(type => {
+    const ship = (player.fleet || []).find(s => s.id === type.id);
+    const hits = ship ? battleCells(ship).filter(i => shots.has(i)).length : 0;
+    return { id: type.id, hits, status: hits === type.length ? 'sunk' : hits ? 'damaged' : 'intact' };
+  });
+}
 function battleshipView(r, token) {
   const me = r.players.find(p => p.token === token),
     enemy = r.players.find(p => p.id !== me?.id);
@@ -88,6 +106,7 @@ function battleshipView(r, token) {
       avatar: p.avatar,
       ready: !!p.ready,
       score: p.score || 0,
+      fleetStatus: battleFleetStatus(p, r.players.find(other => other.id !== p.id)),
       remaining: p.fleet?.length
         ? 5 - battleSunk(p.fleet, r.players.find(other => other.id !== p.id)?.shots || []).length
         : 5,
@@ -109,6 +128,8 @@ function battleshipFinish(r, winner) {
       finishedAt: now,
       winnerId: winner.id,
       totalShots: r.round,
+      gameId: r.gameId,
+      lastShot: r.battle.lastShot,
       elapsedMs: now - r.startedAt,
       players: r.players.map(p => {
         const other = r.players.find(q => q.id !== p.id),

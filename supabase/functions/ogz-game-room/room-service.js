@@ -76,6 +76,7 @@ export function revealRound(r, cars) {
 
 export function createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog }) {
   return async function roomApi(req, env) {
+    const requestReceivedAt = Date.now();
     if (!env.DB) return json({ error: 'Oda servisi henüz hazır değil.' }, 503);
     let b;
     try {
@@ -107,7 +108,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
     if (typeof token !== 'string' || token.length < 20)
       return json({ error: 'Profil oturumu geçersiz' }, 400);
     if (action === 'create' && b.mode === 'battleship') return battleshipApi(b, env);
-    if (action === 'create' && b.mode === 'number-race') return numberRaceApi(b, env);
+    if (action === 'create' && b.mode === 'number-race') return numberRaceApi(b, env, requestReceivedAt);
     if (action === 'create' && b.mode === 'auction' && auctionApi) return auctionApi(b, env);
     if (action === 'create') {
       if (![10, 15, 20].includes(b.rounds)) return json({ error: 'Tur sayısı geçersiz' }, 400);
@@ -116,7 +117,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
       const modeErr = selectedMode.validateOptions(b);
       if (modeErr) return json({ error: modeErr }, 400);
       const categories = selectedMode.normalizeOptions(b);
-      if (!Number.isInteger(b.guessSeconds) || b.guessSeconds < 10 || b.guessSeconds > 120)
+      if (!Number.isInteger(b.guessSeconds) || b.guessSeconds < 0 || b.guessSeconds > 80)
         return json({ error: 'Tahmin süresi geçersiz' }, 400);
       for (let attempt = 0; attempt < 8; attempt++) {
         const code = crypto.randomUUID().replaceAll('-', '').slice(0, 6).toUpperCase();
@@ -227,7 +228,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
           next.players.forEach(p => Object.assign(p, { balance: 20, plate: [] }));
         } else {
           if (![10, 15, 20].includes(b.rounds)) return json({ error: 'Tur sayısı geçersiz' }, 400);
-          if (!Number.isInteger(b.guessSeconds) || b.guessSeconds < 10 || b.guessSeconds > 120)
+          if (!Number.isInteger(b.guessSeconds) || b.guessSeconds < 0 || b.guessSeconds > 80)
             return json({ error: 'Tahmin süresi geçersiz' }, 400);
           Object.assign(next, {
             categories: mode.normalizeOptions(b),
@@ -249,13 +250,13 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         if (next.mode === 'battleship')
           return battleshipApi({ ...b, action: 'get', gameId: next.gameId }, env);
         if (next.mode === 'number-race')
-          return numberRaceApi({ ...b, action: 'get', gameId: next.gameId }, env);
+          return numberRaceApi({ ...b, action: 'get', gameId: next.gameId }, env, requestReceivedAt);
         if (next.mode === 'auction')
           return auctionApi({ ...b, action: 'get', gameId: next.gameId }, env);
         return json(view(next, token, cars));
       }
       if (r.mode === 'battleship') return battleshipApi(b, env);
-      if (r.mode === 'number-race') return numberRaceApi(b, env);
+      if (r.mode === 'number-race') return numberRaceApi(b, env, requestReceivedAt);
       if (r.mode === 'auction' && auctionApi) return await auctionApi(b, env);
       if (r.state === 'closed')
         return json({ error: 'Bu oda kapatıldı. Oda kodu artık geçersiz.', closed: true }, 410);
@@ -370,7 +371,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         r.order = r.customCars.map((_, i) => i);
         reserve = true;
         r.state = 'playing';
-        r.deadline = Date.now() + (r.guessSeconds || 30) * 1000;
+        r.deadline = r.guessSeconds === 0 ? null : Date.now() + (r.guessSeconds ?? 30) * 1000;
       }
       if (action === 'guess') {
         if (expired) actionError = 'Tahmin süresi doldu.';
@@ -396,7 +397,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
           r.state = 'playing';
           r.guesses = {};
           delete r.results;
-          r.deadline = Date.now() + (r.guessSeconds || 30) * 1000;
+          r.deadline = r.guessSeconds === 0 ? null : Date.now() + (r.guessSeconds ?? 30) * 1000;
         }
       }
       if (action === 'close') {

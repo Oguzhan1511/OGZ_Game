@@ -28,7 +28,7 @@ function numberRaceShuffle(n) {
 function numberRaceRoles(r) {
   return { chooser: r.players[r.round % 2], searcher: r.players[(r.round + 1) % 2] };
 }
-function numberRaceView(r, token) {
+function numberRaceView(r, token, receivedAt = Date.now()) {
   const me = r.players.find(p => p.token === token),
     { chooser, searcher } = numberRaceRoles(r);
   return {
@@ -42,6 +42,7 @@ function numberRaceView(r, token) {
     isHost: r.host === token,
     me: me?.id,
     serverNow: Date.now(),
+    serverReceivedAt: receivedAt,
     raceVersion: r.raceVersion || 0,
     players: r.players.map(({ id, name, avatar, marks, score }) => ({
       id,
@@ -109,7 +110,13 @@ function numberRaceFinish(r, winner, now) {
     p.score = 0;
   });
 }
-export async function numberRaceApi(b, env) {
+function numberRaceSettle(r, reason, now) {
+  r.race.phase = 'settling';
+  r.race.cutoffAt = reason === 'timeout' ? r.race.deadline : now;
+  r.race.endReason = reason;
+  r.race.settleUntil = now + 3000;
+}
+export async function numberRaceApi(b, env, receivedAt = Date.now()) {
   const reply = (v, s = 200) =>
       Response.json(v, { status: s, headers: { 'cache-control': 'no-store' } }),
     token = b.token;
@@ -132,7 +139,7 @@ export async function numberRaceApi(b, env) {
       )
         .bind(r.code, JSON.stringify(r), Date.now())
         .run();
-      if (out.meta.changes) return reply(numberRaceView(r, token));
+      if (out.meta.changes) return reply(numberRaceView(r, token, receivedAt));
     }
     return reply({ error: 'Oda oluşturulamadı.' }, 503);
   }
@@ -153,7 +160,7 @@ export async function numberRaceApi(b, env) {
     const player = r.players.find(p => p.token === token);
     if (!player && b.action !== 'join') return reply({ error: 'Önce odaya katıl.' }, 403);
     if (
-      ['pick-number', 'find-number', 'mark-cells', 'start'].includes(b.action) &&
+      ['pick-number', 'find-number', 'mark-cells', 'finish-marks', 'start'].includes(b.action) &&
       b.gameId &&
       b.gameId !== r.gameId
     )
@@ -165,7 +172,11 @@ export async function numberRaceApi(b, env) {
       changed = true;
     }
     if (r.state === 'playing' && r.race.phase === 'search' && now >= r.race.deadline) {
-      numberRaceNextTurn(r, 'timeout', now);
+      numberRaceSettle(r, 'timeout', now);
+      changed = true;
+    }
+    if (r.state === 'playing' && r.race.phase === 'settling' && now >= r.race.settleUntil) {
+      numberRaceNextTurn(r, r.race.endReason, r.race.cutoffAt);
       changed = true;
     }
     if (b.action === 'join' && !player) {
@@ -188,26 +199,18 @@ export async function numberRaceApi(b, env) {
       });
       r.expiresAt = now + 86400000;
       changed = true;
+    } else if (b.action === 'finish-marks') {
+      const { chooser } = numberRaceRoles(r);
+      if (r.state === 'playing' && r.race.phase === 'settling' && b.turnId === r.race.turnId && player.id === chooser.id) {
+        numberRaceNextTurn(r, r.race.endReason, r.race.cutoffAt);
+        changed = true;
+      } else if (!(r.race.lastTurn?.turnId === b.turnId && r.race.lastTurn?.chooserId === player.id)) {
+        error = 'Tur değişti. Güncel tabloyla devam et.';
+      }
     } else if (['pick-number', 'find-number', 'mark-cells'].includes(b.action)) {
-      const { chooser, searcher } = numberRaceRoles(r),
-        n = r.gridSize * r.gridSize;
-      const previous = r.race.lastTurn,
-        late =
-          b.action === 'mark-cells' &&
-          previous?.turnId === b.turnId &&
-          previous.chooserId === player.id &&
-          now - previous.endedAt <= 8000 &&
-          Array.isArray(b.clicks) &&
-          b.clicks.length === b.cells?.length &&
-          b.clicks.every(
-            (c, i) =>
-              c &&
-              c.index === b.cells[i] &&
-              Number.isFinite(c.at) &&
-              c.at >= previous.startsAt &&
-              c.at <= previous.endedAt
-          );
-      if (r.state !== 'playing' || (b.turnId !== r.race.turnId && !late))
+      const { chooser, searcher } = numberRaceRoles(r), n = r.gridSize * r.gridSize;
+      const settling = r.race.phase === 'settling';
+      if (r.state !== 'playing' || b.turnId !== r.race.turnId)
         error = 'Tur değişti. Güncel tabloyla devam et.';
       else if (b.action === 'pick-number') {
         if (r.race.phase !== 'choose' || player.id !== chooser.id)
@@ -226,20 +229,20 @@ export async function numberRaceApi(b, env) {
           r.race.deadline = r.race.startsAt + 20000;
           changed = true;
         }
-      } else if (r.race.phase !== 'search' && !late) error = 'Önce hedef sayı seçilmeli.';
+      } else if (r.race.phase !== 'search' && !(settling && b.action === 'mark-cells')) error = 'Önce hedef sayı seçilmeli.';
       else if (b.action === 'find-number') {
         if (player.id !== searcher.id) error = 'Sayıyı arama sırası rakibinde.';
         else if (!Number.isInteger(b.index) || b.index < 0 || b.index >= n)
           error = 'Geçerli kutuyu seç.';
         else if (r.race.board[b.index] === r.race.target) {
-          numberRaceNextTurn(r, 'found', now);
+          numberRaceSettle(r, 'found', now);
           changed = true;
         } else if (!r.race.wrong.includes(b.index)) {
           r.race.wrong.push(b.index);
           changed = true;
         }
       } else {
-        if (player.id !== chooser.id && !late) error = 'Kutucuk işaretleme sırası rakibinde.';
+        if (player.id !== chooser.id) error = 'Kutucuk işaretleme sırası rakibinde.';
         else if (
           !Array.isArray(b.cells) ||
           !b.cells.length ||
@@ -248,10 +251,18 @@ export async function numberRaceApi(b, env) {
         )
           error = 'Geçerli kutulara tek tek bas.';
         else {
-          player.marks = [...new Set([...player.marks, ...b.cells])];
+          let accepted = b.cells;
+          if (settling) {
+            if (!Array.isArray(b.clicks) || b.clicks.length !== b.cells.length || b.clicks.some((c,i) => !c || c.index !== b.cells[i] || !Number.isFinite(c.at) || c.at < r.race.startsAt)) {
+              error = 'Geçerli tıklama zamanları gerekli.';
+            } else accepted = b.clicks.filter(c => c.at <= r.race.cutoffAt).map(c => c.index);
+          }
+          if (!error) {
+          player.marks = [...new Set([...player.marks, ...accepted])];
           player.score = player.marks.length;
           changed = true;
           if (player.marks.length === n) numberRaceFinish(r, player, now);
+          }
         }
       }
     } else if (b.action === 'close' || b.action === 'leave') {
@@ -274,7 +285,7 @@ export async function numberRaceApi(b, env) {
     if (error) return reply({ error }, 409);
     if (r.state === 'closed') return reply({ closed: true });
     if (b.action === 'leave') return reply({ left: true });
-    return reply(numberRaceView(r, token));
+    return reply(numberRaceView(r, token, receivedAt));
   }
   return reply({ error: 'Oyun güncelleniyor. Tekrar dene.' }, 409);
 }
