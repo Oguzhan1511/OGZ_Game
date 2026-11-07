@@ -505,6 +505,9 @@ export const numberRaceStyles = String.raw`
     transition: none;
   }
 }
+
+.nr-cell.paper.cooldown{opacity:.45;cursor:wait}
+.nr-cell.paper.pending{box-shadow:inset 0 0 0 2px #f2c66d;opacity:.8}
 `;
 export const numberRaceClient = String.raw`
 let nrSelectedNumber = null;
@@ -512,7 +515,23 @@ let nrPending = new Set(),
   nrPendingKey = '',
   nrSending = false,
   nrFlushTimeout = null;
-let nrBatches = new Map();
+let nrBatches = new Map(), nrFinalizing = '', nrClockSample = null;
+let nrFindQueue = new Map(), nrFinding = false;
+const NR_MARK_INTERVAL = 250;
+let nrNextMarkAt = 0;
+function nrObserveClock(data, sentAt, receivedAt){
+ const serverStart=data.serverReceivedAt ?? data.serverNow;
+ const network=Math.max(0,receivedAt-sentAt-(data.serverNow-serverStart));
+ if(!nrClockSample||nrClockSample.gameId!==data.gameId||receivedAt-nrClockSample.at>60000||network<=nrClockSample.network){
+  nrClockSample={gameId:data.gameId,at:receivedAt,network};
+  clockOffset=(serverStart+data.serverNow-sentAt-receivedAt)/2;
+ }
+}
+function nrMaybeFinish(){
+ if(!room||room.mode!=='number-race'||room.state!=='playing'||room.race.phase!=='settling'||room.race.chooserId!==room.me||nrSending||nrBatches.size||nrFinalizing)return;
+ const code=room.code,gameId=room.gameId,turnId=room.race.turnId;nrFinalizing=turnId;
+ call('finish-marks',{code,gameId,turnId}).then(next=>nrApply(next,code,gameId)).catch(()=>nrScheduleFlush(300)).finally(()=>{nrFinalizing=''});
+}
 function numberRaceOptions() {
   return (
     '<section id="number-options" hidden><label>Tablo boyutu</label><div class="nr-choice">' +
@@ -589,7 +608,7 @@ function nrPaper(player, rival = false, interactive = false, result = false) {
       { length: n },
       (_, i) =>
         '<button type="button" class="nr-cell paper ' +
-        (filled.has(i) ? 'marked' : '') +
+        (filled.has(i) ? 'marked' : '') + (local.includes(i)?' pending':'') +
         '" data-cell="' +
         i +
         '" aria-label="' +
@@ -606,7 +625,22 @@ function nrPaper(player, rival = false, interactive = false, result = false) {
     '</div></section>'
   );
 }
+function nrUpdateMarkCooldown() {
+  if(room?.mode!=='number-race'||room.state!=='playing'||room.race.phase!=='search'||room.race.chooserId!==room.me)return;
+  const cooling=Date.now()<nrNextMarkAt;
+  const expired=Date.now()+clockOffset>=room.race.deadline;
+  const player=room.players.find(p=>p.id===room.me);
+  const filled=new Set([...(player.marks||[]),...nrPending]);
+  const panel=document.querySelector('[data-player="'+room.me+'"]');
+  if(!panel)return;
+  for(const b of panel.querySelectorAll('[data-cell]')){
+    const marked=filled.has(Number(b.dataset.cell));
+    b.disabled=marked||cooling||expired;
+    b.classList.toggle('cooldown',cooling&&!marked);
+  }
+}
 function nrTick() {
+  nrUpdateMarkCooldown();
   if (room?.mode === 'number-race' && room.state === 'playing' && room.race.phase === 'ready') {
     const left = Math.max(0, room.race.startsAt - Date.now() - clockOffset);
     const bar = $('#number-ready-progress');
@@ -614,6 +648,10 @@ function nrTick() {
     if ($('#number-clock')) $('#number-clock').textContent = 'Hazır ol';
     if (!left) refresh();
     return;
+  }
+  if(room?.mode==='number-race'&&room.state==='playing'&&room.race.phase==='settling'){
+    if($('#number-clock'))$('#number-clock').textContent='Eşitleniyor';
+    nrScheduleFlush(0);return;
   }
   const clock = $('#number-clock');
   if (!clock || !room || room.mode !== 'number-race' || room.state !== 'playing') return;
@@ -645,7 +683,7 @@ function nrPatch() {
       ' · Rakip ' +
       (opponent.marks || []).length +
       '/' +
-      room.gridSize ** 2;
+      room.gridSize ** 2 + (nrPending.size?' · '+nrPending.size+' işaret bekliyor':'');
   for (const p of room.players) {
     const panel = document.querySelector('[data-player="' + p.id + '"]');
     if (!panel) continue;
@@ -657,16 +695,16 @@ function nrPatch() {
     for (const b of panel.querySelectorAll('[data-cell]')) {
       const marked = filled.has(Number(b.dataset.cell));
       b.classList.toggle('marked', marked);
+      b.classList.toggle('pending',p.id===room.me&&nrPending.has(Number(b.dataset.cell)));
       b.textContent = marked ? '✦' : '·';
       b.disabled = !mine || marked;
     }
   }
-  for (const i of room.race.wrong || []) {
-    const b = document.querySelector('[data-number-index="' + i + '"]');
-    if (b) {
-      b.disabled = true;
-      b.classList.add('wrong');
-    }
+  const tried = new Set([...(room.race.wrong || []), ...nrFindQueue.keys()]);
+  for(const b of document.querySelectorAll('[data-number-index]')){
+    const disabled=tried.has(Number(b.dataset.numberIndex));
+    b.disabled=disabled;
+    b.classList.toggle('wrong',disabled);
   }
   nrTick();
 }
@@ -680,10 +718,12 @@ function renderNumberRace() {
   nrSyncPending();
   if (nrPendingKey !== key) {
     nrPendingKey = key;
+    nrNextMarkAt = 0;
     nrSelectedNumber = Array.from({ length: room.gridSize ** 2 }, (_, i) => i + 1).find(
       n => !(room.usedNumbers || []).includes(n)
     );
   }
+  if(room.race.phase==='settling')nrScheduleFlush(0);
   const viewKey = key + '-' + room.race.phase;
   if ($('#number-race-view')?.dataset.view === viewKey) {
     nrPatch();
@@ -703,7 +743,8 @@ function renderNumberRace() {
         ' Roller değişti.</div>'
       : '';
   let primary;
-  if (room.race.phase === 'ready') primary = nrPaper(me, false, false);
+  if (room.race.phase === 'settling') primary=nrPaper(me,false,false);
+  else if (room.race.phase === 'ready') primary = nrPaper(me, false, false);
   else if (choosing) primary = nrPreparationPanel(mine, chooser);
   else
     primary = mine
@@ -738,7 +779,7 @@ function renderNumberRace() {
     ' · TUR ' +
     (room.round + 1) +
     '</span><h1>' +
-    (choosing
+    (room.race.phase==='settling' ? 'İşaretler eşitleniyor…' : choosing
       ? mine
         ? 'Sayıyı sen seç.'
         : 'Gözün sayılarda olsun.'
@@ -765,11 +806,11 @@ function renderNumberRace() {
     (choosing
       ? nrPaper(me, false, false) + primary + nrPaper(other, true, false)
       : primary +
-        nrPaper(room.race.phase === 'ready' ? other : mine ? other : chooser, true, false)) +
+        nrPaper(['ready','settling'].includes(room.race.phase) ? other : mine ? other : chooser, true, false)) +
     '</div><p class="notice">' +
-    (choosing
+    (room.race.phase==='settling' ? 'Tur kapandı. Bekleyen tıklamalar kaydediliyor; ardından roller değişecek.' : choosing
       ? 'Sayı seçildiğinde süre başlar.'
-      : 'Sürükleyerek işaretleme yok. Her kutuya tek tek tıkla veya dokun.') +
+      : 'Sürükleyerek işaretleme yok. Her kutuya tek tek tıkla veya dokun. İşaretler arasında 0,25 saniye bekle · En fazla 4 kutu/sn.') +
     '</p>' +
     (room.race.phase === 'ready'
       ? '<div class="nr-ready" role="dialog" aria-modal="true" aria-labelledby="number-ready-title"><section class="nr-ready-card"><span class="nr-ready-tag">TUR ' +
@@ -863,7 +904,33 @@ function randomNumberTarget() {
 function confirmNumberTarget() {
   if (nrSelectedNumber) numberAction('pick-number', { number: nrSelectedNumber });
 }
+function nrQueueFind(index) {
+  if(room?.mode!=='number-race'||room.state!=='playing'||room.race.phase!=='search'||room.race.chooserId===room.me||Date.now()+clockOffset>=room.race.deadline||!Number.isInteger(index)||index<0||index>=room.gridSize**2||(room.race.wrong||[]).includes(index)||nrFindQueue.has(index))return;
+  gameAudio.play('tap');
+  nrFindQueue.set(index,{code:room.code,gameId:room.gameId,turnId:room.race.turnId,index});
+  nrPatch();
+  nrFlushFinds();
+}
+async function nrFlushFinds(){
+  if(nrFinding)return;
+  const item=nrFindQueue.values().next().value;
+  if(!item)return;
+  nrFinding=true;
+  let retry=false;
+  try{
+    const next=await call('find-number',item);
+    if(nrFindQueue.get(item.index)===item)nrFindQueue.delete(item.index);
+    nrApply(next,item.code,item.gameId);
+  }catch(e){
+    if([400,403,404,410].includes(e.status)||(e.status===409&&e.message!=='Oyun güncelleniyor. Tekrar dene.')){if(nrFindQueue.get(item.index)===item)nrFindQueue.delete(item.index);refresh();}
+    else retry=true;
+  }finally{
+    nrFinding=false;
+    if(nrFindQueue.size)setTimeout(nrFlushFinds,retry?250:0);
+  }
+}
 async function numberAction(action, extra) {
+  if(action==='find-number'){nrQueueFind(extra.index);return;}
   if (busy) return;
   gameAudio.play('tap');
   busy = true;
@@ -881,6 +948,9 @@ async function numberAction(action, extra) {
 }
 function nrSyncPending() {
   nrPending = new Set();
+  for(const [index,item] of nrFindQueue){
+    if(room?.mode!=='number-race'||room.state!=='playing'||room.race.phase!=='search'||room.code!==item.code||room.gameId!==item.gameId||room.race.turnId!==item.turnId)nrFindQueue.delete(index);
+  }
   if (!room || room.mode !== 'number-race') {
     nrBatches.clear();
     return;
@@ -890,10 +960,11 @@ function nrSyncPending() {
       nrBatches.delete(key);
       continue;
     }
+    if (batch.turnId !== room.race.turnId) {nrBatches.delete(key);continue;}
     for (const index of batch.cells.keys()) nrPending.add(index);
   }
 }
-function nrScheduleFlush(delay = 80) {
+function nrScheduleFlush(delay = 40) {
   if (!nrFlushTimeout) nrFlushTimeout = setTimeout(flushNumberMarks, delay);
 }
 function markNumberCell(index, button) {
@@ -902,10 +973,12 @@ function markNumberCell(index, button) {
     room.race.phase !== 'search' ||
     room.race.chooserId !== room.me ||
     Date.now() + clockOffset >= room.race.deadline ||
-    button.disabled
+    button.disabled || Date.now() < nrNextMarkAt
   )
     return;
   gameAudio.play('tap');
+  nrNextMarkAt = Date.now() + NR_MARK_INTERVAL;
+  setTimeout(nrUpdateMarkCooldown, NR_MARK_INTERVAL);
   const key = nrKey();
   if (!nrBatches.has(key))
     nrBatches.set(key, {
@@ -925,7 +998,8 @@ function markNumberCell(index, button) {
 async function flushNumberMarks() {
   nrFlushTimeout = null;
   nrSyncPending();
-  if (nrSending || !nrBatches.size) return;
+  if(nrSending)return;
+  if(!nrBatches.size){nrMaybeFinish();return;}
   const [key, batch] = nrBatches.entries().next().value,
     clicks = [...batch.cells].map(([index, at]) => ({ index, at }));
   nrSending = true;
@@ -958,7 +1032,7 @@ async function flushNumberMarks() {
     }
   } finally {
     nrSending = false;
-    if (nrBatches.size) nrScheduleFlush(retry ? 650 : 80);
+    if(nrBatches.size)nrScheduleFlush(retry?250:0);else nrMaybeFinish();
   }
 }
 window.addEventListener('online', () => {

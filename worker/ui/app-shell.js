@@ -2799,6 +2799,7 @@ function prefetchGameImages(urls, priority = 'low') {
   }
 }
 async function call(action, extra = {}) {
+  const sentAt = Date.now();
   const controller = new AbortController(),
     timeout = setTimeout(
       () => controller.abort(),
@@ -2820,7 +2821,10 @@ async function call(action, extra = {}) {
     }
     if (data.car) prefetchGameImages([data.car[9], data.car[10]?.damageImage], 'high');
     if (data.nextImages) prefetchGameImages(data.nextImages);
-    if (data.serverNow) clockOffset = data.serverNow - Date.now();
+    if (data.serverNow) {
+      if (data.mode === 'number-race') nrObserveClock(data, sentAt, Date.now());
+      else clockOffset = data.serverNow - Date.now();
+    }
     return data;
   } catch (error) {
     if (error.name === 'AbortError') throw Error('Bağlantı gecikti. Tekrar deneniyor…');
@@ -2910,8 +2914,10 @@ async function refresh() {
       return;
     const previous = { ...room };
     delete previous.serverNow;
+    delete previous.serverReceivedAt;
     const updated = { ...next };
     delete updated.serverNow;
+    delete updated.serverReceivedAt;
     if (JSON.stringify(updated) !== JSON.stringify(previous)) {
       room = next;
       renderRoom();

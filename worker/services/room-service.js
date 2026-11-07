@@ -76,6 +76,7 @@ export function revealRound(r, cars) {
 
 export function createRoomService({ gameModes, cars, selectListings, auctionApi, auctionCatalog }) {
   return async function roomApi(req, env) {
+    const requestReceivedAt = Date.now();
     if (!env.DB) return json({ error: 'Oda servisi henüz hazır değil.' }, 503);
     let b;
     try {
@@ -107,7 +108,7 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
     if (typeof token !== 'string' || token.length < 20)
       return json({ error: 'Profil oturumu geçersiz' }, 400);
     if (action === 'create' && b.mode === 'battleship') return battleshipApi(b, env);
-    if (action === 'create' && b.mode === 'number-race') return numberRaceApi(b, env);
+    if (action === 'create' && b.mode === 'number-race') return numberRaceApi(b, env, requestReceivedAt);
     if (action === 'create' && b.mode === 'auction' && auctionApi) return auctionApi(b, env);
     if (action === 'create') {
       if (![10, 15, 20].includes(b.rounds)) return json({ error: 'Tur sayısı geçersiz' }, 400);
@@ -249,13 +250,13 @@ export function createRoomService({ gameModes, cars, selectListings, auctionApi,
         if (next.mode === 'battleship')
           return battleshipApi({ ...b, action: 'get', gameId: next.gameId }, env);
         if (next.mode === 'number-race')
-          return numberRaceApi({ ...b, action: 'get', gameId: next.gameId }, env);
+          return numberRaceApi({ ...b, action: 'get', gameId: next.gameId }, env, requestReceivedAt);
         if (next.mode === 'auction')
           return auctionApi({ ...b, action: 'get', gameId: next.gameId }, env);
         return json(view(next, token, cars));
       }
       if (r.mode === 'battleship') return battleshipApi(b, env);
-      if (r.mode === 'number-race') return numberRaceApi(b, env);
+      if (r.mode === 'number-race') return numberRaceApi(b, env, requestReceivedAt);
       if (r.mode === 'auction' && auctionApi) return await auctionApi(b, env);
       if (r.state === 'closed')
         return json({ error: 'Bu oda kapatıldı. Oda kodu artık geçersiz.', closed: true }, 410);

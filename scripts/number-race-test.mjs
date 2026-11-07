@@ -72,29 +72,33 @@ for (const size of [4, 6, 10]) {
   await call('find-number', b, { turnId: firstTurn, index: board.findIndex(n => n !== size ** 2) });
   assert.equal(r.round, 0);
   await call('find-number', b, { turnId: firstTurn, index: board.indexOf(size ** 2) });
-  assert.equal(r.round, 1);
-  assert.equal(r.race.chooserId, bid);
-  assert.equal(r.race.lastTurn.reason, 'found');
+  assert.equal(r.round,0);assert.equal(r.race.phase,'settling');assert.equal(r.race.chooserId,aid);
   await call('mark-cells', a, { turnId: firstTurn, cells: [2] }, 409);
-  const ended = r.race.lastTurn.endedAt;
+  const ended = r.race.cutoffAt;
   await call(
     'mark-cells',
     a,
-    { turnId: firstTurn, cells: [0], clicks: [{ index: 0, at: ended + 1 }] },
-    409
+    { turnId: firstTurn, cells: [3], clicks: [{ index: 3, at: ended + 1 }] },
+    200
   );
   await call('mark-cells', a, {
     turnId: firstTurn,
     cells: [2],
-    clicks: [{ index: 2, at: ended - 1 }],
+    clicks: [{ index: 2, at: Math.max(r.race.startsAt,ended - 1) }],
   });
   assert.equal(r.players[0].marks.length, 3);
   await call('mark-cells', a, {
     turnId: firstTurn,
     cells: [2],
-    clicks: [{ index: 2, at: ended - 1 }],
+    clicks: [{ index: 2, at: Math.max(r.race.startsAt,ended - 1) }],
   });
   assert.equal(r.players[0].marks.length, 3);
+  await call('finish-marks',b,{turnId:firstTurn},409);
+  await call('pick-number',b,{turnId:firstTurn,number:1},409);
+  await call('finish-marks',a,{turnId:firstTurn});
+  assert.equal(r.round,1);assert.equal(r.race.phase,'choose');assert.equal(r.race.chooserId,bid);assert.equal(r.race.lastTurn.reason,'found');
+  await call('mark-cells',a,{turnId:firstTurn,cells:[3],clicks:[{index:3,at:ended}]},409);
+  await call('finish-marks',a,{turnId:firstTurn});assert.equal(r.round,1);
   let turn = r.race.turnId;
   await call('pick-number', b, { turnId: turn, number: size ** 2 }, 409);
   await call('pick-number', b, { turnId: turn, number: 1 });
@@ -108,6 +112,9 @@ for (const size of [4, 6, 10]) {
   stored.race.deadline = Date.now() - 1;
   DB.sqlite.prepare('UPDATE rooms SET data=? WHERE code=?').run(JSON.stringify(stored), code);
   await call('mark-cells', b, { turnId: turn, cells: [0] }, 409);
+  await call('get');assert.equal(r.race.phase,'settling');assert.equal(r.round,1);
+  const offline=JSON.parse(DB.sqlite.prepare('SELECT data FROM rooms WHERE code=?').get(code).data);offline.race.settleUntil=Date.now()-1;
+  DB.sqlite.prepare('UPDATE rooms SET data=? WHERE code=?').run(JSON.stringify(offline),code);
   await call('get');
   assert.equal(r.round, 2);
   assert.equal(r.race.lastTurn.reason, 'timeout');
@@ -148,7 +155,7 @@ for (const size of [4, 6, 10]) {
   console.log(
     'PASS:',
     size + '×' + size,
-    'two-player roles, private shuffled board, 20s timeout, explicit marks, deduplication, stale turns, winner snapshot, replay and same-room mode switch.'
+    'two-player roles, private shuffled board, 20s timeout, acknowledged turn settlement, late-mark cutoff, offline fallback, explicit marks, deduplication, stale turns, winner snapshot, replay and same-room mode switch.'
   );
 }
 const html = await (await worker.fetch(new Request('https://test'), {})).text();
