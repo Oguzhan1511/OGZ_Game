@@ -2873,6 +2873,7 @@ async function enterRoom(action, linkCode = null) {
       code: action === 'join' ? linkCode || $('#roomcode').value.trim().toUpperCase() : room?.code,
     });
     $('#overlay').innerHTML = '';
+    busy = false;
     renderRoom();
     clearInterval(poll);
     poll = setInterval(refresh, ['number-race', 'battleship'].includes(room.mode) ? 500 : 2000);

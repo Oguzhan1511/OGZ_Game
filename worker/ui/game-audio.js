@@ -1,23 +1,52 @@
+// Cached PCM effects: pressure blast, metal impact, water and hull breakup.
+export function synthesizeNavalSound(name, sampleRate = 44100) {
+  const durations = { cannon: 1.45, hit: 1.15, splash: 1.25, sunk: 3.2 };
+  if (!durations[name]) return null;
+  const samples = new Float32Array(Math.ceil(sampleRate * durations[name]));
+  let seed = 719 + name.length * 137, low = 0, mid = 0, peak = 0;
+  for (let i = 0; i < samples.length; i++) {
+    const t = i / sampleRate;
+    seed ^= seed << 13; seed ^= seed >>> 17; seed ^= seed << 5;
+    const noise = (seed >>> 0) / 2147483648 - 1;
+    low += (noise - low) * (1 - Math.exp(-2 * Math.PI * 190 / sampleRate));
+    mid += (noise - mid) * (1 - Math.exp(-2 * Math.PI * 2200 / sampleRate));
+    const attack = Math.min(1, t / .002);
+    let value = 0;
+    if (name === 'cannon') {
+      // Sharp ignition, deep falling pressure wave, then a distant echo.
+      value = .8 * (noise - mid) * Math.exp(-t * 95)
+        + 3.4 * low * Math.exp(-t * 5.3)
+        + .55 * Math.sin(2 * Math.PI * (42 * t + 6 * (1 - Math.exp(-t * 22)))) * Math.exp(-t * 7);
+      if (t > .18) value += .75 * low * Math.exp(-(t - .18) * 5);
+    } else if (name === 'hit') {
+      value = 1.3 * mid * Math.exp(-t * 24) + 2.1 * low * Math.exp(-t * 7)
+        + .22 * Math.sin(2 * Math.PI * 173 * t) * Math.exp(-t * 8)
+        + .13 * Math.sin(2 * Math.PI * 437 * t) * Math.exp(-t * 12)
+        + .08 * Math.sin(2 * Math.PI * 793 * t) * Math.exp(-t * 15);
+    } else if (name === 'splash') {
+      value = 1.6 * mid * Math.min(1, t / .025) * Math.exp(-t * 7)
+        + 1.8 * low * Math.exp(-t * 4)
+        + .12 * Math.sin(2 * Math.PI * (120 * t + 16 * Math.sin(t * 18))) * Math.exp(-t * 6);
+    } else {
+      // Three secondary explosions, low hull groan, breaking metal and bubbles.
+      for (const [at, strength] of [[0, 1], [.24, .65], [.58, .4]]) {
+        const dt = t - at;
+        if (dt >= 0) value += strength * (3 * low + .6 * mid) * Math.min(1, dt / .003) * Math.exp(-dt * 6);
+      }
+      value += .24 * Math.sin(2 * Math.PI * (105 * t - 11 * t * t)) * Math.exp(-t * 1.7)
+        + .11 * Math.sin(2 * Math.PI * (247 * t - 18 * t * t)) * Math.exp(-t * 2.4)
+        + low * .9 * Math.min(1, t / .4) * Math.exp(-t * 1.6) * (.6 + .4 * Math.sin(t * 39));
+    }
+    const fade = Math.min(1, (samples.length - 1 - i) / (sampleRate * .06));
+    samples[i] = Math.tanh(value * attack) * fade;
+    peak = Math.max(peak, Math.abs(samples[i]));
+  }
+  if (peak) for (let i = 0; i < samples.length; i++) samples[i] *= .88 / peak;
+  return samples;
+}
 // Small synthesized cues: no audio downloads or network requests in the game loop.
 export function createGameAudio({ createContext, isHidden = () => false } = {}) {
   const notes = {
-    cannon: [
-      [130, 0, 0.08],
-      [80, 0.05, 0.1],
-    ],
-    hit: [
-      [196, 0, 0.08],
-      [330, 0.07, 0.12],
-    ],
-    splash: [
-      [420, 0, 0.04],
-      [220, 0.05, 0.08],
-    ],
-    sunk: [
-      [330, 0, 0.1],
-      [247, 0.1, 0.1],
-      [165, 0.2, 0.22],
-    ],
     tap: [[1250, 0, 0.035]],
     round: [
       [523, 0, 0.09],
@@ -45,7 +74,8 @@ export function createGameAudio({ createContext, isHidden = () => false } = {}) 
     lastRoom = null,
     countKey = '',
     lastSecond = null;
-  const voices = new Set();
+  const voices = new Set(), navalBuffers = new Map();
+  const navalNames = new Set(['cannon', 'hit', 'splash', 'sunk']);
   function stop() {
     for (const voice of voices) {
       try {
@@ -69,12 +99,29 @@ export function createGameAudio({ createContext, isHidden = () => false } = {}) 
     volume = Math.max(0, Math.min(1, Number(level) || 0));
     if (!enabled || volume === 0) stop();
   }
-  function play(name) {
-    if (!enabled || volume === 0 || isHidden() || context?.state !== 'running' || !notes[name])
+  function play(name, { delay = 0 } = {}) {
+    if (!enabled || volume === 0 || isHidden() || context?.state !== 'running' || (!notes[name] && !navalNames.has(name)))
       return false;
-    stop();
+    if (!navalNames.has(name) || voices.size >= 12) stop();
     try {
-      const now = context.currentTime + 0.005;
+      const now = context.currentTime + 0.005 + Math.max(0, Math.min(1, delay));
+      if (navalNames.has(name)) {
+        let buffer = navalBuffers.get(name);
+        if (!buffer) {
+          const pcm = synthesizeNavalSound(name, context.sampleRate);
+          buffer = context.createBuffer(1, pcm.length, context.sampleRate);
+          buffer.getChannelData(0).set(pcm);
+          navalBuffers.set(name, buffer);
+        }
+        const source = context.createBufferSource(), gain = context.createGain();
+        source.buffer = buffer;
+        gain.gain.setValueAtTime(volume * .7, now);
+        source.connect(gain); gain.connect(context.destination);
+        voices.add(source);
+        source.onended = () => { voices.delete(source); source.disconnect(); gain.disconnect(); };
+        source.start(now);
+        return true;
+      }
       for (const [frequency, offset, duration] of notes[name]) {
         const oscillator = context.createOscillator(),
           gain = context.createGain();
@@ -150,7 +197,7 @@ export function createGameAudio({ createContext, isHidden = () => false } = {}) 
   return { unlock, configure, play, sync, countdown, stop };
 }
 export const gameAudioClient =
-  createGameAudio.toString() +
+  synthesizeNavalSound.toString() + '\n' + createGameAudio.toString() +
   String.raw`
 const gameAudio=createGameAudio({createContext:()=>{const Context=window.AudioContext||window.webkitAudioContext;return Context?new Context():null},isHidden:()=>document.hidden});
 document.addEventListener('pointerdown',()=>gameAudio.unlock(),{passive:true});

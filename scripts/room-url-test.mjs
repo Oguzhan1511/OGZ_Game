@@ -135,3 +135,16 @@ new vm.Script(client);
 console.log(
   'PASS: unique canonical URLs, one history entry, copy links, profile-gated direct joins, browser navigation, public deep routes, active-game resume and closed-room rejection.'
 );
+
+// An active Battleship room must render unlocked controls after URL re-entry.
+const entrySource=client.slice(client.indexOf('async function enterRoom('),client.indexOf("document.addEventListener('visibilitychange'",client.indexOf('async function enterRoom(')));
+let renderedBusy;
+const entry=vm.createContext({
+  room:null,profile:{name:'URL QA',avatar:'a1'},validProfile:()=>true,busy:false,poll:null,rounds:10,guessSeconds:30,esc:s=>s,
+  $:()=>({innerHTML:''}),call:async()=>({mode:'battleship',state:'playing'}),
+  renderRoom:()=>{renderedBusy=entry.busy;},clearInterval(){},setInterval(){},refresh(){},toast(){},modal(){},
+});
+vm.runInContext(entrySource,entry);
+await vm.runInContext("enterRoom('join','ABC123')",entry);
+assert.equal(renderedBusy,false);
+console.log('PASS: active-room re-entry releases the request lock before rendering game controls.');

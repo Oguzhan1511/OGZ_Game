@@ -874,7 +874,7 @@ body.game-mode > main {
     margin: 0 auto;
   }
   .bh-page:has(.bh-shot-message) .bh-board {
-    width: min(100%, calc(100dvh - 240px));
+    width: min(100%, calc(100dvh - 330px));
     margin: auto;
   }
   .bh-placement {
@@ -1296,7 +1296,8 @@ body.game-mode > main {
     font-size: 9px;
   }
   .bh-mini-fleet {
-    display: none;
+    display: grid;
+    gap: 3px;
   }
   .bh-stages span {
     padding: 3px 8px;
@@ -1349,7 +1350,7 @@ body.game-mode > main {
     margin: auto;
   }
   .bh-page:has(.bh-shot-message) .bh-board {
-    width: min(100%, calc(100dvh - 240px));
+    width: min(100%, calc(100dvh - 410px));
   }
   .bh-placement {
     margin-top: 7px;

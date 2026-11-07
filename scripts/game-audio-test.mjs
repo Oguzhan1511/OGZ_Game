@@ -1,11 +1,26 @@
 import assert from 'node:assert/strict';
-import { createGameAudio } from '../worker/ui/game-audio.js';
+import { createGameAudio, synthesizeNavalSound } from '../worker/ui/game-audio.js';
 const scheduled = [];
 let hidden = false,
   resumes = 0;
 const context = {
   state: 'suspended',
   currentTime: 10,
+  sampleRate: 44100,
+  createBuffer(channels, length, rate) {
+    const data = new Float32Array(length);
+    return { getChannelData: () => data, duration: length / rate };
+  },
+  createBufferSource() {
+    const voice = { stopped: false };
+    scheduled.push(voice);
+    return {
+      set buffer(value) { voice.buffer = value; },
+      connect() {}, disconnect() {},
+      start(at) { voice.start = at; },
+      stop() { voice.stopped = true; },
+    };
+  },
   destination: {},
   resume() {
     resumes++;
@@ -132,3 +147,26 @@ for (const cue of ['cannon', 'hit', 'splash', 'sunk']) {
   assert.ok(scheduled.length > before);
 }
 console.log('PASS: battleship cannon, hit, miss and sinking cues.');
+
+const lastVoice = scheduled.at(-1);
+assert.ok(lastVoice.buffer.duration > 3);
+assert.equal(audio.play('hit', { delay: .22 }), true);
+assert.equal(lastVoice.stopped, false, 'Impact must not cut off the cannon/sinking tail');
+assert.ok(scheduled.at(-1).start >= context.currentTime + .22);
+const cached = scheduled.at(-1).buffer;
+audio.play('hit');
+assert.equal(scheduled.at(-1).buffer, cached);
+audio.configure(false);
+assert.ok(scheduled.every(v => v.stopped));
+for (const sampleRate of [22050, 44100, 48000]) {
+  for (const cue of ['cannon', 'hit', 'splash', 'sunk']) {
+    const pcm = synthesizeNavalSound(cue, sampleRate);
+    assert.ok(pcm.length >= sampleRate);
+    let peak = 0, energy = 0;
+    for (const value of pcm) { assert.ok(Number.isFinite(value)); peak = Math.max(peak, Math.abs(value)); energy += value * value; }
+    assert.ok(peak <= .881 && peak > .8);
+    assert.ok(Math.sqrt(energy / pcm.length) > .01);
+    assert.ok(Math.abs(pcm[0]) < .001 && Math.abs(pcm.at(-1)) < .001);
+  }
+}
+console.log('PASS: cached naval PCM, unclipped finite waveforms at three sample rates, overlapping blast/impact tails, delayed impacts and mute cleanup.');

@@ -53,16 +53,37 @@ export const battleshipStyles = String.raw`
   color: #9aacc1;
   margin-top: 4px;
 }
+.bh-player { display: grid; grid-template-columns: auto minmax(0, 1fr); }
+.bh-player-info { min-width: 0; }
+.bh-player strong { overflow-wrap: anywhere; }
 .bh-mini-fleet {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-  color: #64809e;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 2px;
 }
-.bh-mini-fleet i {
-  height: 5px;
-  border-radius: 4px;
-  background: currentColor;
+.bh-fleet-ship {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 2px 6px;
+  padding: 4px 5px;
+  border: 1px solid #284359;
+  border-radius: 6px;
+  background: #102334;
+  color: #9ddcef;
+}
+.bh-fleet-ship svg { width: 30px; height: 12px; align-self: center; grid-row: 1 / 3; }
+.bh-fleet-ship b { font-size: 10px; line-height: 1.15; overflow-wrap: anywhere; }
+.bh-fleet-ship em { font-size: 9px; line-height: 1.15; font-style: normal; color: #9aacc1; }
+.bh-fleet-ship.damaged { border-color: #a87930; background: #382c1c; color: #ffd183; }
+.bh-fleet-ship.sunk { border-color: #99445b; background: #39202d; color: #ff8eab; }
+.bh-fleet-ship.sunk svg { opacity: .45; filter: grayscale(1); }
+@media (max-width: 420px) {
+  .bh-fleet-ship { grid-template-columns: 20px minmax(0, 1fr); gap: 2px 3px; padding: 4px 3px; }
+  .bh-fleet-ship svg { width: 20px; }
+  .bh-fleet-ship b { font-size: 9px; }
+  .bh-fleet-ship em { font-size: 8px; }
 }
 .bh-heading {
   text-align: center;
@@ -585,7 +606,7 @@ export const battleshipStyles = String.raw`
 export function getBattleshipClient() {
   return String.raw`
 const bhTypes=${JSON.stringify(battleShipTypes)};
-let bhDraft=[],bhDraftKey='',bhSelected='carrier',bhVertical=false,bhHover=null,bhLastSound='',bhMobilePanel='own',bhMobilePhase='';
+let bhDraft=[],bhDraftKey='',bhSelected='carrier',bhVertical=false,bhHover=null,bhLastSound='',bhMobilePanel='own',bhMobilePhase='',bhLocalShot=null;
 function battleshipOptions(){return '<section id="battleship-options" hidden><p class="notice"><b>2 oyuncu · 10×10 deniz · 5 gemi</b><br>Uçak Gemisi (5), Zırhlı (4), Kruvazör (3), Denizaltı (3), Muhrip (2). Filonu yerleştir ve hazır ol. İsabet edersen tekrar ateş edersin; karavanada sıra rakibe geçer. Rakibin tüm gemilerini batıran kazanır.</p></section>'}
 function toggleBattleshipOptions(){const active=$('#game-mode')?.value==='battleship';if($('#battleship-options'))$('#battleship-options').hidden=!active;if(active){if($('#guess-mode-settings'))$('#guess-mode-settings').hidden=true;if($('#game-mode-description'))$('#game-mode-description').textContent='Filonu yerleştir, düşman sularını tara. İsabet edersen atış hakkın devam eder.'}}
 function bhShipSvg(type){return '<svg viewBox="0 0 250 46" preserveAspectRatio="none" aria-hidden="true"><path d="M7 7 Q3 23 7 39 L208 39 Q235 35 247 23 Q235 11 208 7Z" fill="#526d89" stroke="#8daac5" stroke-width="2"/><path d="M17 12 H203 L229 23 L203 34 H17Z" fill="#425f7e"/><path d="M20 23 H215" stroke="#a7c3d9" stroke-width="1.5" stroke-dasharray="10 5"/>'+(type.id==='carrier'?'<path d="M20 16 H190 M20 30 H190" stroke="#c3d6e4" stroke-width="1"/><path d="m47 15 9 16m-13-7h17m28-9 9 16m-13-7h17m28-9 9 16m-13-7h17" stroke="#bdccdc" stroke-width="2"/><rect x="153" y="27" width="36" height="9" rx="3" fill="#8eaac5"/>':'<rect x="88" y="11" width="66" height="24" rx="6" fill="#91a9c0" stroke="#354e69" stroke-width="3"/><rect x="110" y="16" width="26" height="14" rx="3" fill="#3c546d"/><circle cx="53" cy="23" r="8" fill="#6b88a4" stroke="#a2b9cd"/><path d="M53 23H24" stroke="#c0d4e4" stroke-width="3"/><circle cx="185" cy="23" r="8" fill="#6b88a4" stroke="#a2b9cd"/><path d="M185 23h27" stroke="#c0d4e4" stroke-width="3"/>')+'</svg>'}
@@ -599,12 +620,29 @@ function rotateBattleShip(){if(room?.mode!=='battleship'||room.battle.phase!=='p
 function placeBattleShip(index){if(room.battle.phase!=='placement'||room.players.find(p=>p.id===room.me)?.ready)return;const existing=bhDraft.find(s=>bhCells(s).includes(index));if(existing&&existing.id!==bhSelected){bhSelected=existing.id;bhDraft=bhDraft.filter(s=>s.id!==existing.id);gameAudio.play('tap');renderBattleship();return}const ship={id:bhSelected,row:Math.floor(index/10),col:index%10,vertical:bhVertical};if(!bhCanPlace(ship)){toast('Gemi taşamaz veya başka bir gemiyle üst üste gelemez.');return}bhDraft=bhDraft.filter(s=>s.id!==ship.id).concat(ship);const next=bhTypes.find(t=>!bhDraft.some(s=>s.id===t.id));if(next)bhSelected=next.id;gameAudio.play('tap');renderBattleship()}
 function randomBattleFleet(){if(room.players.find(p=>p.id===room.me)?.ready)return;let fleet=[];for(const type of bhTypes){let placed=false;for(let i=0;i<500;i++){const ship={id:type.id,row:Math.floor(Math.random()*10),col:Math.floor(Math.random()*10),vertical:Math.random()<.5};if(bhCanPlace(ship,fleet)){fleet.push(ship);placed=true;break}}if(!placed){randomBattleFleet();return}}bhDraft=fleet;bhSelected='carrier';gameAudio.play('tap');renderBattleship()}
 function clearBattleFleet(){if(room.players.find(p=>p.id===room.me)?.ready)return;bhDraft=[];bhSelected='carrier';gameAudio.play('tap');renderBattleship()}
-function bhPlayerCard(p,active){return '<section class="bh-player '+(active?'active':'')+'"><img src="'+avatar(p.avatar)+'" alt=""><div><strong>'+esc(p.name)+(p.id===room.me?' (sen)':'')+'</strong><small>'+(room.battle.phase==='placement'?(p.ready?'✓ Filo hazır':'Filosunu yerleştiriyor'):active?'⌖ Nişan alıyor':'Bekliyor')+'</small><div class="bh-mini-fleet">'+bhTypes.map((s,i)=>'<i style="width:'+(s.length*8)+'px;opacity:'+(i<p.remaining?1:.25)+'"></i>').join('')+'</div></div></section>'}
+function bhPlayerCard(p,active){
+ const placement=room.battle.phase==='placement';
+ const fleet=bhTypes.map(type=>{
+  const ship=(p.fleetStatus||[]).find(s=>s.id===type.id)||{status:'intact',hits:0};
+  const label=placement?'Hazırlanıyor':ship.status==='sunk'?'BATTI':ship.status==='damaged'?'İsabet '+ship.hits+'/'+type.length:'Sağlam';
+  return '<span class="bh-fleet-ship '+ship.status+'" title="'+esc(type.name+' · '+label)+'">'+bhShipSvg(type)+'<b>'+esc(type.name)+'</b><em>'+label+'</em></span>';
+ }).join('');
+ return '<section class="bh-player '+(active?'active':'')+'"><img src="'+avatar(p.avatar)+'" alt=""><div class="bh-player-info"><strong>'+esc(p.name)+(p.id===room.me?' (sen)':'')+'</strong><small>'+(placement?(p.ready?'✓ Filo hazır':'Filosunu yerleştiriyor'):active?'⌖ Nişan alıyor':'Bekliyor')+'</small></div>'+(!placement?'<div class="bh-mini-fleet" aria-label="'+esc(p.name)+' filo durumu">'+fleet+'</div>':'')+'</section>';
+}
+function bhPlayShot(shot){
+ if(!shot||shot.id===bhLastSound)return;
+ bhLastSound=shot.id;
+ const local=shot.playerId===room.me&&bhLocalShot?.gameId===(room.lastGame?.lastShot?.id===shot.id?room.lastGame.gameId:room.gameId)&&bhLocalShot.index===shot.index;
+ const elapsed=local?(Date.now()-bhLocalShot.at)/1000:0;
+ if(!local)gameAudio.play('cannon');
+ gameAudio.play(shot.sunk?'sunk':shot.hit?'hit':'splash',{delay:Math.max(0,.22-elapsed)});
+ bhLocalShot=null;
+}
 function renderBattleship(){
  clearInterval(timer);resetMobileRoundRanking();document.body.classList.remove('game-mode','product-game','home-mode','auction-active','number-active');document.body.classList.add('battleship-active');$('#breadcrumb').textContent='Amiral Battı';const me=room.players.find(p=>p.id===room.me),enemy=room.players.find(p=>p.id!==room.me),placement=room.battle.phase==='placement',myTurn=room.battle.turnPlayerId===me.id,key=room.code+'-'+room.gameId;
  if(bhDraftKey!==key){bhDraftKey=key;bhDraft=room.battle.myFleet.map(s=>({...s}));bhSelected='carrier';bhVertical=false;bhLastSound=''}if(me.ready)bhDraft=room.battle.myFleet.map(s=>({...s}));
  if(bhMobilePhase!==room.battle.phase){bhMobilePhase=room.battle.phase;bhMobilePanel=placement?'own':'enemy'}
- const shot=room.battle.lastShot;if(shot&&shot.id!==bhLastSound){bhLastSound=shot.id;gameAudio.play(shot.sunk?'sunk':shot.hit?'hit':'splash')}
+ const shot=room.battle.lastShot;bhPlayShot(shot);
  const message=shot?(shot.sunk?shot.shipName+' BATTI!':shot.hit?'İSABET! '+(shot.playerId===room.me?'Tekrar ateş et.':esc(room.players.find(p=>p.id===shot.playerId)?.name)+' tekrar ateş ediyor.'): 'KARAVANA · Sıra: '+esc(room.players.find(p=>p.id===room.battle.turnPlayerId)?.name)):'İsabet eden oyuncu tekrar ateş eder.';
  const controls=placement&&!me.ready?'<section class="bh-placement"><div class="bh-direction"><div><small>GEMİ YÖNÜ</small><b>'+(bhVertical?'↕ Dikey':'↔ Yatay')+'</b></div><button type="button" onclick="rotateBattleShip()">↻ Döndür · R</button></div><p class="bh-hint">Gemiyi seç, tahtaya tıkla. Döndürmek için R, sağ tık veya Döndür düğmesini kullan.</p><div class="bh-ship-list">'+bhTypes.map(type=>'<button type="button" class="bh-ship-choice '+(type.id===bhSelected?'selected ':'')+(bhDraft.some(s=>s.id===type.id)?'placed':'')+'" onclick="selectBattleShip(\''+type.id+'\')"><b>'+esc(type.name)+'</b> <small>'+type.length+' kare'+(bhDraft.some(s=>s.id===type.id)?' ✓':'')+'</small>'+bhShipSvg(type)+'</button>').join('')+'</div><div class="bh-placement-actions"><button type="button" class="btn secondary" onclick="randomBattleFleet()">⚄ Rastgele</button><button type="button" class="btn secondary" onclick="clearBattleFleet()">Temizle</button><button type="button" class="btn ready" '+(bhDraft.length!==5||busy?'disabled':'')+' onclick="readyBattleFleet()">✓ Filom hazır</button></div><p class="bh-hint">Yerleştirdiğin gemiyi listeden tekrar seçerek taşıyabilirsin. Gemiler birbirine değebilir; üst üste gelemez.</p></section>':placement?'<p class="bh-hint">✓ Filon hazır. Rakibin hazırlanırken gemilerin gizli tutulur.</p>':'';
  $('#content').innerHTML='<main class="bh-page" data-mobile-panel="'+bhMobilePanel+'"><div class="bh-toolbar"><div class="bh-brand"><span class="bh-anchor">⚓</span>Amiral Battı</div><div class="bh-tools"><button type="button" class="game-sound-toggle" onclick="toggleGameSound()" aria-label="Oyun sesleri">♫</button><button class="btn secondary" onclick="goHome()">'+(room.isHost?'Odayı kapat':'Ayrıl')+'</button></div></div><header class="bh-head">'+bhPlayerCard(me,!placement&&myTurn)+'<div class="bh-heading"><div class="bh-stages"><span class="'+(placement?'current':'')+'">HAZIRLIK</span><span class="'+(!placement?'current':'')+'">SAVAŞ</span><span>SONUÇ</span></div><h1>'+(placement?'Filonu yerleştir':myTurn?'Ateş sırası sende':'Sıra: '+esc(enemy.name))+'</h1><p id="connection">Oda '+room.code+' · '+(placement?'5 gemini yerleştir, savaşa hazırlan.':myTurn?'Düşman sularında bir kare seç.':'Rakibin nişan alıyor…')+'</p></div>'+bhPlayerCard(enemy,!placement&&!myTurn)+'</header>'+(!placement?'<div class="bh-shot-message '+(shot?.sunk?'sunk':shot?.hit?'hit':'')+'" role="status">'+message+'</div>':'')+'<div class="bh-mobile-tabs" role="tablist" aria-label="Deniz tahtaları"><button type="button" role="tab" aria-selected="'+(bhMobilePanel==='own')+'" onclick="setBattleMobilePanel(\'own\')">Senin filon</button><button type="button" role="tab" aria-selected="'+(bhMobilePanel==='enemy')+'" onclick="setBattleMobilePanel(\'enemy\')">Düşman suları</button></div><div class="bh-layout"><section class="bh-ocean"><div class="bh-ocean-title"><span>SENİN FİLON</span><small>'+(placement?bhDraft.length+'/5 yerleştirildi':me.remaining+'/5 gemi')+'</small></div>'+bhBoard(placement?bhDraft:room.battle.myFleet,room.battle.incoming,'own',placement&&!me.ready)+controls+'</section><section class="bh-ocean enemy"><div class="bh-ocean-title"><span>DÜŞMAN SULARI · '+esc(enemy.name)+'</span><small>'+(placement?(enemy.ready?'✓ Hazır':'Hazırlanıyor'):enemy.remaining+'/5 gemi')+'</small></div>'+(placement?'<div class="bh-radar-wait"><div class="bh-radar"></div><span>'+esc(enemy.name)+(enemy.ready?' filosunu hazırladı.':' filosunu yerleştiriyor…')+'</span><small>İki filo hazır olduğunda savaş başlar.</small></div>':bhBoard(room.battle.sunkEnemy,room.battle.outgoing,'enemy',myTurn&&!busy))+'</section></div></main>';
@@ -613,8 +651,8 @@ function renderBattleship(){
 function setBattleMobilePanel(panel){bhMobilePanel=panel;const page=document.querySelector('.bh-page');if(page)page.dataset.mobilePanel=panel;document.querySelectorAll('.bh-mobile-tabs button').forEach((b,i)=>b.setAttribute('aria-selected',String((i===0?'own':'enemy')===panel)))}
 function bhApply(next,code){if(!room||room.code!==code||(next.battleVersion||0)<(room.battleVersion||0))return;room=next;renderRoom()}
 async function readyBattleFleet(){if(busy||bhDraft.length!==5)return;busy=true;const code=room.code;try{const next=await call('place-fleet',{fleet:bhDraft});bhApply(next,code);gameAudio.play('submit')}catch(e){toast(e.message)}finally{busy=false;if(room?.mode==='battleship'&&room.state==='playing')renderRoom()}}
-async function fireBattleShot(index){if(busy||room.battle.phase!=='battle'||room.battle.turnPlayerId!==room.me)return;busy=true;gameAudio.play('cannon');const code=room.code,button=document.querySelector('[data-board=enemy] [data-shot="'+index+'"]');if(button)button.disabled=true;try{const next=await call('fire',{index,turnId:room.battle.turnId});bhApply(next,code)}catch(e){toast(e.message)}finally{busy=false;if(room?.mode==='battleship'&&room.state==='playing')renderRoom();refresh()}}
+async function fireBattleShot(index){if(busy||room.battle.phase!=='battle'||room.battle.turnPlayerId!==room.me)return;busy=true;bhLocalShot={gameId:room.gameId,index,at:Date.now()};gameAudio.play('cannon');const code=room.code,button=document.querySelector('[data-board=enemy] [data-shot="'+index+'"]');if(button)button.disabled=true;try{const next=await call('fire',{index,turnId:room.battle.turnId});bhApply(next,code)}catch(e){toast(e.message)}finally{busy=false;if(room?.mode==='battleship'&&room.state==='playing')renderRoom();refresh()}}
 document.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='r'&&!e.repeat&&!['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName)&&room?.mode==='battleship'&&room.state==='playing'&&room.battle.phase==='placement'){e.preventDefault();rotateBattleShip()}});
-function renderBattleshipFinal(){clearInterval(timer);resetMobileRoundRanking();document.body.classList.remove('game-mode','product-game','home-mode','auction-active','number-active');document.body.classList.add('battleship-active');const result=room.lastGame,me=result.players.find(p=>p.id===room.me),other=result.players.find(p=>p.id!==room.me),winner=result.players.find(p=>p.id===result.winnerId);$('#breadcrumb').textContent='Amiral Battı sonuçları';$('#content').innerHTML='<main class="bh-page bh-final"><header><span style="font-size:46px">⚓ 🏆</span><h1>Kazanan: '+esc(winner.name)+'</h1><p>Rakibinin bütün gemilerini batırdı. Denizlerin hâkimi belli oldu!</p></header><div class="bh-final-stats">'+[['Kalan gemin',me.remaining+'/5'],['İsabetin',me.shots.filter(s=>s.hit).length+'/'+me.shots.length],['Toplam atış',result.totalShots],['Süre',Math.ceil(result.elapsedMs/1000)+' sn']].map(([title,value])=>'<div><small>'+esc(title)+'</small><b>'+esc(value)+'</b></div>').join('')+'</div><div class="bh-layout"><section class="bh-ocean"><div class="bh-ocean-title">SENİN FİLON · '+esc(me.name)+'</div>'+bhBoard(me.fleet,other.shots,'own',false)+'</section><section class="bh-ocean enemy"><div class="bh-ocean-title">RAKİBİN FİLOSU · '+esc(other.name)+'</div>'+bhBoard(other.fleet,me.shots,'enemy',false)+'</section></div><div class="final-actions"><button class="btn" onclick="returnFromFinal()">↻ Lobiye dön · Tekrar oyna</button><button class="btn secondary" onclick="goHome()">'+(room.isHost?'Odayı kapat':'Ana menü')+'</button></div></main>'}
+function renderBattleshipFinal(){bhPlayShot(room.lastGame.lastShot);clearInterval(timer);resetMobileRoundRanking();document.body.classList.remove('game-mode','product-game','home-mode','auction-active','number-active');document.body.classList.add('battleship-active');const result=room.lastGame,me=result.players.find(p=>p.id===room.me),other=result.players.find(p=>p.id!==room.me),winner=result.players.find(p=>p.id===result.winnerId);$('#breadcrumb').textContent='Amiral Battı sonuçları';$('#content').innerHTML='<main class="bh-page bh-final"><header><span style="font-size:46px">⚓ 🏆</span><h1>Kazanan: '+esc(winner.name)+'</h1><p>Rakibinin bütün gemilerini batırdı. Denizlerin hâkimi belli oldu!</p></header><div class="bh-final-stats">'+[['Kalan gemin',me.remaining+'/5'],['İsabetin',me.shots.filter(s=>s.hit).length+'/'+me.shots.length],['Toplam atış',result.totalShots],['Süre',Math.ceil(result.elapsedMs/1000)+' sn']].map(([title,value])=>'<div><small>'+esc(title)+'</small><b>'+esc(value)+'</b></div>').join('')+'</div><div class="bh-layout"><section class="bh-ocean"><div class="bh-ocean-title">SENİN FİLON · '+esc(me.name)+'</div>'+bhBoard(me.fleet,other.shots,'own',false)+'</section><section class="bh-ocean enemy"><div class="bh-ocean-title">RAKİBİN FİLOSU · '+esc(other.name)+'</div>'+bhBoard(other.fleet,me.shots,'enemy',false)+'</section></div><div class="final-actions"><button class="btn" onclick="returnFromFinal()">↻ Lobiye dön · Tekrar oyna</button><button class="btn secondary" onclick="goHome()">'+(room.isHost?'Odayı kapat':'Ana menü')+'</button></div></main>'}
 `;
 }

@@ -61,7 +61,9 @@ let guest = await call('get', b);
 assert.deepEqual(guest.battle.myFleet, []);
 assert.deepEqual(guest.battle.sunkEnemy, []);
 assert.ok(!JSON.stringify(guest).includes(a));
-assert.ok(!JSON.stringify(guest).includes('carrier'));
+assert.equal(guest.players[0].fleetStatus.length, 5);
+assert.ok(guest.players[0].fleetStatus.every(s => Object.keys(s).sort().join(',') === 'hits,id,status'));
+assert.ok(guest.players[0].fleetStatus.every(s => s.status === 'intact' && s.hits === 0));
 await call('place-fleet', b, { fleet: otherFleet });
 assert.equal(r.battle.phase, 'battle');
 assert.equal(r.battle.turnPlayerId, aid);
@@ -71,6 +73,8 @@ let turn = r.battle.turnId;
 const firstHit = battleCells(otherFleet[0])[0];
 await call('fire', a, { index: firstHit, turnId: turn });
 assert.equal(r.battle.lastShot.hit, true);
+assert.deepEqual(r.players[1].fleetStatus.find(s => s.id === 'carrier'), { id: 'carrier', hits: 1, status: 'damaged' });
+assert.ok(r.players[0].fleetStatus.every(s => s.status === 'intact'));
 assert.equal(r.battle.turnPlayerId, aid);
 assert.deepEqual(r.battle.sunkEnemy, []);
 assert.equal(r.battle.outgoing[0].shipId, undefined);
@@ -95,7 +99,14 @@ for (const index of otherFleet
   .filter(i => i !== firstHit && i !== secondHit)) {
   assert.equal(r.battle.turnPlayerId, aid);
   await call('fire', a, { index, turnId: r.battle.turnId });
-  if (r.state !== 'lobby') assert.equal(r.battle.lastShot.hit, true);
+  if (r.state !== 'lobby') {
+    assert.equal(r.battle.lastShot.hit, true);
+    if (r.battle.lastShot.sunk) {
+      const sunk = r.players[1].fleetStatus.filter(s => s.status === 'sunk');
+      assert.equal(sunk.length, r.battle.sunkEnemy.length);
+      assert.ok(sunk.every(s => s.hits === battleShipTypes.find(t => t.id === s.id).length));
+    }
+  }
 }
 assert.equal(r.state, 'lobby');
 assert.equal(r.lastGame.mode, 'battleship');
@@ -104,6 +115,8 @@ assert.equal(r.lastGame.players[1].remaining, 0);
 assert.equal(r.lastGame.players[0].remaining, 5);
 assert.equal(r.lastGame.players[0].shots.filter(s => s.hit).length, 17);
 assert.equal(r.lastGame.totalShots, 19);
+assert.equal(r.lastGame.lastShot.sunk, true);
+assert.equal(r.lastGame.gameId, firstGame);
 assert.deepEqual(r.battle.myFleet, []);
 assert.ok(r.players.every(p => !p.ready));
 await call('start');
@@ -151,3 +164,28 @@ assert.ok(html.includes('Filom hazır'));
 console.log(
   'PASS: private 17-cell fleet, placement validation, two-player readiness, hit extra turn, miss handoff, sunk ships, duplicate/concurrent/stale shots, 19-shot victory, snapshot, replay, mode changes, 200 random fleets and client syntax.'
 );
+
+context.esc = s => String(s); context.avatar = s => s;
+context.room = { ...context.room, battle: { phase: 'battle' }, players: [] };
+context.player = { id: 'a', name: 'Ada', avatar: 'a1', fleetStatus: battleShipTypes.map((t,i) => ({id:t.id,hits:i===0?1:i===1?t.length:0,status:i===0?'damaged':i===1?'sunk':'intact'})) };
+const card = vm.runInContext('bhPlayerCard(player,true)', context);
+assert.ok(card.includes('Uçak Gemisi') && card.includes('İsabet 1/5') && card.includes('BATTI') && card.includes('Sağlam'));
+assert.equal((card.match(/class="bh-fleet-ship /g)||[]).length,5);
+const cues=[];context.gameAudio={play:(name,options)=>cues.push([name,options])};
+context.shot={id:'shot-1',playerId:'b',index:0,hit:true,sunk:false};
+vm.runInContext('bhPlayShot(shot);bhPlayShot(shot)',context);
+assert.deepEqual(cues.map(c=>c[0]),['cannon','hit']);
+context.shot={...context.shot,id:'shot-2',sunk:true};
+vm.runInContext('bhPlayShot(shot)',context);
+assert.deepEqual(cues.map(c=>c[0]),['cannon','hit','cannon','sunk']);
+console.log('PASS: named intact/damaged/sunk fleet indicators, private coordinates, final sinking snapshot and per-shot audio deduplication.');
+context.room={...context.room,gameId:'local-game'};
+context.shot={id:'shot-own',playerId:'a',index:3,hit:true,sunk:false};
+vm.runInContext("bhLocalShot={gameId:'local-game',index:3,at:Date.now()}",context);
+const beforeOwn=cues.length;
+vm.runInContext('bhPlayShot(shot)',context);
+assert.deepEqual(cues.slice(beforeOwn).map(c=>c[0]),['hit']);
+context.room={...context.room,gameId:'next-game',lastGame:{gameId:'local-game',lastShot:{...context.shot,id:'final-shot',sunk:true}}};
+vm.runInContext("bhLocalShot={gameId:'local-game',index:3,at:Date.now()};bhPlayShot(room.lastGame.lastShot)",context);
+assert.equal(cues.at(-1)[0],'sunk');
+console.log('PASS: locally fired cannon is not duplicated on acknowledgement or final sinking.');
