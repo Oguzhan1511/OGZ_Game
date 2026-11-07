@@ -30,3 +30,11 @@ sandbox.room.isHost=true;vm.runInContext('lobbyRevision++;',sandbox);const faile
 const retried=vm.runInContext('persistLobbySettings()',sandbox);pending.shift().resolve({...sandbox.room,rounds:20,gameId:'game-4'});await retried;assert.equal(nodes.get('#lobby-save-state').dataset.state,'saved');
 let bytes=0;for(const mode of ['car-price','product-price','auction','number-race','battleship','hero-car-price','hero-product-price','hero-auction','hero-battleship','hero-number-race']){const response=await worker.fetch(new Request('http://localhost/lobby-art/'+mode+'.webp'),{});assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/webp');const data=Buffer.from(await response.arrayBuffer());assert.equal(data.toString('ascii',0,4),'RIFF');bytes+=data.length}
 console.log('PASS: serialized lobby edits, latest-draft preservation, fresh game IDs, no-op saves, guest authorization, visible failures/retry, ten optimized lobby assets ('+bytes+' bytes).');
+
+// Large catalogs retain a bounded main view, including a selection outside the first page.
+const manyCategories=Array.from({length:35},(_,i)=>({id:'category-'+i}));
+sandbox.manyCategories=manyCategories;
+const visible=vm.runInContext("lobbyAuctionVisibleIds(manyCategories,'category-34')",sandbox);
+assert.equal(visible.length,6);assert.equal(new Set(visible).size,6);assert.ok(visible.includes('category-34'));assert.equal(visible[0],'category-0');
+assert.equal(vm.runInContext("lobbyAuctionVisibleIds([],undefined).length",sandbox),0);
+console.log('PASS: 35 auction categories keep six visible choices and retain the selected off-page category.');

@@ -100,3 +100,13 @@ Başlık görselleri yeni `hero-` URL'leriyle sunulur; kart görsellerinin cache
 Tahmin süresi hızlı seçim butonlarının yerine 0–80 arası, birer saniyelik kaydırıcı ve elle sayı girişi geri eklendi. İki kontrol birlikte güncellenir; kurucu ayarı mevcut otomatik kayıt akışına gönderir, misafir salt okunur görür. 0 = süresiz; herkes tahminini gönderince tur açıklanır. Sunucu validasyonu 0–80 olarak güncellendi; süresiz turlarda `deadline: null` kullanılır ve sonraki tur/yeniden başlatmada da korunur. İstemci süresiz turda tahmin alanını kapatmaz ve geri sayım sesi çalmaz. Backend şeması ve oda yetkileri değişmedi.
 
 `npm test` paketi başarılı; yeni sınır/süresiz tur testleri negatif/81/fraction değerlerinin reddini, sıfırın varsayılan 30 saniyeye dönüşmemesini, saat ilerletildiğinde tur kapanmamasını, tüm oyuncuların tahminiyle açılmasını, sonraki turları ve restart'ı kapsar. Tarayıcıda sürükleyerek 40, klavyeyle 0/80, elle 37 saniye seçimi ve yenileyince 37'nin korunması doğrulandı. 1366×768'de belge ve ana panellerde taşma yok. Önizleme: `docs/previews/lobby-duration-slider.png`. Yalnızca oguzhan branch'i; canlı yayın yapılmadı.
+
+### Büyük kategori yazıları ve büyüyen açık artırma kataloğu
+
+Ürün/açık artırma kategori başlıkları 16 px, kategori butonları ve Nasıl Oynanır metinleri 13 px oldu. Kısa laptop ekranında kartların görsel boşlukları sıkıştırılarak büyük metinlerin de panel içinde kalması sağlandı.
+
+Açık artırma ana seçim alanı en fazla altı kategori / iki satır gösterir. Tüm kategoriler düğmesi toplam sayıyı gösterip mevcut aramalı tek seçim penceresini açar. İlk altı dışından seçilen kategori ana alana alınır; uzun adlar alanı büyütmez ve tam adı tooltip/pencerede görünür. Mevcut kategori API'si, kimlikler ve tek kategori kuralı korunur. 35 kategorilik testte altı görünür seçim ve uzaktaki seçimin korunması doğrulandı. Gerçek altı kategorilik local katalogda arama → Hayvan Ordusu → kaydet akışı doğrulandı. 1366×768 ürün ve açık artırma görünümlerinde belge/ana panellerde taşma yok; hedefli testler ve statik build başarılı. Canlıya yayın yapılmadı.
+
+### Kareli tablo ve filo önizlemeleri
+
+Sayı Yarışı tablo boyutları, aynı alana ölçeklenen gerçek 4×4 / 6×6 / 10×10 kareli seçilebilir kartlara dönüştürüldü; her kartta 16 / 36 / 100 hücre bulunur. Radyo kontrolünün adı, `number-size` değeri ve host-only senkronizasyonu korunur. Amiral Battı lobisinde sabit 10×10 deniz ve beş gemilik açıklayıcı önizleme eklendi. Gemi adları, uzunlukları ve çizimleri mevcut `bhTypes`/`bhShipSvg` kaynağından gelir; yeni oyun kuralı veya boyut seçeneği eklenmedi. Bu modlarda da Nasıl Oynanır metni 13 px oldu. Oyunlar, oda ve lobi testleri ile statik build başarılı.
